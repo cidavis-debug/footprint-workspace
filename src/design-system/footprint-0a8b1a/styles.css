@@ -1,0 +1,76 @@
+@import "tw-animate-css";
+@custom-variant dark (&:where(.dark, .dark *));
+@font-face { font-family: Newsreader; src: url('./assets/fonts/newsreader.ttf') format('truetype'); font-weight: 400 600; font-display: swap; }
+@font-face { font-family: DM Sans; src: url('./assets/fonts/dm-sans.ttf') format('truetype'); font-weight: 400 600; font-display: swap; }
+@theme inline {
+ --color-background: var(--background); --color-foreground: var(--foreground);
+ --color-surface: var(--card); --color-on-primary: var(--primary-foreground); --color-text-muted: var(--muted-foreground); --color-focus: var(--primary);
+ --color-card: var(--card); --color-card-foreground: var(--foreground);
+ --color-primary: var(--primary); --color-primary-foreground: var(--primary-foreground);
+ --color-muted: var(--muted); --color-muted-foreground: var(--muted-foreground);
+ --color-accent: var(--accent); --color-accent-foreground: var(--primary);
+ --color-border: var(--border); --color-ring: var(--primary);
+ --color-destructive: var(--destructive); --color-success: var(--success);
+ --color-success-surface: var(--success-surface); --color-reference: var(--reference);
+ --color-reference-surface: var(--reference-surface); --color-ink: var(--ink);
+ --font-heading: 'Newsreader', Georgia, serif; --font-body: 'DM Sans', Arial, sans-serif;
+ --font-display: var(--font-heading); --font-sans: var(--font-body);
+ --font-mono: 'SFMono-Regular', Consolas, monospace;
+ --radius-sm: var(--radius-pill); --radius-md: var(--radius-button); --radius-lg: var(--radius-panel);
+ --spacing: 4px;
+ --text-display: var(--text-hero); --text-display--line-height: var(--leading-heading);
+ --text-h1: var(--text-greeting); --text-h1--line-height: var(--leading-heading);
+ --text-h2: var(--text-section); --text-h2--line-height: var(--leading-heading);
+ --text-h3: var(--text-section); --text-h3--line-height: var(--leading-heading);
+ --text-h4: var(--text-greeting); --text-h4--line-height: var(--leading-heading);
+ --text-h5: var(--text-body); --text-h6: var(--text-label);
+ --text-xs: var(--text-caption); --text-sm: var(--text-label); --text-base: var(--text-body);
+ --shadow-surface: var(--shadow-floating);
+}
+:root {
+ --background: #F4EBDD; --card: #FAF6EF; --ink: #693706;
+ --foreground: var(--ink); --primary: #305A83; --primary-foreground: #F4EBDD;
+ --muted-foreground: #756657; --border: rgba(105,55,6,0.22);
+ --muted: var(--background); --accent: color-mix(in srgb, var(--primary) 10%, var(--card));
+ --destructive: #a13f35; --success: #386c54; --success-surface: #e5eee6;
+ --reference: var(--ink); --reference-surface: var(--background);
+ --text-wordmark: 28px; --text-hero: 72px; --text-greeting: 40px; --text-section: 32px;
+ --text-body: 16px; --text-label: 14px; --text-caption: 13px;
+ --weight-regular: 400; --weight-medium: 500; --weight-semibold: 600;
+ --leading-heading: 1.1; --leading-body: 1.6; --leading-label: 1.4;
+ --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+ --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 64px;
+ --radius-button: 10px; --radius-composer: 16px; --radius-panel: 12px; --radius-pill: 999px;
+ --border-width: 1px; --shadow-floating: 0 4px 16px rgba(105,55,6,0.08);
+ --width-chat: 720px; --width-page: 1200px; --width-source-drawer: 360px;
+ --page-gutter: 32px; --control-min-height: 44px; --icon-size: 20px; --icon-stroke: 1.5;
+ --duration-fast: 150ms; --duration-panel: 240ms; --ease-standard: cubic-bezier(0.2,0,0,1);
+}
+@media (max-width: 767px) { :root { --text-hero: 42px; --text-greeting: 30px; --text-section: 26px; --page-gutter: 20px; } }
+.dark {
+ --background: #242420; --foreground: #e6e1d9; --ink: #f2dfc5; --card: #2e2e29;
+ --primary: #92bad7; --primary-foreground: #182a35; --muted: #34342e;
+ --muted-foreground: #b1aea4; --accent: #30424d; --border: #4a493e;
+ --destructive: #ee9b8f; --success: #aad1b6; --success-surface: #304237;
+ --reference: #dcc09d; --reference-surface: #443b2f;
+}
+@layer base {
+ * { border-color: var(--border); letter-spacing: 0; }
+ body { margin: 0; background: var(--background); color: var(--foreground); font-family: var(--font-sans); font-size: var(--text-body); line-height: var(--leading-body); }
+ h1,h2,h3,h4,h5,h6 { font-family: var(--font-display); color: var(--ink); font-weight: 400; }
+ button, input, textarea { font: inherit; }
+ button, a, summary { -webkit-tap-highlight-color: transparent; }
+ ::selection { background: var(--accent); }
+}
+@media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }
+
+@layer components {
+ .fp-space-1 { width: var(--space-1); } .fp-space-2 { width: var(--space-2); } .fp-space-3 { width: var(--space-3); } .fp-space-4 { width: var(--space-4); } .fp-space-5 { width: var(--space-5); } .fp-space-6 { width: var(--space-6); } .fp-space-7 { width: var(--space-7); } .fp-space-8 { width: var(--space-8); }
+ .fp-control { min-height: var(--control-min-height); border-radius: var(--radius-button); font-weight: var(--weight-medium); line-height: var(--leading-label); transition-duration: var(--duration-fast); transition-timing-function: var(--ease-standard); }
+ .fp-composer { border-radius: var(--radius-composer); max-width: var(--width-chat); }
+ .fp-panel { width: var(--width-source-drawer); border-radius: var(--radius-panel); transition: opacity var(--duration-panel) var(--ease-standard), transform var(--duration-panel) var(--ease-standard); }
+ .fp-pill { border-radius: var(--radius-pill); }
+ .fp-icon { width: var(--icon-size); height: var(--icon-size); stroke-width: var(--icon-stroke); }
+ .fp-wordmark { font-size: var(--text-wordmark); font-weight: var(--weight-medium); font-family: var(--font-heading); }
+ .fp-page { max-width: var(--width-page); padding-inline: var(--page-gutter); }
+}

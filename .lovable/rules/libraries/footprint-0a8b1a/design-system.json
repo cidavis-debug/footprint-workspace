@@ -1,0 +1,793 @@
+{
+  "meta": {
+    "name": "Footprint",
+    "package": "@ws-3242f392178b566f79b6/803f471a-2f3c-48aa-8238-d622c9c30bd7",
+    "version": "1.0.0",
+    "framework": "react",
+    "css_framework": "tailwind",
+    "starter_template": "custom_design_system",
+    "theme_files": [
+      "src/styles.css"
+    ],
+    "source_type": "local",
+    "source_manifest": {
+      "#enrichment": "7ed19ca7637f33e21542857932fcdd7e6ea23ab8ecd12bddd8388fab399b0cad",
+      ".dsignore": "48b755bfe30315a92b675843f3cabb0a",
+      ".gitignore": "6059213806e442947666752f3db6bfdc",
+      ".lovable/meta.yaml": "86a17ac0d6b10fddfde4cdc325cb93a7",
+      ".lovable/project.json": "926dbeac71f9ec5eae3351d39608c40e",
+      ".lovable/sources.yaml": "cefacacec56ba913b8efa1008aa975e7",
+      ".lovable/system.md": "965f37048fe93c00f542182aa9e7d08b",
+      "AGENTS.md": "0a81e7fece1805d00da5156e21595804",
+      "README.md": "219e70a5f6d3bcf9e4254d88e2c14a1c",
+      "bunfig.toml": "25f4c8696b22b0943db7191e0cdf7942",
+      "components.json": "30d3d035361ce807021f5c54620962e9",
+      "eslint.config.js": "07a67437fb1a45ab36d6de0145ff09de",
+      "lovable.toml": "956f55f44ff7952457c73fd1122d6bcd",
+      "mockupPreviewPlugin.ts": "70d01fe16b7ca25f16ff6bdb97f08b0b",
+      "package.json": "10843299aaa57e522f3fde38ac74c4a9",
+      "public/favicon.ico": "9f504444f85a5af2eef9264b02ae40be",
+      "roadmap.md": "ba2ec57875f7975dfd24c177b49406be",
+      "src/assets/fonts/dm-sans-OFL.txt": "5d80d8b71643fc638d4b8b1f3ded7c6f",
+      "src/assets/fonts/dm-sans.ttf": "09d1eaa1672d3815b7b121457ebda2d0",
+      "src/assets/fonts/newsreader-OFL.txt": "18b1799c268d8ac577c6aa8597f5b404",
+      "src/assets/fonts/newsreader.ttf": "d76b049ce532c1326074a93116466515",
+      "src/components/footprint/add-source-menu.tsx": "68ac78d44848c465d92f064ba14bc926",
+      "src/components/footprint/answer.tsx": "0fefd7a7f2986473743f2c3a658e5953",
+      "src/components/footprint/badge.tsx": "9f292356ce18642cd50f996ee5809808",
+      "src/components/footprint/button.tsx": "c65c6879d1a02f7e0f69a8738fa16410",
+      "src/components/footprint/citation-chip.tsx": "55f02550ec6aaaeacecfaa72aa72445e",
+      "src/components/footprint/composer.tsx": "63e2d19e6a59309de0879f7b7caea4d6",
+      "src/components/footprint/icon.tsx": "b268c5f928eaf66af10bb833c60630c0",
+      "src/components/footprint/input.tsx": "429ed0596a16052c9703c37d983d7932",
+      "src/components/footprint/source-item.tsx": "cf9c3e6a8d6eae5dba7fe0a1eb295a50",
+      "src/components/footprint/sources-drawer.tsx": "2eb0528958b49bef566bfa2dd1ac87ce",
+      "src/components/footprint/workspace-selector.tsx": "0b34e52ab3e5d4833a38f929a4809720",
+      "src/index.ts": "f581ed53234fb63de7cc05472df41307",
+      "src/lib/utils.ts": "d9837f38cc05303254571985e3164050",
+      "src/mockup-preview.d.ts": "ae9d81e2b8514e13fd59b5b6bece9a64",
+      "src/routeTree.gen.ts": "cdb80f13492ffa56b9021d252bbde429",
+      "src/router.tsx": "8f905e713b0eba7fa8148b7995a708c9",
+      "src/routes/[__component].preview.$.tsx": "e4bf310e591541d31abf0cfeeb1121a4",
+      "src/routes/[__mockup].preview.$.tsx": "5d9f42470848aa60148f20f9580e240e",
+      "src/routes/__root.tsx": "d6fc448e4207eac7cf105ac08c91bbb5",
+      "src/routes/colors.tsx": "bd358cd9a277f04f95d33cd9cc10e872",
+      "src/routes/components.tsx": "ca1b5cadfc075633cd7b27662c8333ac",
+      "src/routes/iconography.tsx": "633737d489005e863ae7e836037b8927",
+      "src/routes/index.tsx": "74917a045c6ead1c420165d706636751",
+      "src/routes/typography.tsx": "6ab777552cbf299c80a9b7aca3c1f499",
+      "src/showcase/components.tsx": "957dc457269903233172320817c1b27c",
+      "src/showcase/foundations.tsx": "3091043b4faf21c10704cb82b2cc2c7a",
+      "src/showcase/overview.tsx": "3a24e73966ebff7de13d4f942507bb50",
+      "src/showcase/shell.tsx": "7749dcd1dd8612c3333c1c7829af1e29",
+      "src/styles.css": "dacbaa70a296265c7610c5e2629ec7af",
+      "tsconfig.json": "5498ac94bab14bcff2c29aca84eba5b1",
+      "vite.config.ts": "2ad56ddcf2cf63319567ae6ffa363866",
+      "wrangler.jsonc": "680b897d48e44bcc65fe437c29b38f3b"
+    },
+    "pipeline_version": 8
+  },
+  "tokens": {
+    "color": [
+      {
+        "name": "--background",
+        "raw": "#F4EBDD",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--card",
+        "raw": "#FAF6EF",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--ink",
+        "raw": "#693706",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--primary",
+        "raw": "#305A83",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--primary-foreground",
+        "raw": "#F4EBDD",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--muted-foreground",
+        "raw": "#756657",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--border",
+        "raw": "rgba(105,55,6,0.22)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--accent",
+        "raw": "color-mix(in srgb, var(--primary) 10%, var(--card))",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--destructive",
+        "raw": "#a13f35",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--success",
+        "raw": "#386c54",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--success-surface",
+        "raw": "#e5eee6",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--foreground",
+        "raw": "#e6e1d9",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--muted",
+        "raw": "#34342e",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--reference",
+        "raw": "#dcc09d",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--reference-surface",
+        "raw": "#443b2f",
+        "source": "src/styles.css"
+      }
+    ],
+    "spacing": [
+      {
+        "name": "--spacing",
+        "raw": "4px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--space-1",
+        "raw": "4px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--space-2",
+        "raw": "8px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--space-3",
+        "raw": "12px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--space-4",
+        "raw": "16px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--space-5",
+        "raw": "24px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--space-6",
+        "raw": "32px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--space-7",
+        "raw": "48px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--space-8",
+        "raw": "64px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--border-width",
+        "raw": "1px",
+        "source": "src/styles.css"
+      }
+    ],
+    "typography": [
+      {
+        "name": "--font-heading",
+        "raw": "'Newsreader', Georgia, serif",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--font-body",
+        "raw": "'DM Sans', Arial, sans-serif",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--font-mono",
+        "raw": "'SFMono-Regular', Consolas, monospace",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--text-wordmark",
+        "raw": "28px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--text-hero",
+        "raw": "72px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--text-greeting",
+        "raw": "40px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--text-section",
+        "raw": "32px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--text-body",
+        "raw": "16px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--text-label",
+        "raw": "14px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--text-caption",
+        "raw": "13px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--leading-heading",
+        "raw": "1.1",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--leading-body",
+        "raw": "1.6",
+        "source": "src/styles.css"
+      }
+    ],
+    "radius": [
+      {
+        "name": "--radius-button",
+        "raw": "10px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--radius-composer",
+        "raw": "16px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--radius-panel",
+        "raw": "12px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--radius-pill",
+        "raw": "999px",
+        "source": "src/styles.css"
+      }
+    ],
+    "shadow": [
+      {
+        "name": "--shadow-floating",
+        "raw": "0 4px 16px rgba(105,55,6,0.08)",
+        "source": "src/styles.css"
+      }
+    ],
+    "other": [
+      {
+        "name": "--weight-regular",
+        "raw": "400",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--weight-medium",
+        "raw": "500",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--weight-semibold",
+        "raw": "600",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--leading-label",
+        "raw": "1.4",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--width-chat",
+        "raw": "720px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--width-page",
+        "raw": "1200px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--width-source-drawer",
+        "raw": "360px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--page-gutter",
+        "raw": "32px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--control-min-height",
+        "raw": "44px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--icon-size",
+        "raw": "20px",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--icon-stroke",
+        "raw": "1.5",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--duration-fast",
+        "raw": "150ms",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--duration-panel",
+        "raw": "240ms",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--ease-standard",
+        "raw": "cubic-bezier(0.2,0,0,1)",
+        "source": "src/styles.css"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Button",
+      "file": "src/components/footprint/button",
+      "import_path": "",
+      "props": [
+        {
+          "name": "variant",
+          "type": "enum",
+          "values": [
+            "primary",
+            "secondary",
+            "ghost",
+            "quiet"
+          ],
+          "default": "primary"
+        },
+        {
+          "name": "size",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg",
+            "icon"
+          ],
+          "default": "md"
+        },
+        {
+          "name": "loading",
+          "type": "boolean"
+        }
+      ],
+      "usage": "Use for deliberate user actions, with named emphasis and size.",
+      "examples": [
+        {
+          "label": "Typical usage",
+          "code": "\u003cButton variant=\"primary\"\u003eAsk Footprint\u003c/Button\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not omit aria-label on icon-only actions."
+      ]
+    },
+    {
+      "name": "Input",
+      "file": "src/components/footprint/input",
+      "import_path": "",
+      "props": [
+        {
+          "name": "variant",
+          "type": "enum",
+          "values": [
+            "default",
+            "error"
+          ],
+          "default": "default"
+        },
+        {
+          "name": "size",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md"
+          ],
+          "default": "md"
+        }
+      ],
+      "usage": "Use for single-line information and search. Provide an associated label.",
+      "examples": [
+        {
+          "label": "Typical usage",
+          "code": "\u003cInput aria-label=\"Workspace name\" placeholder=\"Design team\" /\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not use placeholder text as the only label."
+      ]
+    },
+    {
+      "name": "Badge",
+      "file": "src/components/footprint/badge",
+      "import_path": "",
+      "props": [
+        {
+          "name": "variant",
+          "type": "enum",
+          "values": [
+            "indexed",
+            "processing",
+            "reference"
+          ],
+          "default": "indexed"
+        },
+        {
+          "name": "size",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md"
+          ],
+          "default": "sm"
+        }
+      ],
+      "usage": "Use to distinguish source status without relying on color alone.",
+      "examples": [
+        {
+          "label": "Typical usage",
+          "code": "\u003cBadge variant=\"reference\"\u003eReference only\u003c/Badge\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not make a badge an action."
+      ]
+    },
+    {
+      "name": "SourceItem",
+      "file": "src/components/footprint/source-item",
+      "import_path": "",
+      "props": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "kind",
+          "type": "enum",
+          "values": [
+            "file",
+            "link"
+          ],
+          "default": "file"
+        },
+        {
+          "name": "status",
+          "type": "enum",
+          "values": [
+            "indexed",
+            "processing",
+            "reference"
+          ],
+          "default": "indexed"
+        },
+        {
+          "name": "onAction",
+          "type": "function"
+        }
+      ],
+      "usage": "Use in source lists for file and link metadata and status.",
+      "examples": [
+        {
+          "label": "Typical usage",
+          "code": "\u003cSourceItem name=\"Project brief.pdf\" kind=\"file\" status=\"indexed\" /\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not display indexed status before actual indexing succeeds."
+      ]
+    },
+    {
+      "name": "AddSourceMenu",
+      "file": "src/components/footprint/add-source-menu",
+      "import_path": "",
+      "props": [
+        {
+          "name": "onUpload",
+          "type": "function"
+        },
+        {
+          "name": "onAddLink",
+          "type": "function"
+        }
+      ],
+      "usage": "Use for compact access to file and link context actions. Wire both callbacks in production.",
+      "examples": [
+        {
+          "label": "Typical usage",
+          "code": "\u003cAddSourceMenu onUpload={openFilePicker} onAddLink={openLinkDialog} /\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not leave callbacks unwired in a production workflow."
+      ]
+    },
+    {
+      "name": "Composer",
+      "file": "src/components/footprint/composer",
+      "import_path": "",
+      "props": [
+        {
+          "name": "onSend",
+          "type": "function"
+        },
+        {
+          "name": "onUpload",
+          "type": "function"
+        },
+        {
+          "name": "onAddLink",
+          "type": "function"
+        },
+        {
+          "name": "placeholder",
+          "type": "string",
+          "default": "Ask your workspace…"
+        },
+        {
+          "name": "disabled",
+          "type": "boolean"
+        },
+        {
+          "name": "loading",
+          "type": "boolean"
+        },
+        {
+          "name": "variant",
+          "type": "enum",
+          "values": [
+            "default",
+            "error"
+          ],
+          "default": "default"
+        },
+        {
+          "name": "size",
+          "type": "enum",
+          "values": [
+            "compact",
+            "comfortable"
+          ],
+          "default": "comfortable"
+        }
+      ],
+      "usage": "Use for a focused multiline workspace question. Wire onSend to the consuming application.",
+      "examples": [
+        {
+          "label": "Typical usage",
+          "code": "\u003cComposer onSend={askWorkspace} size=\"comfortable\" /\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not claim that the component itself generates AI answers."
+      ]
+    },
+    {
+      "name": "Answer",
+      "file": "src/components/footprint/answer",
+      "import_path": "",
+      "props": [
+        {
+          "name": "sources",
+          "type": "any"
+        },
+        {
+          "name": "copyText",
+          "type": "string"
+        },
+        {
+          "name": "size",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md"
+          ],
+          "default": "md"
+        }
+      ],
+      "usage": "Use for readable answers with expandable attribution and optional clipboard copy.",
+      "examples": [
+        {
+          "label": "Typical usage",
+          "code": "\u003cAnswer sources={[\"Project brief.pdf\"]} copyText=\"Confirm the test plan.\"\u003eConfirm the test plan.\u003c/Answer\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not invent source attribution."
+      ]
+    },
+    {
+      "name": "SourcesDrawer",
+      "file": "src/components/footprint/sources-drawer",
+      "import_path": "",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "name": "onClose",
+          "type": "function",
+          "required": true
+        },
+        {
+          "name": "onAddSource",
+          "type": "function"
+        },
+        {
+          "name": "children",
+          "type": "any"
+        },
+        {
+          "name": "onSearch",
+          "type": "function"
+        }
+      ],
+      "usage": "Use to inspect and search workspace sources in a focused modal. Supply controlled open state.",
+      "examples": [
+        {
+          "label": "Typical usage",
+          "code": "\u003cSourcesDrawer open={open} onClose={() =\u003e setOpen(false)}\u003e\u003cSourceItem name=\"Project brief.pdf\" /\u003e\u003c/SourcesDrawer\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not mount a permanently open modal as page navigation."
+      ]
+    },
+    {
+      "name": "Icon",
+      "file": "src/components/footprint/icon",
+      "import_path": "",
+      "props": [
+        {
+          "name": "name",
+          "type": "any",
+          "required": true
+        },
+        {
+          "name": "size",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        }
+      ],
+      "usage": "Use the curated set for consistent visual cues. Label the parent control for actions.",
+      "examples": [
+        {
+          "label": "Typical usage",
+          "code": "\u003cIcon name=\"Folder\" size=\"md\" /\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not use an icon alone to communicate a source status."
+      ]
+    },
+    {
+      "name": "WorkspaceSelector",
+      "file": "src/components/footprint/workspace-selector",
+      "import_path": "",
+      "props": [
+        {
+          "name": "options",
+          "type": "any",
+          "required": true
+        },
+        {
+          "name": "size",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md"
+          ],
+          "default": "md"
+        }
+      ],
+      "usage": "Use one controlled workspace selector in the chat interface.",
+      "examples": [
+        {
+          "label": "Typical usage",
+          "code": "\u003cWorkspaceSelector value={workspace} onChange={e =\u003e setWorkspace(e.target.value)} options={workspaces} /\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not repeat workspace selectors in the same interface."
+      ]
+    },
+    {
+      "name": "CitationChip",
+      "file": "src/components/footprint/citation-chip",
+      "import_path": "",
+      "props": [
+        {
+          "name": "kind",
+          "type": "enum",
+          "values": [
+            "file",
+            "link"
+          ],
+          "default": "file"
+        },
+        {
+          "name": "size",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md"
+          ],
+          "default": "sm"
+        }
+      ],
+      "usage": "Use for linked document or web source attribution.",
+      "examples": [
+        {
+          "label": "Typical usage",
+          "code": "\u003cCitationChip href=\"/sources/brief\"\u003eProject brief.pdf\u003c/CitationChip\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not invent attribution or destinations."
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "file": "src/assets/fonts/dm-sans.ttf",
+      "kind": "font",
+      "format": "ttf"
+    },
+    {
+      "file": "src/assets/fonts/newsreader.ttf",
+      "kind": "font",
+      "format": "ttf"
+    }
+  ]
+}

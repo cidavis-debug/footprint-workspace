@@ -1,22 +1,6 @@
 {
-  "name": "tanstack_start_ts",
-  "private": true,
-  "sideEffects": false,
-  "type": "module",
-  "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
-    "build:dev": "vite build --mode development",
-    "preview": "vite preview",
-    "lint": "eslint .",
-    "format": "prettier --write .",
-    "test": "vitest run",
-    "test:watch": "vitest"
-  },
-  "overrides": {
-    "rolldown": "1.2.1"
-  },
   "dependencies": {
+    "@cloudflare/vite-plugin": "1.39.2",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
@@ -93,5 +77,22 @@
     "typescript-eslint": "^8.56.1",
     "vite": "8.1.5",
     "vitest": "^4.1.10"
-  }
+  },
+  "name": "tanstack_start_ts",
+  "overrides": {
+    "rolldown": "1.2.1"
+  },
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "build:dev": "vite build --mode development",
+    "dev": "vite dev",
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "sideEffects": false,
+  "type": "module"
 }
