@@ -16,8 +16,6 @@ import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as SecurityRouteImport } from './routes/security'
-import { Route as Char91__componentChar93PreviewSplatRouteImport } from './routes/[__component].preview.$'
-import { Route as Char91__mockupChar93PreviewSplatRouteImport } from './routes/[__mockup].preview.$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -54,18 +52,6 @@ const SecurityRoute = SecurityRouteImport.update({
   path: '/security',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91__componentChar93PreviewSplatRoute =
-  Char91__componentChar93PreviewSplatRouteImport.update({
-    id: '/__component/preview/$',
-    path: '/__component/preview/$',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char91__mockupChar93PreviewSplatRoute =
-  Char91__mockupChar93PreviewSplatRouteImport.update({
-    id: '/__mockup/preview/$',
-    path: '/__mockup/preview/$',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -75,8 +61,6 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/security': typeof SecurityRoute
-  '/__component/preview/$': typeof Char91__componentChar93PreviewSplatRoute
-  '/__mockup/preview/$': typeof Char91__mockupChar93PreviewSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,8 +70,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/security': typeof SecurityRoute
-  '/__component/preview/$': typeof Char91__componentChar93PreviewSplatRoute
-  '/__mockup/preview/$': typeof Char91__mockupChar93PreviewSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,8 +80,6 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/security': typeof SecurityRoute
-  '/__component/preview/$': typeof Char91__componentChar93PreviewSplatRoute
-  '/__mockup/preview/$': typeof Char91__mockupChar93PreviewSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,8 +91,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/pricing'
     | '/security'
-    | '/__component/preview/$'
-    | '/__mockup/preview/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,8 +100,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/pricing'
     | '/security'
-    | '/__component/preview/$'
-    | '/__mockup/preview/$'
   id:
     | '__root__'
     | '/'
@@ -133,8 +109,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/pricing'
     | '/security'
-    | '/__component/preview/$'
-    | '/__mockup/preview/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,8 +119,6 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
   SecurityRoute: typeof SecurityRoute
-  Char91__componentChar93PreviewSplatRoute: typeof Char91__componentChar93PreviewSplatRoute
-  Char91__mockupChar93PreviewSplatRoute: typeof Char91__mockupChar93PreviewSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -200,20 +172,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SecurityRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/__component/preview/$': {
-      id: '/__component/preview/$'
-      path: '/__component/preview/$'
-      fullPath: '/__component/preview/$'
-      preLoaderRoute: typeof Char91__componentChar93PreviewSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/__mockup/preview/$': {
-      id: '/__mockup/preview/$'
-      path: '/__mockup/preview/$'
-      fullPath: '/__mockup/preview/$'
-      preLoaderRoute: typeof Char91__mockupChar93PreviewSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -225,9 +183,6 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
   SecurityRoute: SecurityRoute,
-  Char91__componentChar93PreviewSplatRoute:
-    Char91__componentChar93PreviewSplatRoute,
-  Char91__mockupChar93PreviewSplatRoute: Char91__mockupChar93PreviewSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
