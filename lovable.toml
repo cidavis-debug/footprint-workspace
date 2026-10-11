@@ -1,4 +1,5 @@
 [[libraries]]
-project_id = "803f471a-2f3c-48aa-8238-d622c9c30bd7"
-version = "1.0.0"
-slug = "footprint-0a8b1a"
+  name = "Footprint"
+  project_id = "803f471a-2f3c-48aa-8238-d622c9c30bd7"
+  slug = "footprint-0a8b1a"
+  version = "1.0.0"
