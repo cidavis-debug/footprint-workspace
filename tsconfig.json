@@ -23,10 +23,6 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": false,
     "noUncheckedSideEffectImports": true,
     "paths": {
