@@ -10,33 +10,143 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/app'
+import { Route as CollectionsRouteImport } from './routes/collections'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as SecurityRouteImport } from './routes/security'
+import { Route as Char91__componentChar93PreviewSplatRouteImport } from './routes/[__component].preview.$'
+import { Route as Char91__mockupChar93PreviewSplatRouteImport } from './routes/[__mockup].preview.$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionsRoute = CollectionsRouteImport.update({
+  id: '/collections',
+  path: '/collections',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SecurityRoute = SecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Char91__componentChar93PreviewSplatRoute =
+  Char91__componentChar93PreviewSplatRouteImport.update({
+    id: '/__component/preview/$',
+    path: '/__component/preview/$',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91__mockupChar93PreviewSplatRoute =
+  Char91__mockupChar93PreviewSplatRouteImport.update({
+    id: '/__mockup/preview/$',
+    path: '/__mockup/preview/$',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
+  '/collections': typeof CollectionsRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
+  '/security': typeof SecurityRoute
+  '/__component/preview/$': typeof Char91__componentChar93PreviewSplatRoute
+  '/__mockup/preview/$': typeof Char91__mockupChar93PreviewSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
+  '/collections': typeof CollectionsRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
+  '/security': typeof SecurityRoute
+  '/__component/preview/$': typeof Char91__componentChar93PreviewSplatRoute
+  '/__mockup/preview/$': typeof Char91__mockupChar93PreviewSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
+  '/collections': typeof CollectionsRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
+  '/security': typeof SecurityRoute
+  '/__component/preview/$': typeof Char91__componentChar93PreviewSplatRoute
+  '/__mockup/preview/$': typeof Char91__mockupChar93PreviewSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/collections'
+    | '/how-it-works'
+    | '/login'
+    | '/pricing'
+    | '/security'
+    | '/__component/preview/$'
+    | '/__mockup/preview/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/app'
+    | '/collections'
+    | '/how-it-works'
+    | '/login'
+    | '/pricing'
+    | '/security'
+    | '/__component/preview/$'
+    | '/__mockup/preview/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/collections'
+    | '/how-it-works'
+    | '/login'
+    | '/pricing'
+    | '/security'
+    | '/__component/preview/$'
+    | '/__mockup/preview/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRoute
+  CollectionsRoute: typeof CollectionsRoute
+  HowItWorksRoute: typeof HowItWorksRoute
+  LoginRoute: typeof LoginRoute
+  PricingRoute: typeof PricingRoute
+  SecurityRoute: typeof SecurityRoute
+  Char91__componentChar93PreviewSplatRoute: typeof Char91__componentChar93PreviewSplatRoute
+  Char91__mockupChar93PreviewSplatRoute: typeof Char91__mockupChar93PreviewSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +158,76 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collections': {
+      id: '/collections'
+      path: '/collections'
+      fullPath: '/collections'
+      preLoaderRoute: typeof CollectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/security': {
+      id: '/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof SecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/__component/preview/$': {
+      id: '/__component/preview/$'
+      path: '/__component/preview/$'
+      fullPath: '/__component/preview/$'
+      preLoaderRoute: typeof Char91__componentChar93PreviewSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/__mockup/preview/$': {
+      id: '/__mockup/preview/$'
+      path: '/__mockup/preview/$'
+      fullPath: '/__mockup/preview/$'
+      preLoaderRoute: typeof Char91__mockupChar93PreviewSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRoute,
+  CollectionsRoute: CollectionsRoute,
+  HowItWorksRoute: HowItWorksRoute,
+  LoginRoute: LoginRoute,
+  PricingRoute: PricingRoute,
+  SecurityRoute: SecurityRoute,
+  Char91__componentChar93PreviewSplatRoute:
+    Char91__componentChar93PreviewSplatRoute,
+  Char91__mockupChar93PreviewSplatRoute: Char91__mockupChar93PreviewSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
