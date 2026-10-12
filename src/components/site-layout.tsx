@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { Button, Icon } from '@/design-system/footprint-0a8b1a'
+import { Badge, Button, Icon } from '@/design-system/footprint-0a8b1a'
 import { NavigationButton } from '@/components/navigation-button'
 import { Brand } from '@/components/brand'
 import { useAuth } from '@/hooks/use-auth'
@@ -38,7 +38,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
         </nav>
         <div className="account-actions">
           {!loading && (user
-            ? <span className="desktop-account flex items-center gap-2"><span aria-label={user.email ?? 'Account'} title={user.email ?? ''} className="inline-flex items-center justify-center rounded-pill bg-muted text-ink text-label w-6 h-6">{(user.email ?? '?')[0]!.toUpperCase()}</span><Button variant="quiet" onClick={signOut}>Log out</Button></span>
+            ? <span className="desktop-account flex items-center gap-2"><Badge variant="reference" aria-label={user.email ?? 'Account'} title={user.email ?? ''}>{(user.email ?? '?')[0]!.toUpperCase()}</Badge><Button variant="quiet" onClick={signOut}>Log out</Button></span>
             : <Link to="/login" className="site-link desktop-account">Log in</Link>)}
           <NavigationButton to="/app"><span className="desktop-open-label">Open Footprint</span><span className="compact-open-label">Open</span><Icon name="ArrowUpRight" /></NavigationButton>
           <Button ref={menuButton} variant="ghost" size="icon" className="mobile-menu-trigger" aria-label={menuOpen ? 'Close menu' : 'Open menu'} title={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => setMenuOpen(!menuOpen)}><Icon name={menuOpen ? 'X' : 'MoreHorizontal'} /></Button>
