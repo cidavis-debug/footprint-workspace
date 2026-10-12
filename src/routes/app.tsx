@@ -1,13 +1,14 @@
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Composer, Icon, Input, SourceItem, SourcesDrawer, WorkspaceSelector } from '@/design-system/footprint-0a8b1a'
+import { Button, Composer, Icon, Input, SourceItem, SourcesDrawer } from '@/design-system/footprint-0a8b1a'
 import { pageHead } from '@/components/page-head'
 import { Brand } from '@/components/brand'
 import { Illustration } from '@/components/illustration'
+import { WorkspacePicker, type WorkspaceNode } from '@/components/workspace-picker'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/integrations/supabase/client'
 
-type Workspace = { id: string; name: string }
+type Workspace = WorkspaceNode
 type Collection = { id: string; name: string; description: string | null }
 type Source = { id: string; title: string; source_type: string; status: string; collection_id: string | null }
 
