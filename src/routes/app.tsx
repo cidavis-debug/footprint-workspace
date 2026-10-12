@@ -56,6 +56,15 @@ function Workspace() {
   const [evidence, setEvidence] = useState<{ source: EngineeringSource; claims: EngineeringClaim[]; quote: string } | null>(null)
   const requestId = useRef(0)
   const currentWorkspace = useRef(activeWorkspace)
+  const mainRef = useRef<HTMLElement>(null)
+  const dockRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const dock = dockRef.current, main = mainRef.current
+    if (!dock || !main) return
+    const ro = new ResizeObserver(() => main.style.setProperty('--dock-height', `${dock.offsetHeight}px`))
+    ro.observe(dock)
+    return () => ro.disconnect()
+  })
   currentWorkspace.current = activeWorkspace
   useEffect(() => { setThread([]); setEvidence(null) }, [activeWorkspace])
 
@@ -206,7 +215,7 @@ function Workspace() {
   }
 
   return <AppShell workspaces={workspaces} value={activeWorkspace} onChange={setActiveWorkspace} onCreate={createWorkspace} busy={busy} mode="ask" email={user.email ?? null} onSources={() => setSourcesOpen(true)} onSignOut={signOut}>
-    <main className="chat-main">
+    <main className="chat-main" ref={mainRef}>
       <div className="chat-scroll">
         <div className="chat-column">
           {thread.length === 0 && <div className="chat-empty">
@@ -230,15 +239,15 @@ function Workspace() {
           </div>}
         </div>
       </div>
-      <div className="chat-dock">
-        <div className="chat-column">
+      <div className="chat-dock" ref={dockRef}>
+        <div className="chat-column"><div className="chat-dock-card">
           {notice && <p className="chat-notice" role="status">{notice}</p>}
           <p className="workspace-status">{dataLoading ? 'Loading your workspace…' : workspaces.length > 0 ? `Answering from “${workspaces.find(w => w.id === activeWorkspace)?.name ?? 'Personal'}” sources.` : 'No workspace found for this account.'}</p>
           <div className="chat-composer-row">
             <Composer className="flex-1" onSend={q => void ask(q)} onUpload={openUpload} onAddLink={openLink} disabled={asking} placeholder={asking ? 'Thinking…' : 'Ask a question…'} />
             {asking && <Button variant="primary" size="icon" aria-label="Stop generating" title="Stop generating" onClick={stop}><Icon name="X" /></Button>}
           </div>
-        </div>
+        </div></div>
       </div>
     </main>
     <input ref={fileInput} type="file" hidden accept=".pdf,.md,.markdown,.txt,application/pdf,text/markdown,text/plain" onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void uploadFile(f) }} />
