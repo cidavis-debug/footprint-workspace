@@ -164,14 +164,29 @@ function Workspace() {
       </div>
     </header>
     <section className="workspace-main">
-      <Illustration name="empty" eager />
-      <p className="section-kicker">Your shared knowledge, in focus</p>
-      <h1>What’s on your mind?</h1>
-      <p>A clear question. The right context. A place to think together.</p>
-      <Composer onSend={unavailable} onUpload={openUpload} onAddLink={openLink} placeholder="Ask a question…" />
+      {thread.length === 0 && <>
+        <Illustration name="empty" eager />
+        <p className="section-kicker">Your shared knowledge, in focus</p>
+        <h1>What’s on your mind?</h1>
+        <p>A clear question. The right context. A place to think together.</p>
+      </>}
+      {thread.length > 0 && <div className="w-full space-y-8 text-left">
+        {thread.map((m, i) => <div key={i} className="space-y-4">
+          <h2 className="font-heading text-section text-ink">{m.question}</h2>
+          {m.pending
+            ? <p role="status" className="text-muted-foreground">Reading your sources…</p>
+            : <Answer copyText={m.answer} sources={m.citations.map(c => c.title)}>
+                <p className="whitespace-pre-wrap">{m.answer}</p>
+                {m.citations.length > 0 && <div className="mt-4 flex flex-wrap gap-2">
+                  {m.citations.map(c => <CitationChip key={c.id} kind={c.kind} href={c.url ?? '#sources'} title={c.quote} target={c.url ? '_blank' : undefined} rel={c.url ? 'noreferrer' : undefined} onClick={e => { if (!c.url) { e.preventDefault(); setFocusSource(c.title); setSearch(''); setSourcesOpen(true) } }}>{c.title}</CitationChip>)}
+                </div>}
+              </Answer>}
+        </div>)}
+      </div>}
+      <Composer onSend={q => void ask(q)} onUpload={openUpload} onAddLink={openLink} placeholder={asking ? 'Thinking…' : 'Ask a question…'} />
       {dataLoading
         ? <p className="workspace-status" role="status">Loading your workspace…</p>
-        : <p className="workspace-status">{workspaces.length > 0 ? `Connected to “${workspaces.find(w => w.id === activeWorkspace)?.name ?? 'Personal'}”. AI answers are coming next.` : 'No workspace found for this account.'}</p>}
+        : <p className="workspace-status">{workspaces.length > 0 ? `Answering from “${workspaces.find(w => w.id === activeWorkspace)?.name ?? 'Personal'}” sources.` : 'No workspace found for this account.'}</p>}
       {notice && <p className="connection-notice" role="status">{notice}</p>}
     </section>
     <input ref={fileInput} type="file" hidden accept=".pdf,.md,.markdown,.txt,application/pdf,text/markdown,text/plain" onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void uploadFile(f) }} />
@@ -189,6 +204,7 @@ function Workspace() {
         <Button type="submit" size="sm" loading={busy}>Add</Button>
       </form>}
       {notice && sourcesOpen && <p role="status" className="mb-4">{notice}</p>}
+      {focusSource && <p className="mb-4 text-muted-foreground">Cited source: <strong className="text-ink">{focusSource}</strong></p>}
       {visibleSources.length > 0
         ? visibleSources.map(s => <SourceItem key={s.id} name={s.title} kind={s.source_type === 'link' || s.source_type === 'url' ? 'link' : 'file'} status={sourceStatus(s.status)} onAction={() => void removeSource(s)} />)
         : <div className="empty-sources"><h2>{sources.length > 0 ? 'No matches.' : 'No sources yet.'}</h2><p>{sources.length > 0 ? 'Try a different search.' : `Your “${collections[0]?.name ?? 'General'}” collection is ready — upload a file or add a link.`}</p></div>}
