@@ -25,7 +25,7 @@ export const askFootprint = createServerFn({ method: 'POST' })
     const context_ = list.map((s, i) => `[S${i + 1}] ${s.title}${s.url ? ` (${s.url})` : ''}\n${s.content_snippet ?? '(No extracted text yet — title/link only.)'}`).join('\n\n')
     const prompt = `You are Footprint, a careful research assistant. Answer the question using ONLY the sources below. If they don't contain the answer, say so plainly. Cite sources by their tags (e.g. S1).\n\nSOURCES:\n${context_}\n\nQUESTION: ${data.question}`
 
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent`, {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
       body: JSON.stringify({
@@ -44,8 +44,9 @@ export const askFootprint = createServerFn({ method: 'POST' })
       }),
     })
     if (!res.ok) {
-      console.error('Gemini error', res.status, await res.text())
-      const msg = res.status === 429 ? 'Gemini rate limit reached. Try again shortly.' : res.status === 400 || res.status === 403 ? 'Gemini rejected the request — check your API key.' : 'Gemini is unavailable right now.'
+      const detail = await res.text()
+      console.error('Gemini error', res.status, detail)
+      const msg = res.status === 429 ? 'Gemini rate limit reached. Try again shortly.' : res.status === 400 || res.status === 403 ? 'Gemini rejected the request — check your API key.' : res.status === 404 ? 'Gemini could not find the answer model — its name needs updating.' : 'Gemini is unavailable right now.'
       return { answer: '', citations: [], error: msg }
     }
     const json = (await res.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] }
