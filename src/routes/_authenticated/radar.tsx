@@ -3,10 +3,10 @@ import { queryOptions, useSuspenseQuery, useQueryClient } from '@tanstack/react-
 import { useServerFn } from '@tanstack/react-start'
 import { useState } from 'react'
 import { Badge, Button, CitationChip, Icon } from '@/design-system/footprint-0a8b1a'
-import { Brand } from '@/components/brand'
 import { Illustration } from '@/components/illustration'
 import { pageHead } from '@/components/page-head'
-import { WorkspacePicker } from '@/components/workspace-picker'
+import { AppShell } from '@/components/app-shell'
+import { useAuth } from '@/hooks/use-auth'
 import { SeverityBadge } from '@/components/engineering-context'
 import { ClaimEvidence, SourceEvidenceDrawer } from '@/components/source-evidence-drawer'
 import { filterAlerts, radarFilters, type RadarFilter } from '@/lib/engineering-data'
@@ -40,12 +40,8 @@ function Radar() {
     catch { setError('Could not update the alert. Please try again.') }
     finally { setBusy('') }
   }
-  return <main className="site-width">
-    <header className="workspace-header"><Link to="/" className="wordmark"><Brand /></Link><div className="workspace-actions flex-wrap">
-      <WorkspacePicker workspaces={data.workspaces} value={data.workspaceId} onChange={id => { setSourceId(null); void navigate({ search: { workspace: id } }) }} />
-      <Link className="site-link" to="/app" search={{ workspace: data.workspaceId }}><Icon name="Sparkles" /> Chat</Link>
-      <span className="site-link" aria-current="page">Radar</span>
-    </div></header>
+  const { user, signOut } = useAuth()
+  return <AppShell workspaces={data.workspaces} value={data.workspaceId} onChange={id => { setSourceId(null); void navigate({ search: { workspace: id } }) }} mode="radar" email={user?.email ?? null} onSignOut={signOut}><main className="radar-shell">
     <section className="radar-main">
       <p className="section-kicker">Engineering attention</p><h1 className="font-heading text-h1">Radar</h1>
       <div className="radar-filters" role="group" aria-label="Filter engineering alerts">{radarFilters.map(f => <Button key={f} variant={f === filter ? 'primary' : 'ghost'} size="sm" aria-pressed={f === filter} onClick={() => setFilter(f)}>{f}</Button>)}</div>
@@ -64,5 +60,5 @@ function Radar() {
       })}</div>}
     </section>
     <SourceEvidenceDrawer source={data.sources.find(s => s.id === sourceId) ?? null} claims={data.claims.filter(c => c.source_id === sourceId)} onClose={() => setSourceId(null)} />
-  </main>
+  </main></AppShell>
 }

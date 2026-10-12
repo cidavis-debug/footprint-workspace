@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Answer, Button, CitationChip, Composer, Icon, Input, SourceItem, SourcesDrawer } from '@/design-system/footprint-0a8b1a'
@@ -6,9 +6,9 @@ import { askFootprint, type Citation } from '@/lib/ask.functions'
 import { analyzeEngineeringSource } from '@/lib/engineering.functions'
 import { EngineeringAlerts, SourceEngineering } from '@/components/engineering-context'
 import { pageHead } from '@/components/page-head'
-import { Brand } from '@/components/brand'
 import { Illustration } from '@/components/illustration'
-import { WorkspacePicker, type WorkspaceNode } from '@/components/workspace-picker'
+import { type WorkspaceNode } from '@/components/workspace-picker'
+import { AppShell } from '@/components/app-shell'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/integrations/supabase/client'
 import { SourceEvidenceDrawer } from '@/components/source-evidence-drawer'
@@ -54,6 +54,7 @@ function Workspace() {
   const fileInput = useRef<HTMLInputElement>(null)
   const evidenceFn = useServerFn(getRadar)
   const [evidence, setEvidence] = useState<{ source: EngineeringSource; claims: EngineeringClaim[]; quote: string } | null>(null)
+  const requestId = useRef(0)
   const currentWorkspace = useRef(activeWorkspace)
   currentWorkspace.current = activeWorkspace
   useEffect(() => { setThread([]); setEvidence(null) }, [activeWorkspace])
@@ -263,5 +264,5 @@ function Workspace() {
         : <div className="empty-sources"><h2>{sources.length > 0 ? 'No matches.' : 'No sources yet.'}</h2><p>{sources.length > 0 ? 'Try a different search.' : `Your “${collections[0]?.name ?? 'General'}” collection is ready — upload a file or add a link.`}</p></div>}
     </SourcesDrawer>
     <SourceEvidenceDrawer source={evidence?.source ?? null} claims={evidence?.claims ?? []} quote={evidence?.quote} onClose={() => setEvidence(null)} />
-  </main>
+  </AppShell>
 }
