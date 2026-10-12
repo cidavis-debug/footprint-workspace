@@ -236,7 +236,7 @@ function Workspace() {
           <p className="workspace-status">{dataLoading ? 'Loading your workspace…' : workspaces.length > 0 ? `Answering from “${workspaces.find(w => w.id === activeWorkspace)?.name ?? 'Personal'}” sources.` : 'No workspace found for this account.'}</p>
           <div className="chat-composer-row">
             <Composer className="flex-1" onSend={q => void ask(q)} onUpload={openUpload} onAddLink={openLink} disabled={asking} placeholder={asking ? 'Thinking…' : 'Ask a question…'} />
-            {asking && <Button variant="primary" size="icon" aria-label="Stop generating" title="Stop generating" onClick={stop}><Icon name="Square" /></Button>}
+            {asking && <Button variant="primary" size="icon" aria-label="Stop generating" title="Stop generating" onClick={stop}><Icon name="X" /></Button>}
           </div>
         </div>
       </div>
