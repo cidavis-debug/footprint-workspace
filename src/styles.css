@@ -287,3 +287,21 @@
 .walk-step { position: absolute; width: var(--space-7); height: auto; opacity: 0; transition: opacity var(--duration-panel) var(--ease-standard); }
 .walk-step[data-visible="true"] { opacity: 0.8; }
 .footprint-walk[data-motion="false"] .walk-step { opacity: 0.3; }
+
+/* User-requested severity hues deliberately extend the attached palette. */
+:root { --engineering-medium: #c85b16; --engineering-low: #f3cd32; }
+.engineering-severity[data-severity="high"] { background: var(--destructive); color: var(--card); }
+.engineering-severity[data-severity="medium"] { background: var(--engineering-medium); color: var(--card); }
+.engineering-severity[data-severity="low"] { background: var(--engineering-low); color: var(--ink); }
+.engineering-review-heading { cursor: pointer; background: var(--primary); color: var(--primary-foreground); padding-block: var(--space-3); padding-inline: var(--space-4); border-radius: var(--radius-button); font-family: var(--font-heading); font-size: var(--text-body); }
+.engineering-review-heading:focus-visible, .engineering-summary:focus-visible { outline-width: var(--border-width); outline-style: solid; outline-color: var(--primary); outline-offset: var(--space-1); }
+.engineering-summary { cursor: pointer; color: var(--primary); font-weight: var(--weight-medium); }
+.radar-main { max-width: var(--width-chat); margin-inline: auto; padding-block: var(--space-7); }
+.radar-filters { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-block: var(--space-6); }
+.radar-alert { display: flex; flex-direction: column; gap: var(--space-4); border-top-width: var(--border-width); border-top-style: solid; padding-block: var(--space-5); overflow-wrap: anywhere; }
+.radar-empty { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-4); padding-block: var(--space-6); }
+.engineering-evidence { border-left-width: var(--border-width); border-left-style: solid; border-color: var(--border); padding-left: var(--space-4); margin-top: var(--space-2); overflow-wrap: anywhere; }
+.engineering-evidence > * + * { margin-top: var(--space-2); }
+.engineering-questions { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); margin-bottom: var(--space-5); }
+.workspace-actions { flex-wrap: wrap; min-width: 0; }
+.workspace-actions .demo-label { overflow-wrap: anywhere; }

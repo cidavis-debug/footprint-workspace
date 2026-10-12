@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware'
+import { engineeringPrompt, type EngineeringAlert, type EngineeringClaim, type EngineeringSource } from './engineering-data'
 
 export type Citation = { id: string; title: string; kind: 'file' | 'link'; url: string | null; quote: string }
 export type AskResult = { answer: string; citations: Citation[]; error: string | null }
@@ -13,17 +14,20 @@ export const askFootprint = createServerFn({ method: 'POST' })
     if (!key) return { answer: '', citations: [], error: 'AI is not configured.' }
     const { supabase } = context
 
-    const { data: sources, error: srcErr } = await supabase
-      .from('sources')
-      .select('id, title, source_type, url, content_snippet, status')
-      .eq('workspace_id', data.workspaceId)
-      .limit(40)
-    if (srcErr) return { answer: '', citations: [], error: 'Could not load sources.' }
-    const list = sources ?? []
+    const list: EngineeringSource[] = [], claims: EngineeringClaim[] = [], alerts: EngineeringAlert[] = []
+    for (let offset = 0; ; offset += 1000) {
+      const [s, c, a] = await Promise.all([
+        supabase.from('sources').select('id, title, source_type, url, file_path, content_snippet, status, engineering_analysis_status, engineering_summary').eq('workspace_id', data.workspaceId).order('id').range(offset, offset + 999),
+        supabase.from('engineering_claims').select('*').eq('workspace_id', data.workspaceId).order('id').range(offset, offset + 999),
+        supabase.from('engineering_alerts').select('*').eq('workspace_id', data.workspaceId).eq('status', 'open').order('id').range(offset, offset + 999),
+      ])
+      if (s.error || c.error || a.error) return { answer: '', citations: [], error: 'Could not load engineering context.' }
+      list.push(...s.data); claims.push(...c.data); alerts.push(...a.data)
+      if (s.data.length < 1000 && c.data.length < 1000 && a.data.length < 1000) break
+    }
     if (list.length === 0) return { answer: '', citations: [], error: 'Add a source to this workspace first.' }
 
-    const context_ = list.map((s, i) => `[S${i + 1}] ${s.title}${s.url ? ` (${s.url})` : ''}\n${s.content_snippet ?? '(No extracted text yet — title/link only.)'}`).join('\n\n')
-    const prompt = `You are Footprint, a careful research assistant. Answer the question using ONLY the sources below. If they don't contain the answer, say so plainly. Cite sources by their tags (e.g. S1).\n\nSOURCES:\n${context_}\n\nQUESTION: ${data.question}`
+    const prompt = engineeringPrompt(list, claims, alerts, data.question)
 
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent`, {
       method: 'POST',
@@ -52,7 +56,7 @@ export const askFootprint = createServerFn({ method: 'POST' })
     const json = (await res.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] }
     const text = json.candidates?.[0]?.content?.parts?.map((p) => p.text ?? '').join('') ?? ''
     let parsed: { answer: string; citations: { tag: string; quote: string }[] }
-    try { parsed = JSON.parse(text) } catch { return { answer: '', citations: [], error: 'Gemini returned no answer.' } }
+    try { parsed = z.object({ answer: z.string().min(1), citations: z.array(z.object({ tag: z.string().regex(/^S[1-9]\d*$/), quote: z.string() })) }).parse(JSON.parse(text)) } catch { return { answer: '', citations: [], error: 'Gemini returned no answer.' } }
 
     const seen = new Set<string>()
     const citations: Citation[] = []
@@ -60,7 +64,15 @@ export const askFootprint = createServerFn({ method: 'POST' })
       const s = list[Number(c.tag.replace(/\D/g, '')) - 1]
       if (!s || seen.has(s.id)) continue
       seen.add(s.id)
-      citations.push({ id: s.id, title: s.title, kind: s.source_type === 'link' || s.source_type === 'url' ? 'link' : 'file', url: s.url, quote: c.quote })
+      const quote = s.content_snippet?.includes(c.quote) || claims.some(claim => claim.source_id === s.id && claim.evidence_excerpt.includes(c.quote)) ? c.quote : ''
+      citations.push({ id: s.id, title: s.title, kind: s.source_type === 'link' || s.source_type === 'url' ? 'link' : 'file', url: s.url, quote })
+    }
+    // Include every inline source reference even when the model omits it from its citation array.
+    for (const match of parsed.answer.matchAll(/\[S(\d+)\]/g)) {
+      const s = list[Number(match[1]) - 1]
+      if (!s || seen.has(s.id)) continue
+      seen.add(s.id)
+      citations.push({ id: s.id, title: s.title, kind: s.source_type === 'file' ? 'file' : 'link', url: s.url, quote: '' })
     }
     const answer = parsed.answer.replace(/\s*\[?S\d+\]?(,\s*\[?S\d+\]?)*/g, (m) => m.replace(/S(\d+)/g, (_, n) => list[Number(n) - 1]?.title ?? `S${n}`))
 

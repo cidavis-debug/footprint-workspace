@@ -5,6 +5,10 @@ import { supabase } from '@/integrations/supabase/client'
 export type Claim = { id: string; type: string; subject: string; attribute: string; value: string; unit: string | null; evidence_excerpt: string; confidence: number }
 export type Alert = { id: string; alert_type: string; severity: string; title: string; summary: string; status: string; new_claim_id: string; related_claim_id: string | null }
 
+export function SeverityBadge({ severity }: { severity: string }) {
+  return <Badge variant="reference" className="engineering-severity" data-severity={severity}>{severity}</Badge>
+}
+
 export function analysisLabel(status: string) {
   return status === 'processing' ? 'Analyzing' : status === 'complete' ? 'Analyzed' : status === 'failed' ? 'Analysis failed' : 'Not analyzed'
 }
@@ -64,10 +68,10 @@ export function EngineeringAlerts({ workspaceId, refreshKey }: { workspaceId: st
   }
   if (!alerts.length) return null
   return <details className="mb-4" open>
-    <summary className="cursor-pointer font-heading text-ink">Engineering review suggestions ({alerts.length})</summary>
+    <summary className="engineering-review-heading">Engineering review suggestions ({alerts.length})</summary>
     <div className="mt-2 space-y-3 text-caption">
       {alerts.map(a => <div key={a.id} className="border-t border-border pt-2">
-        <p><Badge variant="processing">{a.severity}</Badge> <strong className="text-ink">{a.title}</strong></p>
+        <p><SeverityBadge severity={a.severity} /> <strong className="text-ink">{a.title}</strong></p>
         <p>{a.summary}</p>
         <div className="flex gap-2">
           <Button size="sm" variant="ghost" onClick={() => void setStatus(a.id, 'reviewed')}>Mark reviewed</Button>

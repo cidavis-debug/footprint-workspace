@@ -8,3 +8,6 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Radar uses a client-only authenticated layout and authenticated server functions; workspace-scoped RLS remains the authority for evidence and review actions.
+- Engineering chat builds its evidence prompt through a browser-safe pure helper and includes claims and open alerts; shared evidence drawers keep chat and Radar source inspection consistent.
