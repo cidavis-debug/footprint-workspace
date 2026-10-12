@@ -12,11 +12,11 @@ import { ClaimEvidence, SourceEvidenceDrawer } from '@/components/source-evidenc
 import { filterAlerts, radarFilters, type RadarFilter } from '@/lib/engineering-data'
 import { getRadar, reviewRadarAlert } from '@/lib/radar.functions'
 
-const radarQuery = (workspaceId?: string) => queryOptions({ queryKey: ['radar', workspaceId], queryFn: () => getRadar({ data: { workspaceId } }) })
+const radarQuery = (userId: string, workspaceId?: string) => queryOptions({ queryKey: ['radar', userId, workspaceId], queryFn: () => getRadar({ data: { workspaceId } }) })
 export const Route = createFileRoute('/_authenticated/radar')({
   validateSearch: (s: Record<string, unknown>): { workspace?: string } => typeof s['workspace'] === 'string' && /^[0-9a-f-]{36}$/i.test(s['workspace']) ? { workspace: s['workspace'] } : {},
   loaderDeps: ({ search }) => ({ workspace: search.workspace }),
-  loader: ({ context, deps }) => context.queryClient.ensureQueryData(radarQuery(deps.workspace)),
+  loader: ({ context, deps }) => context.queryClient.ensureQueryData(radarQuery(context.radarUserId, deps.workspace)),
   head: () => pageHead('Radar — Footprint', 'Review possible engineering conflicts, constraints, interfaces, and assumptions with their supporting evidence.'),
   pendingComponent: () => <main className="site-width"><p className="workspace-status" role="status">Opening Radar…</p></main>,
   errorComponent: ({ error, reset }) => <main className="site-width"><h1 className="font-heading text-greeting">Radar unavailable</h1><p role="alert">{error instanceof Error ? error.message : 'Could not load Radar.'}</p><Button variant="quiet" onClick={reset}>Try again</Button><Link to="/app" className="site-link">Return to chat</Link></main>,
@@ -24,7 +24,8 @@ export const Route = createFileRoute('/_authenticated/radar')({
 })
 function Radar() {
   const { workspace } = Route.useSearch()
-  const { data } = useSuspenseQuery(radarQuery(workspace))
+  const { radarUserId } = Route.useRouteContext()
+  const { data } = useSuspenseQuery(radarQuery(radarUserId, workspace))
   const navigate = Route.useNavigate()
   const queryClient = useQueryClient()
   const review = useServerFn(reviewRadarAlert)

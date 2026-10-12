@@ -58,17 +58,23 @@ export function SourceEngineering({ sourceId, status, summary, onReanalyze, busy
 
 export function EngineeringAlerts({ workspaceId, refreshKey }: { workspaceId: string; refreshKey: number }) {
   const [alerts, setAlerts] = useState<Alert[]>([])
+  const [error, setError] = useState('')
   useEffect(() => {
+    setAlerts([]); setError('')
     if (!workspaceId) return
-    void supabase.from('engineering_alerts').select('id, alert_type, severity, title, summary, status, new_claim_id, related_claim_id').eq('workspace_id', workspaceId).eq('status', 'open').order('created_at', { ascending: false }).then(({ data }) => setAlerts(data ?? []))
+    let cancelled = false
+    void supabase.from('engineering_alerts').select('id, alert_type, severity, title, summary, status, new_claim_id, related_claim_id').eq('workspace_id', workspaceId).eq('status', 'open').order('created_at', { ascending: false }).then(({ data, error: failure }) => { if (!cancelled) { setAlerts(data ?? []); if (failure) setError('Could not load engineering review suggestions.') } })
+    return () => { cancelled = true }
   }, [workspaceId, refreshKey])
   const setStatus = async (id: string, status: 'reviewed' | 'resolved' | 'dismissed') => {
     const { error } = await supabase.from('engineering_alerts').update({ status }).eq('id', id)
     if (!error) setAlerts(a => a.filter(x => x.id !== id))
+    else setError('Could not update the review suggestion. Please try again.')
   }
-  if (!alerts.length) return null
+  if (!alerts.length) return error ? <p role="alert" className="text-destructive">{error}</p> : null
   return <details className="mb-4" open>
     <summary className="engineering-review-heading">Engineering review suggestions ({alerts.length})</summary>
+    {error && <p role="alert" className="text-destructive">{error}</p>}
     <div className="mt-2 space-y-3 text-caption">
       {alerts.map(a => <div key={a.id} className="border-t border-border pt-2">
         <p><SeverityBadge severity={a.severity} /> <strong className="text-ink">{a.title}</strong></p>

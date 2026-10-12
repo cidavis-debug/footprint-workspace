@@ -19,7 +19,7 @@ type Workspace = WorkspaceNode
 type Collection = { id: string; name: string; description: string | null }
 type Source = { id: string; title: string; source_type: string; status: string; collection_id: string | null; engineering_analysis_status: string; engineering_summary: string | null }
 
-export const Route = createFileRoute('/app')({ ssr: false, validateSearch: (s: Record<string, unknown>): { workspace?: string } => typeof s['workspace'] === 'string' ? { workspace: s['workspace'] } : {}, head: () => pageHead('Workspace — Footprint', 'A focused workspace for questions, documents, and shared team knowledge.'), component: Workspace })
+export const Route = createFileRoute('/app')({ ssr: false, validateSearch: (s: Record<string, unknown>): { workspace?: string; sources?: boolean } => ({ ...(typeof s['workspace'] === 'string' ? { workspace: s['workspace'] } : {}), ...(s['sources'] === true ? { sources: true } : {}) }), head: () => pageHead('Workspace — Footprint', 'A focused workspace for questions, documents, and shared team knowledge.'), component: Workspace })
 
 function sourceStatus(status: string): 'indexed' | 'processing' | 'reference' {
   if (status === 'ready' || status === 'indexed') return 'indexed'
@@ -28,9 +28,10 @@ function sourceStatus(status: string): 'indexed' | 'processing' | 'reference' {
 }
 
 function Workspace() {
-  const { workspace: requestedWorkspace } = Route.useSearch()
+  const { workspace: requestedWorkspace, sources: requestedSources } = Route.useSearch()
   const { user, loading, signOut } = useAuth()
   const [sourcesOpen, setSourcesOpen] = useState(false)
+  useEffect(() => { if (requestedSources) setSourcesOpen(true) }, [requestedSources])
   const [notice, setNotice] = useState('')
   const [workspaces, setWorkspaces] = useState<Workspace[]>([])
   const [activeWorkspace, setActiveWorkspace] = useState('')
@@ -55,7 +56,7 @@ function Workspace() {
   const [evidence, setEvidence] = useState<{ source: EngineeringSource; claims: EngineeringClaim[]; quote: string } | null>(null)
   const currentWorkspace = useRef(activeWorkspace)
   currentWorkspace.current = activeWorkspace
-  useEffect(() => { setThread([]) }, [activeWorkspace])
+  useEffect(() => { setThread([]); setEvidence(null) }, [activeWorkspace])
 
   useEffect(() => {
     if (!user) return

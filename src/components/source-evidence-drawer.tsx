@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Badge, Button, Icon, SourcesDrawer } from '@/design-system/footprint-0a8b1a'
 import { supabase } from '@/integrations/supabase/client'
 import type { EngineeringClaim, EngineeringSource } from '@/lib/engineering-data'
+import { useNavigate } from '@tanstack/react-router'
 
 export function ClaimEvidence({ claim, onSource }: { claim: EngineeringClaim; onSource?: () => void }) {
   return <div className="engineering-evidence">
@@ -14,6 +15,9 @@ export function ClaimEvidence({ claim, onSource }: { claim: EngineeringClaim; on
 }
 export function SourceEvidenceDrawer({ source, claims, quote, onClose }: { source: EngineeringSource | null; claims: EngineeringClaim[]; quote?: string; onClose: () => void }) {
   const [error, setError] = useState('')
+  const [search, setSearch] = useState('')
+  const navigate = useNavigate()
+  const visibleClaims = claims.filter(c => `${c.subject} ${c.attribute} ${c.value} ${c.evidence_excerpt}`.toLowerCase().includes(search.toLowerCase()))
   const openFile = async () => {
     if (!source?.file_path) return
     setError('')
@@ -21,7 +25,7 @@ export function SourceEvidenceDrawer({ source, claims, quote, onClose }: { sourc
     if (failure || !data) { setError('Could not open the original file.'); return }
     const a = document.createElement('a'); a.href = data.signedUrl; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.click()
   }
-  return <SourcesDrawer open={!!source} onClose={onClose}>
+  return <SourcesDrawer open={!!source} onClose={() => { setSearch(''); setError(''); onClose() }} onSearch={setSearch} onAddSource={() => { onClose(); void navigate({ to: '/app', search: { sources: true } }) }}>
     {source && <div className="space-y-4">
       <h2 className="font-heading text-section">{source.title}</h2>
       <Badge variant={source.status === 'ready' || source.status === 'indexed' ? 'indexed' : 'reference'}>{source.status}</Badge>
@@ -31,7 +35,8 @@ export function SourceEvidenceDrawer({ source, claims, quote, onClose }: { sourc
       {source.url && <a className="site-link" href={source.url} target="_blank" rel="noreferrer">Open original link ↗</a>}
       {source.file_path && <Button variant="quiet" onClick={() => void openFile()}><Icon name="ArrowUpRight" /> Open original file</Button>}
       {error && <p role="alert" className="text-destructive">{error}</p>}
-      {claims.map(c => <ClaimEvidence key={c.id} claim={c} />)}
+      {visibleClaims.map(c => <ClaimEvidence key={c.id} claim={c} />)}
+      {search && visibleClaims.length === 0 && <p className="text-muted-foreground">No matching engineering claims.</p>}
     </div>}
   </SourcesDrawer>
 }
