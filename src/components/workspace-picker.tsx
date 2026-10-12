@@ -50,7 +50,7 @@ export function WorkspacePicker({ workspaces, value, onChange, onCreate, busy }:
       </Button>
       {open && (
         <div className="absolute left-0 top-full z-50 mt-2 flex gap-2">
-          <div className="w-56 rounded-panel border bg-card p-2 shadow-floating" role="menu" aria-label="Workspaces">
+          <div className="w-max min-w-8 rounded-panel border bg-card p-2 shadow-floating" role="menu" aria-label="Workspaces">
             <ul className="flex flex-col gap-1">
               {mains.map(w => (
                 <li key={w.id} className="flex items-center gap-1">
@@ -81,7 +81,7 @@ export function WorkspacePicker({ workspaces, value, onChange, onCreate, busy }:
             </form>
           </div>
           {expanded && (
-            <div className="w-56 rounded-panel border bg-card p-2 shadow-floating" role="menu" aria-label={`Sub-workspaces of ${mains.find(w => w.id === expanded)?.name ?? ''}`}>
+            <div className="w-max min-w-8 rounded-panel border bg-card p-2 shadow-floating" role="menu" aria-label={`Sub-workspaces of ${mains.find(w => w.id === expanded)?.name ?? ''}`}>
               <ul className="flex flex-col gap-1">
                 {subs(expanded).length > 0 ? subs(expanded).map(w => (
                   <li key={w.id}>
