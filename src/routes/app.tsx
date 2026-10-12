@@ -3,6 +3,8 @@ import { useServerFn } from '@tanstack/react-start'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Answer, Button, CitationChip, Composer, Icon, Input, SourceItem, SourcesDrawer } from '@/design-system/footprint-0a8b1a'
 import { askFootprint, type Citation } from '@/lib/ask.functions'
+import { analyzeEngineeringSource } from '@/lib/engineering.functions'
+import { EngineeringAlerts, SourceEngineering } from '@/components/engineering-context'
 import { pageHead } from '@/components/page-head'
 import { Brand } from '@/components/brand'
 import { Illustration } from '@/components/illustration'
@@ -12,7 +14,7 @@ import { supabase } from '@/integrations/supabase/client'
 
 type Workspace = WorkspaceNode
 type Collection = { id: string; name: string; description: string | null }
-type Source = { id: string; title: string; source_type: string; status: string; collection_id: string | null }
+type Source = { id: string; title: string; source_type: string; status: string; collection_id: string | null; engineering_analysis_status: string; engineering_summary: string | null }
 
 export const Route = createFileRoute('/app')({ ssr: false, head: () => pageHead('Workspace — Footprint', 'A focused workspace for questions, documents, and shared team knowledge.'), component: Workspace })
 
@@ -40,6 +42,10 @@ function Workspace() {
   const [asking, setAsking] = useState(false)
   const [focusSource, setFocusSource] = useState<string | null>(null)
   const askFn = useServerFn(askFootprint)
+  const analyzeFn = useServerFn(analyzeEngineeringSource)
+  const [analyzing, setAnalyzing] = useState<string | null>(null)
+  const [bulk, setBulk] = useState('')
+  const [alertKey, setAlertKey] = useState(0)
   const fileInput = useRef<HTMLInputElement>(null)
   useEffect(() => { setThread([]) }, [activeWorkspace])
 
@@ -65,7 +71,7 @@ function Workspace() {
     void (async () => {
       const [{ data: cols }, { data: srcs }] = await Promise.all([
         supabase.from('collections').select('id, name, description').eq('workspace_id', activeWorkspace).order('created_at'),
-        supabase.from('sources').select('id, title, source_type, status, collection_id').eq('workspace_id', activeWorkspace).order('created_at'),
+        supabase.from('sources').select('id, title, source_type, status, collection_id, engineering_analysis_status, engineering_summary').eq('workspace_id', activeWorkspace).order('created_at'),
       ])
       if (cancelled) return
       setCollections(cols ?? [])
@@ -96,6 +102,22 @@ function Workspace() {
   }
   const collectionId = collections[0]?.id ?? null
 
+  const analyze = async (id: string) => {
+    setAnalyzing(id)
+    setSources(s => s.map(x => x.id === id ? { ...x, engineering_analysis_status: 'processing' } : x))
+    let status = 'failed'
+    try { const r = await analyzeFn({ data: { sourceId: id } }); status = r.status === 'skipped' ? 'pending' : r.status; if (r.error) setNotice(r.error) } catch { setNotice('Analysis failed. The source is still available.') }
+    const { data } = await supabase.from('sources').select('engineering_analysis_status, engineering_summary').eq('id', id).maybeSingle()
+    setSources(s => s.map(x => x.id === id ? { ...x, engineering_analysis_status: data?.engineering_analysis_status ?? status, engineering_summary: data?.engineering_summary ?? x.engineering_summary } : x))
+    setAnalyzing(null); setAlertKey(k => k + 1)
+  }
+  const analyzeExisting = async () => {
+    const todo = sources.filter(s => s.status === 'ready' && s.engineering_analysis_status !== 'complete')
+    if (!todo.length) { setNotice('All indexed sources are already analyzed.'); return }
+    for (const [i, s] of todo.entries()) { setBulk(`Analyzing ${i + 1} of ${todo.length}…`); await analyze(s.id) }
+    setBulk(''); setNotice(`Analyzed ${todo.length} source${todo.length === 1 ? '' : 's'}.`)
+  }
+
   const uploadFile = async (file: File) => {
     const ok = /\.(pdf|md|markdown|txt)$/i.test(file.name)
     if (!ok) { setNotice('Only PDF, Markdown, and text files are supported.'); return }
@@ -106,17 +128,18 @@ function Workspace() {
     if (upErr) { setBusy(false); setNotice(`Upload failed: ${upErr.message}`); return }
     const isText = !/\.pdf$/i.test(file.name)
     const snippet = isText ? (await file.text()).slice(0, 2000) : null
-    const { data, error } = await supabase.from('sources').insert({ workspace_id: activeWorkspace, collection_id: collectionId, title: file.name, source_type: 'file', file_path: path, status: isText ? 'ready' : 'indexing', content_snippet: snippet, metadata: { size: file.size, mime: file.type } }).select('id, title, source_type, status, collection_id').single()
+    const { data, error } = await supabase.from('sources').insert({ workspace_id: activeWorkspace, collection_id: collectionId, title: file.name, source_type: 'file', file_path: path, status: isText ? 'ready' : 'indexing', content_snippet: snippet, metadata: { size: file.size, mime: file.type } }).select('id, title, source_type, status, collection_id, engineering_analysis_status, engineering_summary').single()
     setBusy(false)
     if (error) { await supabase.storage.from('sources').remove([path]); setNotice(`Could not save source: ${error.message}`); return }
     setSources(s => [...s, data]); setNotice(`Added “${file.name}”.`)
+    if (isText) void analyze(data.id)
   }
 
   const addLink = async () => {
     let url: URL
     try { url = new URL(linkUrl.trim()); if (!/^https?:$/.test(url.protocol)) throw new Error() } catch { setNotice('Enter a valid http(s) link.'); return }
     setBusy(true)
-    const { data, error } = await supabase.from('sources').insert({ workspace_id: activeWorkspace, collection_id: collectionId, title: url.hostname + url.pathname.replace(/\/$/, ''), source_type: 'link', url: url.toString(), status: 'ready' }).select('id, title, source_type, status, collection_id').single()
+    const { data, error } = await supabase.from('sources').insert({ workspace_id: activeWorkspace, collection_id: collectionId, title: url.hostname + url.pathname.replace(/\/$/, ''), source_type: 'link', url: url.toString(), status: 'ready' }).select('id, title, source_type, status, collection_id, engineering_analysis_status, engineering_summary').single()
     setBusy(false)
     if (error) { setNotice(`Could not add link: ${error.message}`); return }
     setSources(s => [...s, data]); setLinkUrl(''); setLinkOpen(false); setNotice('Link added.')
@@ -204,9 +227,11 @@ function Workspace() {
         <Button type="submit" size="sm" loading={busy}>Add</Button>
       </form>}
       {notice && sourcesOpen && <p role="status" className="mb-4">{notice}</p>}
+      <div className="mb-4 flex items-center gap-2"><Button variant="quiet" size="sm" onClick={() => void analyzeExisting()} loading={!!bulk}><Icon name="Sparkles" /> Analyze existing sources</Button>{bulk && <span role="status" className="text-muted-foreground">{bulk}</span>}</div>
+      <EngineeringAlerts workspaceId={activeWorkspace} refreshKey={alertKey} />
       {focusSource && <p className="mb-4 text-muted-foreground">Cited source: <strong className="text-ink">{focusSource}</strong></p>}
       {visibleSources.length > 0
-        ? visibleSources.map(s => <SourceItem key={s.id} name={s.title} kind={s.source_type === 'link' || s.source_type === 'url' ? 'link' : 'file'} status={sourceStatus(s.status)} onAction={() => void removeSource(s)} />)
+        ? visibleSources.map(s => <div key={s.id}><SourceItem name={s.title} kind={s.source_type === 'link' || s.source_type === 'url' ? 'link' : 'file'} status={sourceStatus(s.status)} onAction={() => void removeSource(s)} />{s.status === 'ready' && <SourceEngineering sourceId={s.id} status={s.engineering_analysis_status} summary={s.engineering_summary} busy={analyzing === s.id} onReanalyze={() => void analyze(s.id)} />}</div>)
         : <div className="empty-sources"><h2>{sources.length > 0 ? 'No matches.' : 'No sources yet.'}</h2><p>{sources.length > 0 ? 'Try a different search.' : `Your “${collections[0]?.name ?? 'General'}” collection is ready — upload a file or add a link.`}</p></div>}
     </SourcesDrawer>
   </main>
