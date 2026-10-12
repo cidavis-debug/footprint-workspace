@@ -1,13 +1,14 @@
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Composer, Icon, Input, SourceItem, SourcesDrawer, WorkspaceSelector } from '@/design-system/footprint-0a8b1a'
+import { Button, Composer, Icon, Input, SourceItem, SourcesDrawer } from '@/design-system/footprint-0a8b1a'
 import { pageHead } from '@/components/page-head'
 import { Brand } from '@/components/brand'
 import { Illustration } from '@/components/illustration'
+import { WorkspacePicker, type WorkspaceNode } from '@/components/workspace-picker'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/integrations/supabase/client'
 
-type Workspace = { id: string; name: string }
+type Workspace = WorkspaceNode
 type Collection = { id: string; name: string; description: string | null }
 type Source = { id: string; title: string; source_type: string; status: string; collection_id: string | null }
 
@@ -40,7 +41,7 @@ function Workspace() {
     let cancelled = false
     setDataLoading(true)
     void (async () => {
-      const { data: ws } = await supabase.from('workspaces').select('id, name').order('created_at')
+      const { data: ws } = await supabase.from('workspaces').select('id, name, parent_id').order('created_at')
       if (cancelled) return
       const list = ws ?? []
       setWorkspaces(list)
@@ -123,13 +124,23 @@ function Workspace() {
 
   const openUpload = () => fileInput.current?.click()
   const openLink = () => { setLinkOpen(true); setSourcesOpen(true) }
-  const workspaceOptions = workspaces.map(w => ({ value: w.id, label: w.name }))
+
+  const createWorkspace = async (name: string, parentId: string | null) => {
+    if (!user) return
+    setBusy(true)
+    const { data, error } = await supabase.from('workspaces').insert({ owner_id: user.id, name, parent_id: parentId }).select('id, name, parent_id').single()
+    setBusy(false)
+    if (error) { setNotice(`Could not create workspace: ${error.message}`); return }
+    setWorkspaces(w => [...w, data])
+    setActiveWorkspace(data.id)
+    setNotice(`Workspace “${name}” created.`)
+  }
 
   return <main className="site-width">
     <header className="workspace-header">
       <Link to="/" className="wordmark"><Brand /></Link>
       <div className="workspace-actions">
-        {workspaceOptions.length > 0 && <WorkspaceSelector value={activeWorkspace} onChange={e => setActiveWorkspace(e.target.value)} options={workspaceOptions} size="sm" />}
+        {workspaces.length > 0 && <WorkspacePicker workspaces={workspaces} value={activeWorkspace} onChange={setActiveWorkspace} onCreate={createWorkspace} busy={busy} />}
         <span className="demo-label">{user.email}</span>
         <Button variant="ghost" onClick={() => setSourcesOpen(true)}><Icon name="Folder" /> Sources</Button>
         <Button variant="quiet" onClick={signOut}>Log out</Button>
