@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Button, Icon } from '@/design-system/footprint-0a8b1a'
 import { NavigationButton } from '@/components/navigation-button'
 import { Brand } from '@/components/brand'
+import { useAuth } from '@/hooks/use-auth'
 
 const directory = [
   { to: '/how-it-works', label: 'How it works' },
@@ -13,6 +14,7 @@ const directory = [
 
 export function SiteLayout({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const { user, loading, signOut } = useAuth()
   const menuButton = useRef<HTMLButtonElement>(null)
   useEffect(() => {
     if (!menuOpen) return
@@ -35,7 +37,9 @@ export function SiteLayout({ children }: { children: ReactNode }) {
           {directory.map(item => <Link key={item.to} to={item.to} className="site-link" activeProps={{ 'aria-current': 'page' }}>{item.label}</Link>)}
         </nav>
         <div className="account-actions">
-          <Link to="/login" className="site-link desktop-account">Log in</Link>
+          {!loading && (user
+            ? <span className="desktop-account flex items-center gap-2"><span aria-label={user.email ?? 'Account'} title={user.email ?? ''} className="inline-flex items-center justify-center rounded-pill bg-muted text-ink text-label w-6 h-6">{(user.email ?? '?')[0]!.toUpperCase()}</span><Button variant="quiet" onClick={signOut}>Log out</Button></span>
+            : <Link to="/login" className="site-link desktop-account">Log in</Link>)}
           <NavigationButton to="/app"><span className="desktop-open-label">Open Footprint</span><span className="compact-open-label">Open</span><Icon name="ArrowUpRight" /></NavigationButton>
           <Button ref={menuButton} variant="ghost" size="icon" className="mobile-menu-trigger" aria-label={menuOpen ? 'Close menu' : 'Open menu'} title={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => setMenuOpen(!menuOpen)}><Icon name={menuOpen ? 'X' : 'MoreHorizontal'} /></Button>
         </div>
@@ -43,7 +47,9 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       {menuOpen && <nav id="mobile-navigation" aria-label="Mobile navigation" className="mobile-menu" onKeyDown={e => { if (e.key === 'Escape') closeMenu() }}>
         <Link to="/" className="wordmark" aria-label="Footprint home" onClick={closeMenu}><Brand iconOnly /></Link>
         {directory.map(item => <Link key={item.to} to={item.to} className="site-link" activeProps={{ 'aria-current': 'page' }} onClick={closeMenu}>{item.label}</Link>)}
-        <Link to="/login" className="site-link" onClick={closeMenu}>Log in</Link>
+        {!loading && (user
+          ? <Button variant="quiet" onClick={() => { closeMenu(); void signOut() }}>Log out</Button>
+          : <Link to="/login" className="site-link" onClick={closeMenu}>Log in</Link>)}
       </nav>}
       </div>
     </header>
