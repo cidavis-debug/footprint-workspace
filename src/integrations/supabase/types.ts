@@ -91,6 +91,133 @@ export type Database = {
           },
         ]
       }
+      engineering_alerts: {
+        Row: {
+          affected_systems: string[]
+          alert_type: string
+          created_at: string
+          id: string
+          new_claim_id: string
+          related_claim_id: string | null
+          severity: string
+          status: string
+          summary: string
+          title: string
+          workspace_id: string
+        }
+        Insert: {
+          affected_systems?: string[]
+          alert_type: string
+          created_at?: string
+          id?: string
+          new_claim_id: string
+          related_claim_id?: string | null
+          severity?: string
+          status?: string
+          summary: string
+          title: string
+          workspace_id: string
+        }
+        Update: {
+          affected_systems?: string[]
+          alert_type?: string
+          created_at?: string
+          id?: string
+          new_claim_id?: string
+          related_claim_id?: string | null
+          severity?: string
+          status?: string
+          summary?: string
+          title?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "engineering_alerts_new_claim_id_fkey"
+            columns: ["new_claim_id"]
+            isOneToOne: false
+            referencedRelation: "engineering_claims"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "engineering_alerts_related_claim_id_fkey"
+            columns: ["related_claim_id"]
+            isOneToOne: false
+            referencedRelation: "engineering_claims"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "engineering_alerts_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      engineering_claims: {
+        Row: {
+          affected_systems: string[]
+          attribute: string
+          confidence: number
+          created_at: string
+          evidence_excerpt: string
+          id: string
+          source_id: string
+          status: string
+          subject: string
+          type: string
+          unit: string | null
+          value: string
+          workspace_id: string
+        }
+        Insert: {
+          affected_systems?: string[]
+          attribute: string
+          confidence?: number
+          created_at?: string
+          evidence_excerpt?: string
+          id?: string
+          source_id: string
+          status?: string
+          subject: string
+          type: string
+          unit?: string | null
+          value: string
+          workspace_id: string
+        }
+        Update: {
+          affected_systems?: string[]
+          attribute?: string
+          confidence?: number
+          created_at?: string
+          evidence_excerpt?: string
+          id?: string
+          source_id?: string
+          status?: string
+          subject?: string
+          type?: string
+          unit?: string | null
+          value?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "engineering_claims_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "engineering_claims_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           citations: Json
@@ -161,6 +288,8 @@ export type Database = {
           collection_id: string | null
           content_snippet: string | null
           created_at: string
+          engineering_analysis_status: string
+          engineering_summary: string | null
           error_message: string | null
           file_path: string | null
           id: string
@@ -176,6 +305,8 @@ export type Database = {
           collection_id?: string | null
           content_snippet?: string | null
           created_at?: string
+          engineering_analysis_status?: string
+          engineering_summary?: string | null
           error_message?: string | null
           file_path?: string | null
           id?: string
@@ -191,6 +322,8 @@ export type Database = {
           collection_id?: string | null
           content_snippet?: string | null
           created_at?: string
+          engineering_analysis_status?: string
+          engineering_summary?: string | null
           error_message?: string | null
           file_path?: string | null
           id?: string
