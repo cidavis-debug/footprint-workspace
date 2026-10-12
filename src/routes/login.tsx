@@ -6,6 +6,9 @@ import { pageHead } from '@/components/page-head'
 import { supabase } from '@/integrations/supabase/client'
 import { safeRedirect, useAuth } from '@/hooks/use-auth'
 
+/** Google sign-in is hidden until the provider is configured in Supabase. */
+const GOOGLE_ENABLED = false
+
 export const Route = createFileRoute('/login')({
   validateSearch: (s: Record<string, unknown>): { redirect?: string } => (typeof s['redirect'] === 'string' ? { redirect: s['redirect'] } : {}),
   head: () => pageHead('Log in — Footprint', 'Sign in or create your Footprint account.'),
@@ -51,7 +54,7 @@ function Login() {
       {error && <p role="alert" className="text-destructive">{error}</p>}
       {info && <p role="status">{info}</p>}
       <Button type="submit" variant="primary" disabled={busy}>{busy ? 'Please wait…' : mode === 'signin' ? 'Log in' : 'Sign up'}</Button>
-      <Button type="button" variant="secondary" onClick={google}>Continue with Google</Button>
+      {GOOGLE_ENABLED && <Button type="button" variant="secondary" onClick={google}>Continue with Google</Button>}
       <Button type="button" variant="quiet" onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(''); setInfo('') }}>
         {mode === 'signin' ? 'New here? Create an account' : 'Already have an account? Log in'}
       </Button>

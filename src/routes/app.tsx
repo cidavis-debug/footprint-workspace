@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Answer, Button, CitationChip, Composer, Icon, Input, SourceItem, SourcesDrawer } from '@/design-system/footprint-0a8b1a'
@@ -6,9 +6,9 @@ import { askFootprint, type Citation } from '@/lib/ask.functions'
 import { analyzeEngineeringSource } from '@/lib/engineering.functions'
 import { EngineeringAlerts, SourceEngineering } from '@/components/engineering-context'
 import { pageHead } from '@/components/page-head'
-import { Brand } from '@/components/brand'
 import { Illustration } from '@/components/illustration'
-import { WorkspacePicker, type WorkspaceNode } from '@/components/workspace-picker'
+import { type WorkspaceNode } from '@/components/workspace-picker'
+import { AppShell } from '@/components/app-shell'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/integrations/supabase/client'
 import { SourceEvidenceDrawer } from '@/components/source-evidence-drawer'
@@ -54,6 +54,7 @@ function Workspace() {
   const fileInput = useRef<HTMLInputElement>(null)
   const evidenceFn = useServerFn(getRadar)
   const [evidence, setEvidence] = useState<{ source: EngineeringSource; claims: EngineeringClaim[]; quote: string } | null>(null)
+  const requestId = useRef(0)
   const currentWorkspace = useRef(activeWorkspace)
   currentWorkspace.current = activeWorkspace
   useEffect(() => { setThread([]); setEvidence(null) }, [activeWorkspace])
@@ -102,13 +103,20 @@ function Workspace() {
     if (!question.trim() || !activeWorkspace || asking) return
     setAsking(true); setNotice('')
     const askedWorkspace = activeWorkspace
+    const run = ++requestId.current
     setThread(t => [...t, { question, answer: '', citations: [], pending: true }])
     try {
       const r = await askFn({ data: { workspaceId: activeWorkspace, question } })
+      if (run !== requestId.current) return
       if (currentWorkspace.current !== askedWorkspace) { setAsking(false); return }
       if (r.error) { setNotice(r.error); setThread(t => t.slice(0, -1)) }
       else setThread(t => [...t.slice(0, -1), { question, answer: r.answer, citations: r.citations, pending: false }])
-    } catch { if (currentWorkspace.current === askedWorkspace) { setNotice('Something went wrong asking Footprint.'); setThread(t => t.slice(0, -1)) } }
+    } catch { if (run !== requestId.current) return; if (currentWorkspace.current === askedWorkspace) { setNotice('Something went wrong asking Footprint.'); setThread(t => t.slice(0, -1)) } }
+    setAsking(false)
+  }
+  const stop = () => {
+    requestId.current++
+    setThread(t => t.map((m, i) => i === t.length - 1 && m.pending ? { ...m, pending: false, answer: 'Generation stopped.' } : m))
     setAsking(false)
   }
   const collectionId = collections[0]?.id ?? null
@@ -197,44 +205,42 @@ function Workspace() {
     setNotice(`Workspace “${name}” created.`)
   }
 
-  return <main className="site-width">
-    <header className="workspace-header">
-      <Link to="/" className="wordmark"><Brand /></Link>
-      <div className="workspace-actions">
-        {workspaces.length > 0 && <WorkspacePicker workspaces={workspaces} value={activeWorkspace} onChange={setActiveWorkspace} onCreate={createWorkspace} busy={busy} />}
-        <span className="demo-label">{user.email}</span>
-        <Button variant="ghost" onClick={() => setSourcesOpen(true)}><Icon name="Folder" /> Sources</Button>
-        <Link className="site-link" to="/radar" search={{ workspace: activeWorkspace }}>Radar</Link>
-        <Button variant="quiet" onClick={signOut}>Log out</Button>
+  return <AppShell workspaces={workspaces} value={activeWorkspace} onChange={setActiveWorkspace} onCreate={createWorkspace} busy={busy} mode="ask" email={user.email ?? null} onSources={() => setSourcesOpen(true)} onSignOut={signOut}>
+    <main className="chat-main">
+      <div className="chat-scroll">
+        <div className="chat-column">
+          {thread.length === 0 && <div className="chat-empty">
+            <Illustration name="empty" eager />
+            <h1>What’s on your mind?</h1>
+            <p>A clear question. The right context. A place to think together.</p>
+            <div className="starter-grid">{suggestedQuestions.map(q => <button type="button" key={q} className="starter-card" onClick={() => void ask(q)} disabled={asking || !activeWorkspace}>{q}</button>)}</div>
+          </div>}
+          {thread.length > 0 && <div className="w-full space-y-8 text-left">
+            {thread.map((m, i) => <div key={i} className="space-y-4">
+              <h2 className="font-heading text-h2 text-ink">{m.question}</h2>
+              {m.pending
+                ? <p role="status" className="text-muted-foreground">Reading your sources…</p>
+                : <Answer copyText={m.answer} sources={m.citations.map(c => c.title)}>
+                    <p className="whitespace-pre-wrap">{m.answer}</p>
+                    {m.citations.length > 0 && <div className="mt-4 flex flex-wrap gap-2">
+                      {m.citations.map(c => <CitationChip key={c.id} kind={c.kind} href="#evidence" title={c.quote} onClick={e => { e.preventDefault(); void openEvidence(c) }}>{c.title}</CitationChip>)}
+                    </div>}
+                  </Answer>}
+            </div>)}
+          </div>}
+        </div>
       </div>
-    </header>
-    <section className="workspace-main">
-      {thread.length === 0 && <>
-        <Illustration name="empty" eager />
-        <p className="section-kicker">Your shared knowledge, in focus</p>
-        <h1>What’s on your mind?</h1>
-        <p>A clear question. The right context. A place to think together.</p>
-      </>}
-      {thread.length > 0 && <div className="w-full space-y-8 text-left">
-        {thread.map((m, i) => <div key={i} className="space-y-4">
-          <h2 className="font-heading text-h2 text-ink">{m.question}</h2>
-          {m.pending
-            ? <p role="status" className="text-muted-foreground">Reading your sources…</p>
-            : <Answer copyText={m.answer} sources={m.citations.map(c => c.title)}>
-                <p className="whitespace-pre-wrap">{m.answer}</p>
-                {m.citations.length > 0 && <div className="mt-4 flex flex-wrap gap-2">
-                  {m.citations.map(c => <CitationChip key={c.id} kind={c.kind} href="#evidence" title={c.quote} onClick={e => { e.preventDefault(); void openEvidence(c) }}>{c.title}</CitationChip>)}
-                </div>}
-              </Answer>}
-        </div>)}
-      </div>}
-      {thread.length === 0 && <div className="engineering-questions">{suggestedQuestions.map(q => <Button key={q} variant="ghost" size="sm" onClick={() => void ask(q)} disabled={asking || !activeWorkspace}><span className="whitespace-normal text-left">{q}</span></Button>)}</div>}
-      <Composer onSend={q => void ask(q)} onUpload={openUpload} onAddLink={openLink} loading={asking} placeholder={asking ? 'Thinking…' : 'Ask a question…'} />
-      {dataLoading
-        ? <p className="workspace-status" role="status">Loading your workspace…</p>
-        : <p className="workspace-status">{workspaces.length > 0 ? `Answering from “${workspaces.find(w => w.id === activeWorkspace)?.name ?? 'Personal'}” sources.` : 'No workspace found for this account.'}</p>}
-      {notice && <p className="connection-notice" role="status">{notice}</p>}
-    </section>
+      <div className="chat-dock">
+        <div className="chat-column">
+          {notice && <p className="chat-notice" role="status">{notice}</p>}
+          <p className="workspace-status">{dataLoading ? 'Loading your workspace…' : workspaces.length > 0 ? `Answering from “${workspaces.find(w => w.id === activeWorkspace)?.name ?? 'Personal'}” sources.` : 'No workspace found for this account.'}</p>
+          <div className="chat-composer-row">
+            <Composer className="flex-1" onSend={q => void ask(q)} onUpload={openUpload} onAddLink={openLink} disabled={asking} placeholder={asking ? 'Thinking…' : 'Ask a question…'} />
+            {asking && <Button variant="primary" size="icon" aria-label="Stop generating" title="Stop generating" onClick={stop}><Icon name="X" /></Button>}
+          </div>
+        </div>
+      </div>
+    </main>
     <input ref={fileInput} type="file" hidden accept=".pdf,.md,.markdown,.txt,application/pdf,text/markdown,text/plain" onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void uploadFile(f) }} />
     <SourcesDrawer open={sourcesOpen} onClose={() => { setSourcesOpen(false); setLinkOpen(false) }} onAddSource={openUpload} onSearch={setSearch}>
       {collectionId && <form className="mb-4 flex gap-2" onSubmit={e => { e.preventDefault(); void renameCollection() }}>
@@ -258,5 +264,5 @@ function Workspace() {
         : <div className="empty-sources"><h2>{sources.length > 0 ? 'No matches.' : 'No sources yet.'}</h2><p>{sources.length > 0 ? 'Try a different search.' : `Your “${collections[0]?.name ?? 'General'}” collection is ready — upload a file or add a link.`}</p></div>}
     </SourcesDrawer>
     <SourceEvidenceDrawer source={evidence?.source ?? null} claims={evidence?.claims ?? []} quote={evidence?.quote} onClose={() => setEvidence(null)} />
-  </main>
+  </AppShell>
 }
