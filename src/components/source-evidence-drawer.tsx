@@ -27,7 +27,7 @@ export function SourceEvidenceDrawer({ source, claims, quote, onClose }: { sourc
   }
   return <SourcesDrawer open={!!source} onClose={() => { setSearch(''); setError(''); onClose() }} onSearch={setSearch} onAddSource={() => { onClose(); void navigate({ to: '/app', search: { sources: true } }) }}>
     {source && <div className="space-y-4">
-      <h2 className="font-heading text-section">{source.title}</h2>
+      <h2 className="font-heading text-h2">{source.title}</h2>
       <Badge variant={source.status === 'ready' || source.status === 'indexed' ? 'indexed' : 'reference'}>{source.status}</Badge>
       {quote && <blockquote className="engineering-evidence">“{quote}”</blockquote>}
       {source.engineering_summary && <p>{source.engineering_summary}</p>}

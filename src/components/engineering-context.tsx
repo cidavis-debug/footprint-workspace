@@ -35,7 +35,7 @@ export function SourceEngineering({ sourceId, status, summary, onReanalyze, busy
     if (!error) setClaims(c => c.filter(x => x.id !== id))
   }
 
-  return <details className="mb-3 ml-4 text-caption" onToggle={e => setOpen((e.target as HTMLDetailsElement).open)}>
+  return <details className="mb-3 ml-4 text-xs" onToggle={e => setOpen((e.target as HTMLDetailsElement).open)}>
     <summary className="cursor-pointer text-muted-foreground">Engineering context · {analysisLabel(status)}</summary>
     <div className="mt-2 space-y-2">
       {summary && <p>{summary}</p>}
@@ -75,7 +75,7 @@ export function EngineeringAlerts({ workspaceId, refreshKey }: { workspaceId: st
   return <details className="mb-4" open>
     <summary className="engineering-review-heading">Engineering review suggestions ({alerts.length})</summary>
     {error && <p role="alert" className="text-destructive">{error}</p>}
-    <div className="mt-2 space-y-3 text-caption">
+    <div className="mt-2 space-y-3 text-xs">
       {alerts.map(a => <div key={a.id} className="border-t border-border pt-2">
         <p><SeverityBadge severity={a.severity} /> <strong className="text-ink">{a.title}</strong></p>
         <p>{a.summary}</p>

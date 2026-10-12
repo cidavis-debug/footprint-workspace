@@ -3,16 +3,6 @@
 @source "../src";
 @source "./design-system/footprint-0a8b1a/**/*.{ts,tsx,css}";
 
-/* Wire the published typography names to the library's existing tokens. */
-@theme inline {
-  --text-wordmark: var(--text-wordmark);
-  --text-greeting: var(--text-greeting);
-  --text-section: var(--text-section);
-  --text-body: var(--text-body);
-  --text-label: var(--text-label);
-  --text-caption: var(--text-caption);
-}
-
 .site-width { width: 100%; max-width: var(--width-page); margin-inline: auto; padding-inline: var(--page-gutter); }
 .top-scroll-fade { position: absolute; top: calc(-1 * var(--space-4)); bottom: calc(-1 * var(--space-6)); left: 0; width: 100%; background: linear-gradient(to bottom, var(--background) 0, var(--background) calc(100% - var(--space-6) + var(--space-2)), transparent 100%); pointer-events: none; z-index: -1; }
 .floating-header { position: sticky; top: var(--space-4); margin-top: var(--space-4); isolation: isolate; z-index: 1; }

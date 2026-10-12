@@ -217,7 +217,7 @@ function Workspace() {
       </>}
       {thread.length > 0 && <div className="w-full space-y-8 text-left">
         {thread.map((m, i) => <div key={i} className="space-y-4">
-          <h2 className="font-heading text-section text-ink">{m.question}</h2>
+          <h2 className="font-heading text-h2 text-ink">{m.question}</h2>
           {m.pending
             ? <p role="status" className="text-muted-foreground">Reading your sources…</p>
             : <Answer copyText={m.answer} sources={m.citations.map(c => c.title)}>
