@@ -331,8 +331,10 @@
 .app-mode { align-self: center; display: inline-flex; gap: var(--space-1); margin-top: var(--space-4); padding: var(--space-1); border-width: var(--border-width); border-style: solid; border-color: var(--border); border-radius: var(--radius-pill); background: var(--card); }
 .app-mode-tab { display: inline-flex; align-items: center; min-height: var(--control-min-height); padding-inline: var(--space-5); border-radius: var(--radius-pill); font-size: var(--text-label); font-weight: var(--weight-medium); color: var(--muted-foreground); }
 .app-mode-tab[data-active="true"] { background: var(--primary); color: var(--primary-foreground); }
-.chat-main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
-.chat-scroll { flex: 1; min-height: 0; overflow-y: auto; padding-block: var(--space-7); }
+.chat-main { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.chat-scroll { flex: 1; min-height: 0; overflow-y: auto; padding-top: var(--space-7); padding-bottom: calc(var(--dock-height, 0px) + var(--space-5));
+  mask-image: linear-gradient(to bottom, black calc(100% - var(--dock-height, 0px) - var(--space-7)), transparent calc(100% - var(--dock-height, 0px)));
+  -webkit-mask-image: linear-gradient(to bottom, black calc(100% - var(--dock-height, 0px) - var(--space-7)), transparent calc(100% - var(--dock-height, 0px))); }
 .chat-column { width: 100%; max-width: var(--width-chat); margin-inline: auto; padding-inline: var(--page-gutter); }
 .chat-empty { text-align: center; }
 .chat-empty h1 { font-family: var(--font-heading); font-size: var(--text-greeting); line-height: var(--leading-heading); color: var(--ink); margin-block: var(--space-4); }
@@ -341,7 +343,8 @@
 .starter-card { min-height: var(--control-min-height); padding: var(--space-4); border-radius: var(--radius-button); background: var(--primary); color: var(--primary-foreground); font-size: var(--text-label); text-align: left; transition: box-shadow var(--duration-fast) var(--ease-standard); }
 .starter-card:hover:not(:disabled) { box-shadow: inset 0 0 0 var(--border-width) var(--primary-foreground); }
 .starter-card:disabled { background: var(--muted); color: var(--muted-foreground); }
-.chat-dock { border-top-width: var(--border-width); border-top-style: solid; border-color: var(--border); background: var(--card); padding-block: var(--space-3) var(--space-4); }
+.chat-dock { position: absolute; left: 0; right: 0; bottom: 0; padding-bottom: var(--space-4); pointer-events: none; }
+.chat-dock-card { pointer-events: auto; padding: var(--space-3); border-width: var(--border-width); border-style: solid; border-color: var(--border); border-radius: var(--radius-panel); background: var(--card); }
 .chat-dock .workspace-status { margin-top: 0; margin-bottom: var(--space-2); }
 .chat-notice { font-size: var(--text-label); margin-bottom: var(--space-2); color: var(--ink); }
 .chat-composer-row { display: flex; align-items: flex-end; gap: var(--space-2); }

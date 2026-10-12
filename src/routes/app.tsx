@@ -56,6 +56,15 @@ function Workspace() {
   const [evidence, setEvidence] = useState<{ source: EngineeringSource; claims: EngineeringClaim[]; quote: string } | null>(null)
   const requestId = useRef(0)
   const currentWorkspace = useRef(activeWorkspace)
+  const mainRef = useRef<HTMLElement>(null)
+  const dockRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const dock = dockRef.current, main = mainRef.current
+    if (!dock || !main) return
+    const ro = new ResizeObserver(() => main.style.setProperty('--dock-height', `${dock.offsetHeight}px`))
+    ro.observe(dock)
+    return () => ro.disconnect()
+  })
   currentWorkspace.current = activeWorkspace
   useEffect(() => { setThread([]); setEvidence(null) }, [activeWorkspace])
 
