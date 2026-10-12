@@ -8,8 +8,8 @@ type Props = {
   workspaces: WorkspaceNode[]
   value: string
   onChange: (id: string) => void
-  onCreate: (name: string, parentId: string | null) => Promise<void>
-  busy: boolean
+  onCreate?: (name: string, parentId: string | null) => Promise<void>
+  busy?: boolean
 }
 
 /** Cascading workspace picker: main workspaces on the left, sub-workspaces in an adjacent panel. */
@@ -38,7 +38,7 @@ export function WorkspacePicker({ workspaces, value, onChange, onCreate, busy }:
   const pick = (id: string) => { onChange(id); setOpen(false) }
   const create = async (name: string, parentId: string | null, clear: () => void) => {
     const trimmed = name.trim()
-    if (!trimmed) return
+    if (!trimmed || !onCreate) return
     await onCreate(trimmed, parentId)
     clear()
   }
@@ -75,10 +75,10 @@ export function WorkspacePicker({ workspaces, value, onChange, onCreate, busy }:
                 </li>
               ))}
             </ul>
-            <form className="mt-2 flex gap-1 border-t pt-2" onSubmit={e => { e.preventDefault(); void create(newMain, null, () => setNewMain('')) }}>
+            {onCreate && <form className="mt-2 flex gap-1 border-t pt-2" onSubmit={e => { e.preventDefault(); void create(newMain, null, () => setNewMain('')) }}>
               <Input aria-label="New workspace name" placeholder="New workspace…" value={newMain} onChange={e => setNewMain(e.target.value)} />
               <Button type="submit" variant="quiet" size="sm" disabled={busy} aria-label="Create workspace"><Plus className="fp-icon" /></Button>
-            </form>
+            </form>}
           </div>
           {expanded && (
             <div className="w-max min-w-8 rounded-panel border bg-card p-2 shadow-floating" role="menu" aria-label={`Sub-workspaces of ${mains.find(w => w.id === expanded)?.name ?? ''}`}>
@@ -97,10 +97,10 @@ export function WorkspacePicker({ workspaces, value, onChange, onCreate, busy }:
                   </li>
                 )) : <li className="px-3 py-2 text-caption text-muted-foreground">No sub-workspaces yet.</li>}
               </ul>
-              <form className="mt-2 flex gap-1 border-t pt-2" onSubmit={e => { e.preventDefault(); void create(newSub, expanded, () => setNewSub('')) }}>
+              {onCreate && <form className="mt-2 flex gap-1 border-t pt-2" onSubmit={e => { e.preventDefault(); void create(newSub, expanded, () => setNewSub('')) }}>
                 <Input aria-label="New sub-workspace name" placeholder="New sub-workspace…" value={newSub} onChange={e => setNewSub(e.target.value)} />
                 <Button type="submit" variant="quiet" size="sm" disabled={busy} aria-label="Create sub-workspace"><Plus className="fp-icon" /></Button>
-              </form>
+              </form>}
             </div>
           )}
         </div>

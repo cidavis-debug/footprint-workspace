@@ -11,12 +11,15 @@ import { Illustration } from '@/components/illustration'
 import { WorkspacePicker, type WorkspaceNode } from '@/components/workspace-picker'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/integrations/supabase/client'
+import { SourceEvidenceDrawer } from '@/components/source-evidence-drawer'
+import { getRadar } from '@/lib/radar.functions'
+import { suggestedQuestions, type EngineeringClaim, type EngineeringSource } from '@/lib/engineering-data'
 
 type Workspace = WorkspaceNode
 type Collection = { id: string; name: string; description: string | null }
 type Source = { id: string; title: string; source_type: string; status: string; collection_id: string | null; engineering_analysis_status: string; engineering_summary: string | null }
 
-export const Route = createFileRoute('/app')({ ssr: false, head: () => pageHead('Workspace — Footprint', 'A focused workspace for questions, documents, and shared team knowledge.'), component: Workspace })
+export const Route = createFileRoute('/app')({ ssr: false, validateSearch: (s: Record<string, unknown>): { workspace?: string; sources?: boolean } => ({ ...(typeof s['workspace'] === 'string' ? { workspace: s['workspace'] } : {}), ...(s['sources'] === true ? { sources: true } : {}) }), head: () => pageHead('Workspace — Footprint', 'A focused workspace for questions, documents, and shared team knowledge.'), component: Workspace })
 
 function sourceStatus(status: string): 'indexed' | 'processing' | 'reference' {
   if (status === 'ready' || status === 'indexed') return 'indexed'
@@ -25,8 +28,10 @@ function sourceStatus(status: string): 'indexed' | 'processing' | 'reference' {
 }
 
 function Workspace() {
+  const { workspace: requestedWorkspace, sources: requestedSources } = Route.useSearch()
   const { user, loading, signOut } = useAuth()
   const [sourcesOpen, setSourcesOpen] = useState(false)
+  useEffect(() => { if (requestedSources) setSourcesOpen(true) }, [requestedSources])
   const [notice, setNotice] = useState('')
   const [workspaces, setWorkspaces] = useState<Workspace[]>([])
   const [activeWorkspace, setActiveWorkspace] = useState('')
@@ -47,7 +52,11 @@ function Workspace() {
   const [bulk, setBulk] = useState('')
   const [alertKey, setAlertKey] = useState(0)
   const fileInput = useRef<HTMLInputElement>(null)
-  useEffect(() => { setThread([]) }, [activeWorkspace])
+  const evidenceFn = useServerFn(getRadar)
+  const [evidence, setEvidence] = useState<{ source: EngineeringSource; claims: EngineeringClaim[]; quote: string } | null>(null)
+  const currentWorkspace = useRef(activeWorkspace)
+  currentWorkspace.current = activeWorkspace
+  useEffect(() => { setThread([]); setEvidence(null) }, [activeWorkspace])
 
   useEffect(() => {
     if (!user) return
@@ -59,11 +68,11 @@ function Workspace() {
       const list = ws ?? []
       setWorkspaces(list)
       const first = list[0]?.id ?? ''
-      setActiveWorkspace(current => current || first)
+      setActiveWorkspace(current => list.some(w => w.id === requestedWorkspace) ? requestedWorkspace ?? first : current || first)
       setDataLoading(false)
     })()
     return () => { cancelled = true }
-  }, [user])
+  }, [user, requestedWorkspace])
 
   useEffect(() => {
     if (!activeWorkspace) { setCollections([]); setSources([]); return }
@@ -92,15 +101,27 @@ function Workspace() {
   const ask = async (question: string) => {
     if (!question.trim() || !activeWorkspace || asking) return
     setAsking(true); setNotice('')
+    const askedWorkspace = activeWorkspace
     setThread(t => [...t, { question, answer: '', citations: [], pending: true }])
     try {
       const r = await askFn({ data: { workspaceId: activeWorkspace, question } })
+      if (currentWorkspace.current !== askedWorkspace) { setAsking(false); return }
       if (r.error) { setNotice(r.error); setThread(t => t.slice(0, -1)) }
       else setThread(t => [...t.slice(0, -1), { question, answer: r.answer, citations: r.citations, pending: false }])
-    } catch { setNotice('Something went wrong asking Footprint.'); setThread(t => t.slice(0, -1)) }
+    } catch { if (currentWorkspace.current === askedWorkspace) { setNotice('Something went wrong asking Footprint.'); setThread(t => t.slice(0, -1)) } }
     setAsking(false)
   }
   const collectionId = collections[0]?.id ?? null
+  const openEvidence = async (citation: Citation) => {
+    const workspaceId = activeWorkspace
+    try {
+      const context = await evidenceFn({ data: { workspaceId } })
+      if (currentWorkspace.current !== workspaceId) return
+      const source = context.sources.find(s => s.id === citation.id)
+      if (!source) { setNotice('This source is no longer available.'); return }
+      setEvidence({ source, claims: context.claims.filter(c => c.source_id === source.id), quote: citation.quote })
+    } catch { setNotice('Could not load supporting evidence. Please try again.') }
+  }
 
   const analyze = async (id: string) => {
     setAnalyzing(id)
@@ -183,6 +204,7 @@ function Workspace() {
         {workspaces.length > 0 && <WorkspacePicker workspaces={workspaces} value={activeWorkspace} onChange={setActiveWorkspace} onCreate={createWorkspace} busy={busy} />}
         <span className="demo-label">{user.email}</span>
         <Button variant="ghost" onClick={() => setSourcesOpen(true)}><Icon name="Folder" /> Sources</Button>
+        <Link className="site-link" to="/radar" search={{ workspace: activeWorkspace }}>Radar</Link>
         <Button variant="quiet" onClick={signOut}>Log out</Button>
       </div>
     </header>
@@ -195,18 +217,19 @@ function Workspace() {
       </>}
       {thread.length > 0 && <div className="w-full space-y-8 text-left">
         {thread.map((m, i) => <div key={i} className="space-y-4">
-          <h2 className="font-heading text-section text-ink">{m.question}</h2>
+          <h2 className="font-heading text-h2 text-ink">{m.question}</h2>
           {m.pending
             ? <p role="status" className="text-muted-foreground">Reading your sources…</p>
             : <Answer copyText={m.answer} sources={m.citations.map(c => c.title)}>
                 <p className="whitespace-pre-wrap">{m.answer}</p>
                 {m.citations.length > 0 && <div className="mt-4 flex flex-wrap gap-2">
-                  {m.citations.map(c => <CitationChip key={c.id} kind={c.kind} href={c.url ?? '#sources'} title={c.quote} target={c.url ? '_blank' : undefined} rel={c.url ? 'noreferrer' : undefined} onClick={e => { if (!c.url) { e.preventDefault(); setFocusSource(c.title); setSearch(''); setSourcesOpen(true) } }}>{c.title}</CitationChip>)}
+                  {m.citations.map(c => <CitationChip key={c.id} kind={c.kind} href="#evidence" title={c.quote} onClick={e => { e.preventDefault(); void openEvidence(c) }}>{c.title}</CitationChip>)}
                 </div>}
               </Answer>}
         </div>)}
       </div>}
-      <Composer onSend={q => void ask(q)} onUpload={openUpload} onAddLink={openLink} placeholder={asking ? 'Thinking…' : 'Ask a question…'} />
+      {thread.length === 0 && <div className="engineering-questions">{suggestedQuestions.map(q => <Button key={q} variant="ghost" size="sm" onClick={() => void ask(q)} disabled={asking || !activeWorkspace}><span className="whitespace-normal text-left">{q}</span></Button>)}</div>}
+      <Composer onSend={q => void ask(q)} onUpload={openUpload} onAddLink={openLink} loading={asking} placeholder={asking ? 'Thinking…' : 'Ask a question…'} />
       {dataLoading
         ? <p className="workspace-status" role="status">Loading your workspace…</p>
         : <p className="workspace-status">{workspaces.length > 0 ? `Answering from “${workspaces.find(w => w.id === activeWorkspace)?.name ?? 'Personal'}” sources.` : 'No workspace found for this account.'}</p>}
@@ -234,5 +257,6 @@ function Workspace() {
         ? visibleSources.map(s => <div key={s.id}><SourceItem name={s.title} kind={s.source_type === 'link' || s.source_type === 'url' ? 'link' : 'file'} status={sourceStatus(s.status)} onAction={() => void removeSource(s)} />{s.status === 'ready' && <SourceEngineering sourceId={s.id} status={s.engineering_analysis_status} summary={s.engineering_summary} busy={analyzing === s.id} onReanalyze={() => void analyze(s.id)} />}</div>)
         : <div className="empty-sources"><h2>{sources.length > 0 ? 'No matches.' : 'No sources yet.'}</h2><p>{sources.length > 0 ? 'Try a different search.' : `Your “${collections[0]?.name ?? 'General'}” collection is ready — upload a file or add a link.`}</p></div>}
     </SourcesDrawer>
+    <SourceEvidenceDrawer source={evidence?.source ?? null} claims={evidence?.claims ?? []} quote={evidence?.quote} onClose={() => setEvidence(null)} />
   </main>
 }
