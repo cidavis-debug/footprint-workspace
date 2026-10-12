@@ -1,6 +1,8 @@
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
+import { useServerFn } from '@tanstack/react-start'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Composer, Icon, Input, SourceItem, SourcesDrawer } from '@/design-system/footprint-0a8b1a'
+import { Answer, Button, CitationChip, Composer, Icon, Input, SourceItem, SourcesDrawer } from '@/design-system/footprint-0a8b1a'
+import { askFootprint, type Citation } from '@/lib/ask.functions'
 import { pageHead } from '@/components/page-head'
 import { Brand } from '@/components/brand'
 import { Illustration } from '@/components/illustration'
@@ -34,7 +36,12 @@ function Workspace() {
   const [linkUrl, setLinkUrl] = useState('')
   const [busy, setBusy] = useState(false)
   const [collectionName, setCollectionName] = useState('')
+  const [thread, setThread] = useState<{ question: string; answer: string; citations: Citation[]; pending: boolean }[]>([])
+  const [asking, setAsking] = useState(false)
+  const [focusSource, setFocusSource] = useState<string | null>(null)
+  const askFn = useServerFn(askFootprint)
   const fileInput = useRef<HTMLInputElement>(null)
+  useEffect(() => { setThread([]) }, [activeWorkspace])
 
   useEffect(() => {
     if (!user) return
@@ -76,7 +83,17 @@ function Workspace() {
   if (loading) return <main className="site-width"><p className="workspace-status" role="status">Opening your workspace…</p></main>
   if (!user) return <Navigate to="/login" search={{ redirect: '/app' }} replace />
 
-  const unavailable = () => setNotice('Asking questions is coming next. Nothing has been sent.')
+  const ask = async (question: string) => {
+    if (!question.trim() || !activeWorkspace || asking) return
+    setAsking(true); setNotice('')
+    setThread(t => [...t, { question, answer: '', citations: [], pending: true }])
+    try {
+      const r = await askFn({ data: { workspaceId: activeWorkspace, question } })
+      if (r.error) { setNotice(r.error); setThread(t => t.slice(0, -1)) }
+      else setThread(t => [...t.slice(0, -1), { question, answer: r.answer, citations: r.citations, pending: false }])
+    } catch { setNotice('Something went wrong asking Footprint.'); setThread(t => t.slice(0, -1)) }
+    setAsking(false)
+  }
   const collectionId = collections[0]?.id ?? null
 
   const uploadFile = async (file: File) => {
