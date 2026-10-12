@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
-import { useEffect, useMemo, useState } from 'react'
-import { Button, Composer, Icon, SourceItem, SourcesDrawer, WorkspaceSelector } from '@/design-system/footprint-0a8b1a'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Button, Composer, Icon, Input, SourceItem, SourcesDrawer, WorkspaceSelector } from '@/design-system/footprint-0a8b1a'
 import { pageHead } from '@/components/page-head'
 import { Brand } from '@/components/brand'
 import { Illustration } from '@/components/illustration'
@@ -29,6 +29,11 @@ function Workspace() {
   const [sources, setSources] = useState<Source[]>([])
   const [dataLoading, setDataLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [linkOpen, setLinkOpen] = useState(false)
+  const [linkUrl, setLinkUrl] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [collectionName, setCollectionName] = useState('')
+  const fileInput = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!user) return
@@ -56,6 +61,7 @@ function Workspace() {
       ])
       if (cancelled) return
       setCollections(cols ?? [])
+      setCollectionName(cols?.[0]?.name ?? '')
       setSources(srcs ?? [])
     })()
     return () => { cancelled = true }
@@ -69,7 +75,54 @@ function Workspace() {
   if (loading) return <main className="site-width"><p className="workspace-status" role="status">Opening your workspace…</p></main>
   if (!user) return <Navigate to="/login" search={{ redirect: '/app' }} replace />
 
-  const unavailable = () => setNotice('Adding sources and asking questions is coming next. Nothing has been saved or sent.')
+  const unavailable = () => setNotice('Asking questions is coming next. Nothing has been sent.')
+  const collectionId = collections[0]?.id ?? null
+
+  const uploadFile = async (file: File) => {
+    const ok = /\.(pdf|md|markdown|txt)$/i.test(file.name)
+    if (!ok) { setNotice('Only PDF, Markdown, and text files are supported.'); return }
+    if (file.size > 20 * 1024 * 1024) { setNotice('Files must be 20 MB or smaller.'); return }
+    setBusy(true); setNotice(`Uploading “${file.name}”…`)
+    const path = `${activeWorkspace}/${crypto.randomUUID()}-${file.name.replace(/[^\w.-]+/g, '_')}`
+    const { error: upErr } = await supabase.storage.from('sources').upload(path, file, { contentType: file.type || undefined })
+    if (upErr) { setBusy(false); setNotice(`Upload failed: ${upErr.message}`); return }
+    const isText = !/\.pdf$/i.test(file.name)
+    const snippet = isText ? (await file.text()).slice(0, 2000) : null
+    const { data, error } = await supabase.from('sources').insert({ workspace_id: activeWorkspace, collection_id: collectionId, title: file.name, source_type: 'file', file_path: path, status: isText ? 'ready' : 'indexing', content_snippet: snippet, metadata: { size: file.size, mime: file.type } }).select('id, title, source_type, status, collection_id').single()
+    setBusy(false)
+    if (error) { await supabase.storage.from('sources').remove([path]); setNotice(`Could not save source: ${error.message}`); return }
+    setSources(s => [...s, data]); setNotice(`Added “${file.name}”.`)
+  }
+
+  const addLink = async () => {
+    let url: URL
+    try { url = new URL(linkUrl.trim()); if (!/^https?:$/.test(url.protocol)) throw new Error() } catch { setNotice('Enter a valid http(s) link.'); return }
+    setBusy(true)
+    const { data, error } = await supabase.from('sources').insert({ workspace_id: activeWorkspace, collection_id: collectionId, title: url.hostname + url.pathname.replace(/\/$/, ''), source_type: 'link', url: url.toString(), status: 'ready' }).select('id, title, source_type, status, collection_id').single()
+    setBusy(false)
+    if (error) { setNotice(`Could not add link: ${error.message}`); return }
+    setSources(s => [...s, data]); setLinkUrl(''); setLinkOpen(false); setNotice('Link added.')
+  }
+
+  const removeSource = async (src: Source) => {
+    if (!window.confirm(`Remove “${src.title}”?`)) return
+    const { data: row } = await supabase.from('sources').select('file_path').eq('id', src.id).single()
+    const { error } = await supabase.from('sources').delete().eq('id', src.id)
+    if (error) { setNotice(`Could not remove: ${error.message}`); return }
+    if (row?.file_path) await supabase.storage.from('sources').remove([row.file_path])
+    setSources(s => s.filter(x => x.id !== src.id)); setNotice(`Removed “${src.title}”.`)
+  }
+
+  const renameCollection = async () => {
+    const name = collectionName.trim()
+    if (!collectionId || !name) return
+    const { error } = await supabase.from('collections').update({ name }).eq('id', collectionId)
+    if (error) { setNotice(`Could not rename: ${error.message}`); return }
+    setCollections(c => c.map(x => x.id === collectionId ? { ...x, name } : x)); setNotice('Collection renamed.')
+  }
+
+  const openUpload = () => fileInput.current?.click()
+  const openLink = () => { setLinkOpen(true); setSourcesOpen(true) }
   const workspaceOptions = workspaces.map(w => ({ value: w.id, label: w.name }))
 
   return <main className="site-width">
@@ -87,16 +140,30 @@ function Workspace() {
       <p className="section-kicker">Your shared knowledge, in focus</p>
       <h1>What’s on your mind?</h1>
       <p>A clear question. The right context. A place to think together.</p>
-      <Composer onSend={unavailable} onUpload={unavailable} onAddLink={unavailable} placeholder="Ask a question…" />
+      <Composer onSend={unavailable} onUpload={openUpload} onAddLink={openLink} placeholder="Ask a question…" />
       {dataLoading
         ? <p className="workspace-status" role="status">Loading your workspace…</p>
         : <p className="workspace-status">{workspaces.length > 0 ? `Connected to “${workspaces.find(w => w.id === activeWorkspace)?.name ?? 'Personal'}”. AI answers are coming next.` : 'No workspace found for this account.'}</p>}
       {notice && <p className="connection-notice" role="status">{notice}</p>}
     </section>
-    <SourcesDrawer open={sourcesOpen} onClose={() => setSourcesOpen(false)} onAddSource={unavailable} onSearch={setSearch}>
+    <input ref={fileInput} type="file" hidden accept=".pdf,.md,.markdown,.txt,application/pdf,text/markdown,text/plain" onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void uploadFile(f) }} />
+    <SourcesDrawer open={sourcesOpen} onClose={() => { setSourcesOpen(false); setLinkOpen(false) }} onAddSource={openUpload} onSearch={setSearch}>
+      {collectionId && <form className="mb-4 flex gap-2" onSubmit={e => { e.preventDefault(); void renameCollection() }}>
+        <Input aria-label="Collection name" value={collectionName} onChange={e => setCollectionName(e.target.value)} />
+        <Button type="submit" variant="quiet" size="sm">Rename</Button>
+      </form>}
+      <div className="mb-4 flex gap-2">
+        <Button variant="ghost" size="sm" onClick={openUpload} disabled={busy}><Icon name="FilePlus2" /> Upload file</Button>
+        <Button variant="ghost" size="sm" onClick={() => setLinkOpen(o => !o)}><Icon name="Link2" /> Add link</Button>
+      </div>
+      {linkOpen && <form className="mb-4 flex gap-2" onSubmit={e => { e.preventDefault(); void addLink() }}>
+        <Input aria-label="Link URL" type="url" placeholder="https://…" value={linkUrl} onChange={e => setLinkUrl(e.target.value)} autoFocus />
+        <Button type="submit" size="sm" loading={busy}>Add</Button>
+      </form>}
+      {notice && sourcesOpen && <p role="status" className="mb-4">{notice}</p>}
       {visibleSources.length > 0
-        ? visibleSources.map(s => <SourceItem key={s.id} name={s.title} kind={s.source_type === 'link' || s.source_type === 'url' ? 'link' : 'file'} status={sourceStatus(s.status)} />)
-        : <div className="empty-sources"><h2>{sources.length > 0 ? 'No matches.' : 'No sources yet.'}</h2><p>{sources.length > 0 ? 'Try a different search.' : `Your “${collections[0]?.name ?? 'General'}” collection is ready — adding documents and links is coming next.`}</p>{notice && <p role="status" className="mt-5">{notice}</p>}</div>}
+        ? visibleSources.map(s => <SourceItem key={s.id} name={s.title} kind={s.source_type === 'link' || s.source_type === 'url' ? 'link' : 'file'} status={sourceStatus(s.status)} onAction={() => void removeSource(s)} />)
+        : <div className="empty-sources"><h2>{sources.length > 0 ? 'No matches.' : 'No sources yet.'}</h2><p>{sources.length > 0 ? 'Try a different search.' : `Your “${collections[0]?.name ?? 'General'}” collection is ready — upload a file or add a link.`}</p></div>}
     </SourcesDrawer>
   </main>
 }
