@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { ChevronRight } from 'lucide-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Button, Icon, Input } from '@/design-system/footprint-0a8b1a'
 import { Brand } from '@/components/brand'
@@ -52,7 +53,7 @@ export function AppShell({ workspaces, value, onChange, onCreate, busy, mode, em
         {mains.map(w => { const kids = workspaces.filter(k => k.parent_id === w.id); const open = flyout === w.id || activeMain === w.id; return <li key={w.id}>
           <div className="app-rail-row">
             <button type="button" className="app-rail-item" data-active={value === w.id} aria-current={value === w.id ? 'true' : undefined} onClick={() => onChange(w.id)}>{w.name}</button>
-            <button type="button" className="app-rail-toggle" aria-label={`${open ? 'Collapse' : 'Expand'} ${w.name}`} aria-expanded={open} onClick={() => setFlyout(f => f === w.id ? null : w.id)}><Icon name={open ? 'ChevronDown' : 'ChevronRight'} /></button>
+            <button type="button" className="app-rail-toggle" aria-label={`${open ? 'Collapse' : 'Expand'} ${w.name}`} aria-expanded={open} onClick={() => setFlyout(f => f === w.id ? null : w.id)}>{open ? <Icon name="ChevronDown" /> : <ChevronRight className="fp-icon" />}</button>
           </div>
           {open && <ul className="app-rail-subs">
             {kids.map(k => <li key={k.id}><button type="button" className="app-rail-sub" data-active={value === k.id} aria-current={value === k.id ? 'true' : undefined} onClick={() => onChange(k.id)}>{k.name}</button></li>)}
