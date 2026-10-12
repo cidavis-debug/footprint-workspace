@@ -225,6 +225,7 @@ export type Database = {
           id: string
           name: string
           owner_id: string
+          parent_id: string | null
           updated_at: string
         }
         Insert: {
@@ -232,6 +233,7 @@ export type Database = {
           id?: string
           name?: string
           owner_id: string
+          parent_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -239,6 +241,7 @@ export type Database = {
           id?: string
           name?: string
           owner_id?: string
+          parent_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -247,6 +250,13 @@ export type Database = {
             columns: ["owner_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workspaces_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
             referencedColumns: ["id"]
           },
         ]
