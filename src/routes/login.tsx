@@ -51,7 +51,7 @@ function Login() {
       {error && <p role="alert" className="text-destructive">{error}</p>}
       {info && <p role="status">{info}</p>}
       <Button type="submit" variant="primary" disabled={busy}>{busy ? 'Please wait…' : mode === 'signin' ? 'Log in' : 'Sign up'}</Button>
-      <Button type="button" variant="secondary" onClick={google}><Icon name="LogIn" /> Continue with Google</Button>
+      <Button type="button" variant="secondary" onClick={google}>Continue with Google</Button>
       <Button type="button" variant="quiet" onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(''); setInfo('') }}>
         {mode === 'signin' ? 'New here? Create an account' : 'Already have an account? Log in'}
       </Button>
