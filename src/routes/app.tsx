@@ -227,7 +227,7 @@ function Workspace() {
               </Answer>}
         </div>)}
       </div>}
-      {thread.length === 0 && <div className="engineering-questions">{suggestedQuestions.map(q => <Button key={q} variant="ghost" size="sm" onClick={() => void ask(q)} disabled={asking || !activeWorkspace}>{q}</Button>)}</div>}
+      {thread.length === 0 && <div className="engineering-questions">{suggestedQuestions.map(q => <Button key={q} variant="ghost" size="sm" onClick={() => void ask(q)} disabled={asking || !activeWorkspace}><span className="whitespace-normal text-left">{q}</span></Button>)}</div>}
       <Composer onSend={q => void ask(q)} onUpload={openUpload} onAddLink={openLink} loading={asking} placeholder={asking ? 'Thinking…' : 'Ask a question…'} />
       {dataLoading
         ? <p className="workspace-status" role="status">Loading your workspace…</p>

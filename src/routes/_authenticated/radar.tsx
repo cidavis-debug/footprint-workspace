@@ -19,7 +19,7 @@ export const Route = createFileRoute('/_authenticated/radar')({
   loader: ({ context, deps }) => context.queryClient.ensureQueryData(radarQuery(deps.workspace)),
   head: () => pageHead('Radar — Footprint', 'Review possible engineering conflicts, constraints, interfaces, and assumptions with their supporting evidence.'),
   pendingComponent: () => <main className="site-width"><p className="workspace-status" role="status">Opening Radar…</p></main>,
-  errorComponent: ({ error, reset }) => <main className="site-width"><h1 className="font-heading text-greeting">Radar unavailable</h1><p role="alert">{error.message}</p><Button variant="quiet" onClick={reset}>Try again</Button><Link to="/app" className="site-link">Return to chat</Link></main>,
+  errorComponent: ({ error, reset }) => <main className="site-width"><h1 className="font-heading text-greeting">Radar unavailable</h1><p role="alert">{error instanceof Error ? error.message : 'Could not load Radar.'}</p><Button variant="quiet" onClick={reset}>Try again</Button><Link to="/app" className="site-link">Return to chat</Link></main>,
   component: Radar,
 })
 function Radar() {
