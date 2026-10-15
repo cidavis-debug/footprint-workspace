@@ -7,7 +7,7 @@ import { analyzeEngineeringSource } from '@/lib/engineering.functions'
 import { EngineeringAlerts, SourceEngineering } from '@/components/engineering-context'
 import { pageHead } from '@/components/page-head'
 import { Illustration } from '@/components/illustration'
-import { type WorkspaceNode } from '@/components/workspace-picker'
+import { useWorkspaces } from '@/features/workspace/use-workspaces'
 import { AppShell } from '@/components/app-shell'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/integrations/supabase/client'
@@ -15,7 +15,6 @@ import { SourceEvidenceDrawer } from '@/components/source-evidence-drawer'
 import { getRadar } from '@/lib/radar.functions'
 import { suggestedQuestions, type EngineeringClaim, type EngineeringSource } from '@/lib/engineering-data'
 
-type Workspace = WorkspaceNode
 type Collection = { id: string; name: string; description: string | null }
 type Source = { id: string; title: string; source_type: string; status: string; collection_id: string | null; engineering_analysis_status: string; engineering_summary: string | null }
 
@@ -33,15 +32,13 @@ function Workspace() {
   const [sourcesOpen, setSourcesOpen] = useState(false)
   useEffect(() => { if (requestedSources) setSourcesOpen(true) }, [requestedSources])
   const [notice, setNotice] = useState('')
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([])
-  const [activeWorkspace, setActiveWorkspace] = useState('')
   const [collections, setCollections] = useState<Collection[]>([])
   const [sources, setSources] = useState<Source[]>([])
-  const [dataLoading, setDataLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [linkOpen, setLinkOpen] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
   const [busy, setBusy] = useState(false)
+  const { workspaces, activeWorkspace, setActiveWorkspace, dataLoading, currentWorkspace, createWorkspace } = useWorkspaces({ user, requestedWorkspace, setNotice, setBusy })
   const [collectionName, setCollectionName] = useState('')
   const [thread, setThread] = useState<{ question: string; answer: string; citations: Citation[]; pending: boolean }[]>([])
   const [asking, setAsking] = useState(false)
@@ -55,7 +52,6 @@ function Workspace() {
   const evidenceFn = useServerFn(getRadar)
   const [evidence, setEvidence] = useState<{ source: EngineeringSource; claims: EngineeringClaim[]; quote: string } | null>(null)
   const requestId = useRef(0)
-  const currentWorkspace = useRef(activeWorkspace)
   const mainRef = useRef<HTMLElement>(null)
   const dockRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
@@ -65,24 +61,7 @@ function Workspace() {
     ro.observe(dock)
     return () => ro.disconnect()
   })
-  currentWorkspace.current = activeWorkspace
   useEffect(() => { setThread([]); setEvidence(null) }, [activeWorkspace])
-
-  useEffect(() => {
-    if (!user) return
-    let cancelled = false
-    setDataLoading(true)
-    void (async () => {
-      const { data: ws } = await supabase.from('workspaces').select('id, name, parent_id').order('created_at')
-      if (cancelled) return
-      const list = ws ?? []
-      setWorkspaces(list)
-      const first = list[0]?.id ?? ''
-      setActiveWorkspace(current => list.some(w => w.id === requestedWorkspace) ? requestedWorkspace ?? first : current || first)
-      setDataLoading(false)
-    })()
-    return () => { cancelled = true }
-  }, [user, requestedWorkspace])
 
   useEffect(() => {
     if (!activeWorkspace) { setCollections([]); setSources([]); return }
@@ -202,17 +181,6 @@ function Workspace() {
 
   const openUpload = () => fileInput.current?.click()
   const openLink = () => { setLinkOpen(true); setSourcesOpen(true) }
-
-  const createWorkspace = async (name: string, parentId: string | null) => {
-    if (!user) return
-    setBusy(true)
-    const { data, error } = await supabase.from('workspaces').insert({ owner_id: user.id, name, parent_id: parentId }).select('id, name, parent_id').single()
-    setBusy(false)
-    if (error) { setNotice(`Could not create workspace: ${error.message}`); return }
-    setWorkspaces(w => [...w, data])
-    setActiveWorkspace(data.id)
-    setNotice(`Workspace “${name}” created.`)
-  }
 
   return <AppShell workspaces={workspaces} value={activeWorkspace} onChange={setActiveWorkspace} onCreate={createWorkspace} busy={busy} mode="ask" email={user.email ?? null} onSources={() => setSourcesOpen(true)} onSignOut={signOut}>
     <main className="chat-main" ref={mainRef}>
