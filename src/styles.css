@@ -1,7 +1,34 @@
 @import "tailwindcss" source(none);
 @import "./design-system/footprint-0a8b1a/styles.css";
+@import "./design-system/apple-inspired-bec754/design-system/theme.css";
 @source "../src";
 @source "./design-system/footprint-0a8b1a/**/*.{ts,tsx,css}";
+@source "./design-system/apple-inspired-bec754/**/*.{ts,tsx,css}";
+
+/* Compatibility names for existing pages; the attached system owns the values. */
+:root {
+  --font-heading: var(--font-display);
+  --font-body: var(--font-sans);
+  --ink: var(--foreground);
+  --card: var(--surface);
+  --text-wordmark: var(--text-h3);
+  --text-hero: var(--text-display);
+  --text-greeting: var(--text-h1);
+  --text-section: var(--text-h2);
+  --leading-heading: var(--text-h1--line-height);
+  --leading-body: var(--text-body--line-height);
+  --leading-label: var(--text-label--line-height);
+  --radius-button: var(--radius-md);
+  --radius-composer: var(--radius-lg);
+  --radius-panel: var(--radius-lg);
+  --shadow-floating: var(--shadow-soft);
+  --duration-panel: var(--duration-normal);
+  --control-min-height: var(--control-lg);
+  --icon-size: var(--space-5);
+  /* Preserve the explicitly requested blue/cream review treatment. */
+  --engineering-review-background: #305a83;
+  --engineering-review-foreground: #f4ebdd;
+}
 
 .site-width { width: 100%; max-width: var(--width-page); margin-inline: auto; padding-inline: var(--page-gutter); }
 .top-scroll-fade { position: absolute; top: calc(-1 * var(--space-4)); bottom: calc(-1 * var(--space-6)); left: 0; width: 100%; background: linear-gradient(to bottom, var(--background) 0, var(--background) calc(100% - var(--space-6) + var(--space-2)), transparent 100%); pointer-events: none; z-index: -1; }
@@ -293,7 +320,7 @@
 .engineering-severity[data-severity="high"] { background: var(--destructive); color: var(--card); }
 .engineering-severity[data-severity="medium"] { background: var(--engineering-medium); color: var(--card); }
 .engineering-severity[data-severity="low"] { background: var(--engineering-low); color: var(--ink); }
-.engineering-review-heading { cursor: pointer; background: var(--primary); color: var(--primary-foreground); padding-block: var(--space-3); padding-inline: var(--space-4); border-radius: var(--radius-button); font-family: var(--font-heading); font-size: var(--text-body); }
+.engineering-review-heading { cursor: pointer; background: var(--engineering-review-background); color: var(--engineering-review-foreground); padding-block: var(--space-3); padding-inline: var(--space-4); border-radius: var(--radius-button); font-family: var(--font-heading); font-size: var(--text-body); }
 .engineering-review-heading:focus-visible, .engineering-summary:focus-visible { outline-width: var(--border-width); outline-style: solid; outline-color: var(--primary); outline-offset: var(--space-1); }
 .engineering-summary { cursor: pointer; color: var(--primary); font-weight: var(--weight-medium); }
 .radar-main { max-width: var(--width-chat); margin-inline: auto; padding-block: var(--space-7); }

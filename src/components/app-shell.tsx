@@ -1,7 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import { ChevronRight } from 'lucide-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { Button, Icon, Input } from '@/design-system/footprint-0a8b1a'
+import { Button, Input } from '@/design-system/apple-inspired-bec754'
+import { ChevronDown, Folder, Plus } from 'lucide-react'
 import { Brand } from '@/components/brand'
 import { WorkspacePicker, type WorkspaceNode } from '@/components/workspace-picker'
 
@@ -53,31 +54,31 @@ export function AppShell({ workspaces, value, onChange, onCreate, busy, mode, em
         {mains.map(w => { const kids = workspaces.filter(k => k.parent_id === w.id); const open = flyout === w.id || activeMain === w.id; return <li key={w.id}>
           <div className="app-rail-row">
             <button type="button" className="app-rail-item" data-active={value === w.id} aria-current={value === w.id ? 'true' : undefined} onClick={() => onChange(w.id)}>{w.name}</button>
-            <button type="button" className="app-rail-toggle" aria-label={`${open ? 'Collapse' : 'Expand'} ${w.name}`} aria-expanded={open} onClick={() => setFlyout(f => f === w.id ? null : w.id)}>{open ? <Icon name="ChevronDown" /> : <ChevronRight className="fp-icon" />}</button>
+            <button type="button" className="app-rail-toggle" aria-label={`${open ? 'Collapse' : 'Expand'} ${w.name}`} aria-expanded={open} onClick={() => setFlyout(f => f === w.id ? null : w.id)}>{open ? <ChevronDown className="fp-icon" aria-hidden="true" /> : <ChevronRight className="fp-icon" />}</button>
           </div>
           {open && <ul className="app-rail-subs">
             {kids.map(k => <li key={k.id}><button type="button" className="app-rail-sub" data-active={value === k.id} aria-current={value === k.id ? 'true' : undefined} onClick={() => onChange(k.id)}>{k.name}</button></li>)}
             {onCreate && <li><form className="flex gap-1" onSubmit={e => { e.preventDefault(); void create(subName, w.id, () => setSubName('')) }}>
               <Input aria-label={`New sub-workspace in ${w.name}`} placeholder="New sub-workspace…" value={subName} onChange={e => setSubName(e.target.value)} />
-              <Button type="submit" variant="quiet" size="icon" disabled={busy} aria-label="Create sub-workspace" title="Create sub-workspace"><Icon name="Plus" /></Button>
+              <Button type="submit" variant="ghost" size="icon" disabled={busy} aria-label="Create sub-workspace" title="Create sub-workspace"><Plus className="fp-icon" aria-hidden="true" /></Button>
             </form></li>}
           </ul>}
         </li> })}
       </ul>
-      {onCreate && <Button variant="quiet" size="sm" aria-expanded={adding} onClick={() => setAdding(a => !a)}><Icon name="Plus" /> Add workspace</Button>}
+      {onCreate && <Button variant="ghost" size="sm" aria-expanded={adding} onClick={() => setAdding(a => !a)}><Plus className="fp-icon" aria-hidden="true" /> Add workspace</Button>}
       {adding && <form className="app-rail-flyout app-rail-flyout-bottom flex gap-1" onSubmit={e => { e.preventDefault(); void create(name, null, () => setName('')) }}>
         <Input aria-label="New workspace name" placeholder="New workspace…" value={name} onChange={e => setName(e.target.value)} autoFocus />
-        <Button type="submit" variant="quiet" size="icon" disabled={busy} aria-label="Create workspace" title="Create workspace"><Icon name="Plus" /></Button>
+        <Button type="submit" variant="ghost" size="icon" disabled={busy} aria-label="Create workspace" title="Create workspace"><Plus className="fp-icon" aria-hidden="true" /></Button>
       </form>}
     </nav>
     <div className="app-body">
       <header className="app-header">
         <div className="app-mobile-workspaces"><WorkspacePicker workspaces={workspaces} value={value} onChange={onChange} {...(onCreate ? { onCreate } : {})} {...(busy !== undefined ? { busy } : {})} /></div>
         <span className="app-header-title">{title}</span>
-        {onSources && <Button variant="quiet" size="sm" onClick={onSources}><Icon name="Folder" /> Sources</Button>}
+        {onSources && <Button variant="ghost" size="sm" onClick={onSources}><Folder className="fp-icon" aria-hidden="true" /> Sources</Button>}
         <span className="app-header-spacer" />
         {email && <span className="app-header-email">{email}</span>}
-        {onSignOut && <Button variant="quiet" size="sm" onClick={onSignOut}>Log out</Button>}
+        {onSignOut && <Button variant="ghost" size="sm" onClick={onSignOut}>Log out</Button>}
       </header>
       <div className="app-mode" role="tablist" aria-label="Mode">
         <Link to="/app" search={value ? { workspace: value } : {}} role="tab" aria-selected={mode === 'ask'} className="app-mode-tab" data-active={mode === 'ask'}>Ask</Link>
