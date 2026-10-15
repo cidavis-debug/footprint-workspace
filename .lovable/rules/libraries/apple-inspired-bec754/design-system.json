@@ -1,0 +1,1267 @@
+{
+  "meta": {
+    "name": "Apple_inspired",
+    "package": "@ws-3242f392178b566f79b6/e8d96ff4-7fc4-4fd5-a3c0-8876b290ed5c",
+    "version": "1.0.0",
+    "framework": "react",
+    "css_framework": "tailwind",
+    "starter_template": "custom_design_system",
+    "theme_files": [
+      "src/design-system/theme.css"
+    ],
+    "source_type": "local",
+    "source_manifest": {
+      "#enrichment": "d843dfa22ac94891b4e4e4eee6b41b91a89873b2da793e29078e02de8f916bb5",
+      ".dsignore": "48b755bfe30315a92b675843f3cabb0a",
+      ".gitignore": "6059213806e442947666752f3db6bfdc",
+      ".lovable/meta.yaml": "86a17ac0d6b10fddfde4cdc325cb93a7",
+      ".lovable/sources.yaml": "74c6c103fc6a8c4a782cf891c30329be",
+      ".lovable/system.md": "ae67315341b330f0aa50f2eafa648455",
+      "AGENTS.md": "0f8ea2c2f28a846214e1569819662f3f",
+      "README.md": "d19675c449605f23c7cfa133c69b398b",
+      "bunfig.toml": "25f4c8696b22b0943db7191e0cdf7942",
+      "eslint.config.js": "07a67437fb1a45ab36d6de0145ff09de",
+      "lovable.toml": "b32568cbef680de9cbb176344986f1a3",
+      "mockupPreviewPlugin.ts": "a6cce6578baacdf702fc6a3fc3e44395",
+      "package.json": "dd68e38269f85feaedd8bd1d4bade0cb",
+      "public/favicon.ico": "9f504444f85a5af2eef9264b02ae40be",
+      "roadmap.md": "b82bb4a6fb5eb22b2f52db7efb26924c",
+      "src/assets/fonts/geist-latin-400-normal.woff2": "56809efdfa4e42b32e3ea87e024ddcb7",
+      "src/assets/fonts/geist-latin-500-normal.woff2": "10c3a6c65729628712239bb6a86a1c3a",
+      "src/assets/fonts/geist-latin-600-normal.woff2": "c5fb39ae6acec6e07b7a450e92ee031c",
+      "src/assets/fonts/geist-latin-700-normal.woff2": "6c351f5556aef684e09cd38479604b7e",
+      "src/assets/fonts/space-mono-latin-400-normal.woff2": "049dfc5919c21896a13296775d80b8c0",
+      "src/assets/fonts/space-mono-latin-700-normal.woff2": "e5e908997a453e21f2fe41cb72e186d2",
+      "src/assets/fonts/tektur-latin-400-normal.woff2": "7886e80813561df8219e438c2fd48411",
+      "src/assets/fonts/tektur-latin-500-normal.woff2": "6a616e7e5bf825d4adf2333988b90156",
+      "src/assets/fonts/tektur-latin-600-normal.woff2": "46dfeb1104ebad6e8956b77221bbb3e5",
+      "src/assets/fonts/tektur-latin-700-normal.woff2": "d59e7837b8313a0657334f7f21949361",
+      "src/assets/photography/precision-assembly.jpg": "7c4fc2960b029133276974c842443e5b",
+      "src/design-system/button.tsx": "44207b91bdc54f123d0a4ad635e1a7ce",
+      "src/design-system/chat.tsx": "ee977ca037226be96f7aaa809c2848a1",
+      "src/design-system/fields.tsx": "a4ce85a4238f35826d25a283df80bf83",
+      "src/design-system/navigation.tsx": "ed1d08d2edc7350acdbf7b008d967fdf",
+      "src/design-system/overlays.tsx": "f9e0231ac43800e9592077d9b796e6c1",
+      "src/design-system/surfaces.tsx": "0e696796dab8d3c564e44a364e8eb6af",
+      "src/design-system/theme.css": "61ee4a01b7d12a1c11ff87acd0944815",
+      "src/design-system/utils.ts": "2879cb9c5a49fe4a9db577c6e77e1250",
+      "src/index.ts": "5646b68f14518b868613890289da99dd",
+      "src/lib/utils.ts": "2879cb9c5a49fe4a9db577c6e77e1250",
+      "src/mockup-preview.d.ts": "ae9d81e2b8514e13fd59b5b6bece9a64",
+      "src/routeTree.gen.ts": "4ef7c43d4d3adf989f5897cc1257a093",
+      "src/router.tsx": "8f905e713b0eba7fa8148b7995a708c9",
+      "src/routes/[__component].preview.$.tsx": "e63e4b151fa738d36cb24710d2dbea18",
+      "src/routes/[__mockup].preview.$.tsx": "bc9ea23fc46521b323ef461c9e77ff48",
+      "src/routes/__root.tsx": "e174ed34aa864c1b54d1440eca7bafa6",
+      "src/routes/design-system.colors.tsx": "2e8d268cfab59a0366a6c8e080920426",
+      "src/routes/design-system.components.tsx": "d84ce3240db253e7b728837ba1a3f510",
+      "src/routes/design-system.iconography.tsx": "e4d3605fcce3f16c3d9c8478978decea",
+      "src/routes/design-system.index.tsx": "d6eae8d26675cb4b3f85d02723b2d062",
+      "src/routes/design-system.materials.tsx": "caf93eba83cd6a6255b3748a82305fff",
+      "src/routes/design-system.tsx": "ae9ce8579efd4b2bb332dc65cf7fced4",
+      "src/routes/design-system.typography.tsx": "7bc64a02eadc8cc5f59c203d8fc84b2c",
+      "src/routes/index.tsx": "b7397e7e415ef45c0447b108acf95220",
+      "src/showcase/catalog.tsx": "cfe1332f6efd1f212d8b0c4b2997185e",
+      "src/showcase/components.tsx": "76ad58c82b09a5393838a9c48046c019",
+      "src/showcase/foundations.tsx": "580191ff1cfa8bc1ad12aae9ebb658c5",
+      "src/showcase/overview.tsx": "d7645cfc9455566b056e677edfbe407f",
+      "src/showcase/shell.tsx": "a53bacfdde0e7c351b23a9c8e980f810",
+      "src/showcase/showcase.css": "91ee5360dc1e813405dfac1d3f8f9bf4",
+      "src/styles.css": "db0cec63427dd04b02e398ce09d87157",
+      "tsconfig.json": "994abf64c2b9f78b568879f80ed0170e",
+      "vite.config.ts": "622315d921a1f9d00cb5a8a3f7a521f8",
+      "wrangler.jsonc": "680b897d48e44bcc65fe437c29b38f3b"
+    },
+    "pipeline_version": 8
+  },
+  "tokens": {
+    "color": [
+      {
+        "name": "--stormtrooper",
+        "raw": "#e8eaed",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--white",
+        "raw": "#ffffff",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--cloud",
+        "raw": "#f4f6f8",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--obsidian",
+        "raw": "#08090c",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--graphite",
+        "raw": "#12151b",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--slate",
+        "raw": "#1e2930",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--orange",
+        "raw": "#ff5e00",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--warning-orange",
+        "raw": "#ff3b00",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--background",
+        "raw": "#f4f6f8",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--surface",
+        "raw": "#ffffff",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--surface-secondary",
+        "raw": "#e8eaed",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--foreground",
+        "raw": "#12151b",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--muted-foreground",
+        "raw": "#626b78",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--subtle-foreground",
+        "raw": "#737d8b",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--border",
+        "raw": "#dce0e5",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--primary",
+        "raw": "#ff5e00",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--primary-foreground",
+        "raw": "#08090c",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--primary-hover",
+        "raw": "#e65300",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--primary-active",
+        "raw": "#d94b00",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--accent",
+        "raw": "#fff0e5",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--accent-foreground",
+        "raw": "#a63d00",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--success",
+        "raw": "#137b53",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--success-surface",
+        "raw": "#e7f5ee",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--warning",
+        "raw": "#b54100",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--warning-surface",
+        "raw": "#fff0e5",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--destructive",
+        "raw": "#bd3337",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--destructive-surface",
+        "raw": "#fcebed",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--info",
+        "raw": "#3466a7",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--info-surface",
+        "raw": "#eaf1fb",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--focus",
+        "raw": "#a63d00",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--disabled",
+        "raw": "#e3e6ea",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--disabled-foreground",
+        "raw": "#7b8490",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--charcoal",
+        "raw": "#12151b",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--charcoal-foreground",
+        "raw": "#ffffff",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--charcoal-muted",
+        "raw": "#aeb6c2",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--glass",
+        "raw": "#ffffffb8",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--glass-border",
+        "raw": "#ffffffd6",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--signal-border",
+        "raw": "#ff5e0052",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--overlay",
+        "raw": "#08090c70",
+        "source": "src/design-system/theme.css"
+      }
+    ],
+    "spacing": [
+      {
+        "name": "--space-1",
+        "raw": "4px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--space-2",
+        "raw": "8px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--space-3",
+        "raw": "12px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--space-4",
+        "raw": "16px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--space-5",
+        "raw": "20px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--space-6",
+        "raw": "24px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--space-8",
+        "raw": "32px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--space-10",
+        "raw": "40px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--space-12",
+        "raw": "48px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--space-16",
+        "raw": "64px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--space-20",
+        "raw": "80px",
+        "source": "src/design-system/theme.css"
+      }
+    ],
+    "typography": [
+      {
+        "name": "--font-sans",
+        "raw": "Geist, sans-serif",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--font-display",
+        "raw": "Tektur, sans-serif",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--font-mono",
+        "raw": "'Space Mono', monospace",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-display",
+        "raw": "56px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-display--line-height",
+        "raw": "1.12",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-h1",
+        "raw": "40px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-h1--line-height",
+        "raw": "1.2",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-h2",
+        "raw": "32px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-h2--line-height",
+        "raw": "1.25",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-h3",
+        "raw": "24px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-h3--line-height",
+        "raw": "1.3",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-h4",
+        "raw": "20px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-h4--line-height",
+        "raw": "1.4",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-body",
+        "raw": "14px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-body--line-height",
+        "raw": "1.65",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-label",
+        "raw": "13px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-label--line-height",
+        "raw": "1.5",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-caption",
+        "raw": "12px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-caption--line-height",
+        "raw": "1.6",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-technical",
+        "raw": "10px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--text-technical--line-height",
+        "raw": "1.6",
+        "source": "src/design-system/theme.css"
+      }
+    ],
+    "radius": [
+      {
+        "name": "--radius-sm",
+        "raw": "4px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--radius-md",
+        "raw": "8px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--radius-lg",
+        "raw": "8px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--radius-pill",
+        "raw": "9999px",
+        "source": "src/design-system/theme.css"
+      }
+    ],
+    "shadow": [
+      {
+        "name": "--shadow-soft",
+        "raw": "0 4px 16px #12151b06, 0 1px 3px #12151b05",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--shadow-elevated",
+        "raw": "0 16px 48px #12151b14",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--shadow-signal",
+        "raw": "0 3px 12px #ff5e0024",
+        "source": "src/design-system/theme.css"
+      }
+    ],
+    "other": [
+      {
+        "name": "--duration-fast",
+        "raw": "140ms",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--duration-normal",
+        "raw": "220ms",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--ease-standard",
+        "raw": "cubic-bezier(.2,.8,.2,1)",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--blur-glass",
+        "raw": "16px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--glass-saturate",
+        "raw": "150%",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--control-sm",
+        "raw": "32px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--control-md",
+        "raw": "40px",
+        "source": "src/design-system/theme.css"
+      },
+      {
+        "name": "--control-lg",
+        "raw": "48px",
+        "source": "src/design-system/theme.css"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Button",
+      "file": "src/design-system/button",
+      "import_path": "",
+      "props": [
+        {
+          "name": "variant",
+          "type": "enum",
+          "values": [
+            "primary",
+            "secondary",
+            "ghost",
+            "destructive",
+            "icon"
+          ],
+          "default": "primary"
+        },
+        {
+          "name": "size",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg",
+            "icon"
+          ],
+          "default": "md"
+        },
+        {
+          "name": "loading",
+          "type": "boolean"
+        }
+      ],
+      "usage": "Use Button for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cButton variant=\"primary\"\u003eAnalyze assembly\u003c/Button\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "Input",
+      "file": "src/design-system/fields",
+      "import_path": "",
+      "props": [
+        {
+          "name": "size",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        }
+      ],
+      "usage": "Use Input for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cInput id=\"project\" aria-label=\"Project name\" defaultValue=\"M6 fastener redesign\" /\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "SearchField",
+      "file": "src/design-system/fields",
+      "import_path": "",
+      "usage": "Use SearchField for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cSearchField aria-label=\"Search sources\" placeholder=\"Search sources…\" /\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "Textarea",
+      "file": "src/design-system/fields",
+      "import_path": "",
+      "usage": "Use Textarea for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cTextarea aria-label=\"Engineering notes\" placeholder=\"Add assembly notes…\" /\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "Select",
+      "file": "src/design-system/fields",
+      "import_path": "",
+      "props": [
+        {
+          "name": "size",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        }
+      ],
+      "usage": "Use Select for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cSelect aria-label=\"Workspace\"\u003e\u003coption\u003ePropulsion team\u003c/option\u003e\u003c/Select\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "Card",
+      "file": "src/design-system/surfaces",
+      "import_path": "",
+      "props": [
+        {
+          "name": "variant",
+          "type": "enum",
+          "values": [
+            "matte",
+            "glass",
+            "charcoal",
+            "signal"
+          ],
+          "default": "matte"
+        },
+        {
+          "name": "size",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        }
+      ],
+      "usage": "Use Card for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cCard variant=\"matte\"\u003e\u003ch3\u003eAssembly review\u003c/h3\u003e\u003cp\u003eRevision B is ready.\u003c/p\u003e\u003c/Card\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "Badge",
+      "file": "src/design-system/surfaces",
+      "import_path": "",
+      "props": [
+        {
+          "name": "variant",
+          "type": "enum",
+          "values": [
+            "neutral",
+            "success",
+            "warning",
+            "error",
+            "info"
+          ],
+          "default": "matte"
+        },
+        {
+          "name": "size",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md"
+          ],
+          "default": "md"
+        }
+      ],
+      "usage": "Use Badge for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cBadge variant=\"success\"\u003eAnalyzed\u003c/Badge\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "Alert",
+      "file": "src/design-system/surfaces",
+      "import_path": "",
+      "props": [
+        {
+          "name": "variant",
+          "type": "enum",
+          "values": [
+            "warning",
+            "success",
+            "error",
+            "info"
+          ],
+          "default": "matte"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "usage": "Use Alert for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cAlert variant=\"warning\" title=\"Potential interference\"\u003eReview clearance in revision B.\u003c/Alert\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "SourceCard",
+      "file": "src/design-system/surfaces",
+      "import_path": "",
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "metadata",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "type": "enum",
+          "values": [
+            "connected",
+            "pending"
+          ],
+          "default": "connected"
+        }
+      ],
+      "usage": "Use SourceCard for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cSourceCard title=\"Assembly specification\" metadata=\"REV B · 12 pages\" onClick={openSource} /\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "Progress",
+      "file": "src/design-system/surfaces",
+      "import_path": "",
+      "props": [
+        {
+          "name": "value",
+          "type": "number",
+          "required": true
+        },
+        {
+          "name": "variant",
+          "type": "enum",
+          "values": [
+            "primary",
+            "success"
+          ],
+          "default": "matte"
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "default": "Progress"
+        }
+      ],
+      "usage": "Use Progress for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cProgress value={72} label=\"Assembly analysis\" /\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "StatePanel",
+      "file": "src/design-system/surfaces",
+      "import_path": "",
+      "props": [
+        {
+          "name": "variant",
+          "type": "enum",
+          "values": [
+            "empty",
+            "loading",
+            "error"
+          ],
+          "default": "matte"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "usage": "Use StatePanel for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cStatePanel variant=\"empty\" title=\"No sources connected\"\u003eAdd your first specification.\u003c/StatePanel\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "SegmentedControl",
+      "file": "src/design-system/navigation",
+      "import_path": "",
+      "props": [
+        {
+          "name": "options",
+          "type": "any",
+          "required": true
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "onValueChange",
+          "type": "function",
+          "required": true
+        },
+        {
+          "name": "variant",
+          "type": "enum",
+          "values": [
+            "pill",
+            "tabs"
+          ],
+          "default": "pill"
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "default": "Primary",
+          "required": true
+        }
+      ],
+      "usage": "Use SegmentedControl for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cSegmentedControl label=\"Analysis mode\" value={mode} onValueChange={setMode} options={[{value:\"ask\",label:\"Ask mode\"},{value:\"radar\",label:\"Radar mode\"}]} /\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "SidebarItem",
+      "file": "src/design-system/navigation",
+      "import_path": "",
+      "props": [
+        {
+          "name": "active",
+          "type": "boolean"
+        },
+        {
+          "name": "icon",
+          "type": "any"
+        },
+        {
+          "name": "trailing",
+          "type": "any"
+        }
+      ],
+      "usage": "Use SidebarItem for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cSidebarItem active onClick={selectProject}\u003eM6 fastener redesign\u003c/SidebarItem\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "NavigationHeader",
+      "file": "src/design-system/navigation",
+      "import_path": "",
+      "props": [
+        {
+          "name": "brand",
+          "type": "any",
+          "required": true
+        },
+        {
+          "name": "actions",
+          "type": "any"
+        }
+      ],
+      "usage": "Use NavigationHeader for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cNavigationHeader brand=\"Footprint\" actions={\u003cButton\u003eOpen workspace\u003c/Button\u003e}\u003e\u003ca href=\"/sources\"\u003eSources\u003c/a\u003e\u003c/NavigationHeader\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "WorkspaceLayout",
+      "file": "src/design-system/navigation",
+      "import_path": "",
+      "props": [
+        {
+          "name": "navigation",
+          "type": "any",
+          "required": true
+        },
+        {
+          "name": "inspector",
+          "type": "any"
+        }
+      ],
+      "usage": "Use WorkspaceLayout for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cWorkspaceLayout navigation={\u003cProjectNavigation /\u003e} inspector={\u003cSourceInspector /\u003e}\u003e\u003cAssemblyReview /\u003e\u003c/WorkspaceLayout\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "Dialog",
+      "file": "src/design-system/overlays",
+      "import_path": "",
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "trigger",
+          "type": "any",
+          "required": true
+        },
+        {
+          "name": "open",
+          "type": "boolean"
+        },
+        {
+          "name": "onOpenChange",
+          "type": "function"
+        }
+      ],
+      "usage": "Use Dialog for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cDialog trigger=\"Review changes\" title=\"Approve revision\" description=\"Confirm this engineering revision.\"\u003e\u003cButton\u003eApprove revision\u003c/Button\u003e\u003c/Dialog\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "Drawer",
+      "file": "src/design-system/overlays",
+      "import_path": "",
+      "usage": "Use Drawer for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cDrawer trigger=\"Connected sources\" title=\"Sources\" description=\"Assembly evidence\"\u003e\u003cSourceCard title=\"Jira specification\" /\u003e\u003c/Drawer\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "Tooltip",
+      "file": "src/design-system/overlays",
+      "import_path": "",
+      "props": [
+        {
+          "name": "content",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "usage": "Use Tooltip for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cTooltip content=\"Copy source link\"\u003e\u003cLinkIcon /\u003e\u003c/Tooltip\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "Popover",
+      "file": "src/design-system/overlays",
+      "import_path": "",
+      "props": [
+        {
+          "name": "trigger",
+          "type": "any",
+          "required": true
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "default": "Close dialog",
+          "required": true
+        }
+      ],
+      "usage": "Use Popover for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cPopover label=\"Source details\" trigger=\"Revision details\"\u003e\u003cp\u003eRevision B · Approved\u003c/p\u003e\u003c/Popover\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "ChatMessage",
+      "file": "src/design-system/chat",
+      "import_path": "",
+      "props": [
+        {
+          "name": "variant",
+          "type": "enum",
+          "values": [
+            "user",
+            "assistant"
+          ],
+          "default": "assistant"
+        },
+        {
+          "name": "author",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "timestamp",
+          "type": "string"
+        }
+      ],
+      "usage": "Use ChatMessage for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cChatMessage author=\"Footprint AI\" variant=\"assistant\"\u003eThe assembly needs a clearance review.\u003c/ChatMessage\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "ChatComposer",
+      "file": "src/design-system/chat",
+      "import_path": "",
+      "props": [
+        {
+          "name": "onSend",
+          "type": "function",
+          "required": true
+        },
+        {
+          "name": "loading",
+          "type": "boolean"
+        },
+        {
+          "name": "placeholder",
+          "type": "string",
+          "default": "Ask about your engineering data…"
+        }
+      ],
+      "usage": "Use ChatComposer for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cChatComposer onSend={sendMessage} /\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    },
+    {
+      "name": "Citation",
+      "file": "src/design-system/chat",
+      "import_path": "",
+      "props": [
+        {
+          "name": "href",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "required": true
+        }
+      ],
+      "usage": "Use Citation for its named interface role in Footprint engineering workflows. Compose it with semantic tokens and the other library controls.",
+      "examples": [
+        {
+          "label": "Engineering workflow",
+          "code": "\u003cCitation href=\"/sources/assembly\" index={1}\u003eAssembly specification\u003c/Citation\u003e"
+        }
+      ],
+      "antipatterns": [
+        "Do not substitute raw color or material values for semantic tokens.",
+        "Do not remove accessible labels or keyboard behavior."
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "file": "src/assets/fonts/geist-latin-400-normal.woff2",
+      "kind": "font",
+      "format": "woff2"
+    },
+    {
+      "file": "src/assets/fonts/geist-latin-500-normal.woff2",
+      "kind": "font",
+      "format": "woff2"
+    },
+    {
+      "file": "src/assets/fonts/geist-latin-600-normal.woff2",
+      "kind": "font",
+      "format": "woff2"
+    },
+    {
+      "file": "src/assets/fonts/geist-latin-700-normal.woff2",
+      "kind": "font",
+      "format": "woff2"
+    },
+    {
+      "file": "src/assets/fonts/space-mono-latin-400-normal.woff2",
+      "kind": "font",
+      "format": "woff2"
+    },
+    {
+      "file": "src/assets/fonts/space-mono-latin-700-normal.woff2",
+      "kind": "font",
+      "format": "woff2"
+    },
+    {
+      "file": "src/assets/fonts/tektur-latin-400-normal.woff2",
+      "kind": "font",
+      "format": "woff2"
+    },
+    {
+      "file": "src/assets/fonts/tektur-latin-500-normal.woff2",
+      "kind": "font",
+      "format": "woff2"
+    },
+    {
+      "file": "src/assets/fonts/tektur-latin-600-normal.woff2",
+      "kind": "font",
+      "format": "woff2"
+    },
+    {
+      "file": "src/assets/fonts/tektur-latin-700-normal.woff2",
+      "kind": "font",
+      "format": "woff2"
+    },
+    {
+      "file": "src/assets/photography/precision-assembly.jpg",
+      "kind": "photography",
+      "format": "jpg"
+    }
+  ]
+}
