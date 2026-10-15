@@ -1,7 +1,9 @@
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Answer, Button, CitationChip, Composer, Icon, Input, SourceItem, SourcesDrawer } from '@/design-system/footprint-0a8b1a'
+import { Button, Input } from '@/design-system/apple-inspired-bec754'
+import { Answer, CitationChip, Composer, SourceItem, SourcesDrawer } from '@/design-system/footprint-0a8b1a'
+import { FilePlus2, Link2, Sparkles, X } from 'lucide-react'
 import { askFootprint, type Citation } from '@/lib/ask.functions'
 import { analyzeEngineeringSource } from '@/lib/engineering.functions'
 import { EngineeringAlerts, SourceEngineering } from '@/components/engineering-context'
@@ -245,7 +247,7 @@ function Workspace() {
           <p className="workspace-status">{dataLoading ? 'Loading your workspace…' : workspaces.length > 0 ? `Answering from “${workspaces.find(w => w.id === activeWorkspace)?.name ?? 'Personal'}” sources.` : 'No workspace found for this account.'}</p>
           <div className="chat-composer-row">
             <Composer className="flex-1" onSend={q => void ask(q)} onUpload={openUpload} onAddLink={openLink} disabled={asking} placeholder={asking ? 'Thinking…' : 'Ask a question…'} />
-            {asking && <Button variant="primary" size="icon" aria-label="Stop generating" title="Stop generating" onClick={stop}><Icon name="X" /></Button>}
+            {asking && <Button variant="primary" size="icon" aria-label="Stop generating" title="Stop generating" onClick={stop}><X className="fp-icon" aria-hidden="true" /></Button>}
           </div>
         </div></div>
       </div>
@@ -254,18 +256,18 @@ function Workspace() {
     <SourcesDrawer open={sourcesOpen} onClose={() => { setSourcesOpen(false); setLinkOpen(false) }} onAddSource={openUpload} onSearch={setSearch}>
       {collectionId && <form className="mb-4 flex gap-2" onSubmit={e => { e.preventDefault(); void renameCollection() }}>
         <Input aria-label="Collection name" value={collectionName} onChange={e => setCollectionName(e.target.value)} />
-        <Button type="submit" variant="quiet" size="sm">Rename</Button>
+        <Button type="submit" variant="ghost" size="sm">Rename</Button>
       </form>}
       <div className="mb-4 flex gap-2">
-        <Button variant="ghost" size="sm" onClick={openUpload} disabled={busy}><Icon name="FilePlus2" /> Upload file</Button>
-        <Button variant="ghost" size="sm" onClick={() => setLinkOpen(o => !o)}><Icon name="Link2" /> Add link</Button>
+        <Button variant="ghost" size="sm" onClick={openUpload} disabled={busy}><FilePlus2 className="fp-icon" aria-hidden="true" /> Upload file</Button>
+        <Button variant="ghost" size="sm" onClick={() => setLinkOpen(o => !o)}><Link2 className="fp-icon" aria-hidden="true" /> Add link</Button>
       </div>
       {linkOpen && <form className="mb-4 flex gap-2" onSubmit={e => { e.preventDefault(); void addLink() }}>
         <Input aria-label="Link URL" type="url" placeholder="https://…" value={linkUrl} onChange={e => setLinkUrl(e.target.value)} autoFocus />
         <Button type="submit" size="sm" loading={busy}>Add</Button>
       </form>}
       {notice && sourcesOpen && <p role="status" className="mb-4">{notice}</p>}
-      <div className="mb-4 flex items-center gap-2"><Button variant="quiet" size="sm" onClick={() => void analyzeExisting()} loading={!!bulk}><Icon name="Sparkles" /> Analyze existing sources</Button>{bulk && <span role="status" className="text-muted-foreground">{bulk}</span>}</div>
+      <div className="mb-4 flex items-center gap-2"><Button variant="ghost" size="sm" onClick={() => void analyzeExisting()} loading={!!bulk}><Sparkles className="fp-icon" aria-hidden="true" /> Analyze existing sources</Button>{bulk && <span role="status" className="text-muted-foreground">{bulk}</span>}</div>
       <EngineeringAlerts workspaceId={activeWorkspace} refreshKey={alertKey} />
       {focusSource && <p className="mb-4 text-muted-foreground">Cited source: <strong className="text-ink">{focusSource}</strong></p>}
       {visibleSources.length > 0
