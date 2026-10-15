@@ -1,7 +1,7 @@
-import { Link, useNavigate, useRouter } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useAuth } from '@/hooks/use-auth'
-import { openFootprint } from '@/ui/marketing/open-footprint'
+import { useEntryTransition } from '@/ui/transition/entry-transition'
 import { prefersReducedMotion, useCursorLight } from '@/ui/marketing/interactive'
 import {
   ConclusionSection, IngestionSection, IntelligenceSection, NAV, ProblemSection, RadarSection, SecuritySection,
@@ -16,24 +16,9 @@ const A = '/landing'
 
 /* ------------------------------ Header ------------------------------ */
 
-function useOpenFootprint() {
-  const { user } = useAuth()
-  const navigate = useNavigate()
-  const router = useRouter()
-  return () => {
-    const to = user ? '/app' : '/login'
-    openFootprint({
-      authed: !!user,
-      reducedMotion: prefersReducedMotion(),
-      navigate: () => (user ? navigate({ to: '/app' }) : navigate({ to: '/login', search: { redirect: '/app' } })),
-      preload: () => router.preloadRoute({ to }),
-    })
-  }
-}
-
 function Header() {
   const { user, loading, signOut } = useAuth()
-  const open = useOpenFootprint()
+  const { open } = useEntryTransition()
   const [hidden, setHidden] = useState(false)
   const [menu, setMenu] = useState(false)
   const lastY = useRef(0)

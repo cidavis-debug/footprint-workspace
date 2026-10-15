@@ -28,6 +28,7 @@ export const fake = {
   createSignedUrl: vi.fn(),
   auth: {
     getUser: vi.fn(),
+    getSession: vi.fn(),
     signInWithPassword: vi.fn(),
     signUp: vi.fn(),
     signInWithOAuth: vi.fn(),
@@ -102,6 +103,7 @@ export const authState = {
 export const routerState = {
   search: {} as Record<string, unknown>,
   navigate: vi.fn(),
+  preload: vi.fn(),
 }
 
 type LinkProps = { to?: string; search?: unknown; children?: ReactNode } & Record<string, unknown>
@@ -113,6 +115,7 @@ export const routerModule = {
     useNavigate: () => routerState.navigate,
   }),
   useNavigate: () => routerState.navigate,
+  useRouter: () => ({ preloadRoute: routerState.preload }),
   Navigate: ({ to, search }: { to: string; search?: unknown }) =>
     createElement('div', { 'data-testid': 'navigate', 'data-to': to, 'data-search': JSON.stringify(search ?? null) }),
   Link: ({ to, search: _search, children, ...rest }: LinkProps) => createElement('a', { href: to, ...rest }, children),

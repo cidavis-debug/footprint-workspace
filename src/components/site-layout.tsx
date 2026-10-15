@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Badge, Button, Icon } from '@/design-system/footprint-0a8b1a'
-import { NavigationButton } from '@/components/navigation-button'
+import { EntryButton, EntryLink } from '@/ui/transition/entry-transition'
 import { Brand } from '@/components/brand'
 import { useAuth } from '@/hooks/use-auth'
 
@@ -40,7 +40,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
           {!loading && (user
             ? <span className="desktop-account flex items-center gap-2"><Badge variant="reference" aria-label={user.email ?? 'Account'} title={user.email ?? ''}>{(user.email ?? '?')[0]!.toUpperCase()}</Badge><Button variant="quiet" onClick={signOut}>Log out</Button></span>
             : <Link to="/login" className="site-link desktop-account">Log in</Link>)}
-          <NavigationButton to="/app"><span className="desktop-open-label">Open Footprint</span><span className="compact-open-label">Open</span><Icon name="ArrowUpRight" /></NavigationButton>
+          <EntryButton><span className="desktop-open-label">Open Footprint</span><span className="compact-open-label">Open</span><Icon name="ArrowUpRight" /></EntryButton>
           <Button ref={menuButton} variant="ghost" size="icon" className="mobile-menu-trigger" aria-label={menuOpen ? 'Close menu' : 'Open menu'} title={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => setMenuOpen(!menuOpen)}><Icon name={menuOpen ? 'X' : 'MoreHorizontal'} /></Button>
         </div>
       </div>
@@ -58,7 +58,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
     <footer className="site-width"><div className="site-footer">
       <Link to="/" className="wordmark"><Brand /></Link>
       <span className="demo-label">A little more clarity. A lot less searching.</span>
-      <nav aria-label="Footer navigation" className="footer-links">{directory.map(item => <Link key={item.to} to={item.to} className="site-link">{item.label}</Link>)}<Link to="/app" className="site-link">Open Footprint <span aria-hidden="true">↗</span></Link></nav>
+      <nav aria-label="Footer navigation" className="footer-links">{directory.map(item => <Link key={item.to} to={item.to} className="site-link">{item.label}</Link>)}<EntryLink>Open Footprint <span aria-hidden="true">↗</span></EntryLink></nav>
     </div></footer>
     </div>
   </>

@@ -9,6 +9,7 @@ import type { ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { AuthProvider } from "@/hooks/use-auth";
+import { EntryTransitionProvider } from "@/ui/transition/entry-transition";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -54,7 +55,9 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
+        <EntryTransitionProvider>
+          <Outlet />
+        </EntryTransitionProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
