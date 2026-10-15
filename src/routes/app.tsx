@@ -1,6 +1,6 @@
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Answer, Button, CitationChip, Composer, Icon, Input, SourceItem, SourcesDrawer } from '@/design-system/footprint-0a8b1a'
 import { askFootprint, type Citation } from '@/lib/ask.functions'
 import { analyzeEngineeringSource } from '@/lib/engineering.functions'
@@ -8,6 +8,7 @@ import { EngineeringAlerts, SourceEngineering } from '@/components/engineering-c
 import { pageHead } from '@/components/page-head'
 import { Illustration } from '@/components/illustration'
 import { useWorkspaces } from '@/features/workspace/use-workspaces'
+import { sourceStatus, useSources } from '@/features/sources/use-sources'
 import { AppShell } from '@/components/app-shell'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/integrations/supabase/client'
@@ -15,16 +16,7 @@ import { SourceEvidenceDrawer } from '@/components/source-evidence-drawer'
 import { getRadar } from '@/lib/radar.functions'
 import { suggestedQuestions, type EngineeringClaim, type EngineeringSource } from '@/lib/engineering-data'
 
-type Collection = { id: string; name: string; description: string | null }
-type Source = { id: string; title: string; source_type: string; status: string; collection_id: string | null; engineering_analysis_status: string; engineering_summary: string | null }
-
 export const Route = createFileRoute('/app')({ ssr: false, validateSearch: (s: Record<string, unknown>): { workspace?: string; sources?: boolean } => ({ ...(typeof s['workspace'] === 'string' ? { workspace: s['workspace'] } : {}), ...(s['sources'] === true ? { sources: true } : {}) }), head: () => pageHead('Workspace — Footprint', 'A focused workspace for questions, documents, and shared team knowledge.'), component: Workspace })
-
-function sourceStatus(status: string): 'indexed' | 'processing' | 'reference' {
-  if (status === 'ready' || status === 'indexed') return 'indexed'
-  if (status === 'error') return 'reference'
-  return 'processing'
-}
 
 function Workspace() {
   const { workspace: requestedWorkspace, sources: requestedSources } = Route.useSearch()
@@ -32,14 +24,9 @@ function Workspace() {
   const [sourcesOpen, setSourcesOpen] = useState(false)
   useEffect(() => { if (requestedSources) setSourcesOpen(true) }, [requestedSources])
   const [notice, setNotice] = useState('')
-  const [collections, setCollections] = useState<Collection[]>([])
-  const [sources, setSources] = useState<Source[]>([])
-  const [search, setSearch] = useState('')
-  const [linkOpen, setLinkOpen] = useState(false)
-  const [linkUrl, setLinkUrl] = useState('')
   const [busy, setBusy] = useState(false)
   const { workspaces, activeWorkspace, setActiveWorkspace, dataLoading, currentWorkspace, createWorkspace } = useWorkspaces({ user, requestedWorkspace, setNotice, setBusy })
-  const [collectionName, setCollectionName] = useState('')
+  const { collections, sources, setSources, visibleSources, collectionId, collectionName, setCollectionName, setSearch, linkOpen, setLinkOpen, linkUrl, setLinkUrl, uploadFile, addLink, removeSource, renameCollection } = useSources({ activeWorkspace, setNotice, setBusy, onTextSourceAdded: id => void analyze(id) })
   const [thread, setThread] = useState<{ question: string; answer: string; citations: Citation[]; pending: boolean }[]>([])
   const [asking, setAsking] = useState(false)
   const [focusSource, setFocusSource] = useState<string | null>(null)
@@ -62,27 +49,6 @@ function Workspace() {
     return () => ro.disconnect()
   })
   useEffect(() => { setThread([]); setEvidence(null) }, [activeWorkspace])
-
-  useEffect(() => {
-    if (!activeWorkspace) { setCollections([]); setSources([]); return }
-    let cancelled = false
-    void (async () => {
-      const [{ data: cols }, { data: srcs }] = await Promise.all([
-        supabase.from('collections').select('id, name, description').eq('workspace_id', activeWorkspace).order('created_at'),
-        supabase.from('sources').select('id, title, source_type, status, collection_id, engineering_analysis_status, engineering_summary').eq('workspace_id', activeWorkspace).order('created_at'),
-      ])
-      if (cancelled) return
-      setCollections(cols ?? [])
-      setCollectionName(cols?.[0]?.name ?? '')
-      setSources(srcs ?? [])
-    })()
-    return () => { cancelled = true }
-  }, [activeWorkspace])
-
-  const visibleSources = useMemo(() => {
-    const query = search.trim().toLowerCase()
-    return query ? sources.filter(s => s.title.toLowerCase().includes(query)) : sources
-  }, [sources, search])
 
   if (loading) return <main className="site-width"><p className="workspace-status" role="status">Opening your workspace…</p></main>
   if (!user) return <Navigate to="/login" search={{ redirect: '/app' }} replace />
@@ -107,7 +73,6 @@ function Workspace() {
     setThread(t => t.map((m, i) => i === t.length - 1 && m.pending ? { ...m, pending: false, answer: 'Generation stopped.' } : m))
     setAsking(false)
   }
-  const collectionId = collections[0]?.id ?? null
   const openEvidence = async (citation: Citation) => {
     const workspaceId = activeWorkspace
     try {
@@ -133,50 +98,6 @@ function Workspace() {
     if (!todo.length) { setNotice('All indexed sources are already analyzed.'); return }
     for (const [i, s] of todo.entries()) { setBulk(`Analyzing ${i + 1} of ${todo.length}…`); await analyze(s.id) }
     setBulk(''); setNotice(`Analyzed ${todo.length} source${todo.length === 1 ? '' : 's'}.`)
-  }
-
-  const uploadFile = async (file: File) => {
-    const ok = /\.(pdf|md|markdown|txt)$/i.test(file.name)
-    if (!ok) { setNotice('Only PDF, Markdown, and text files are supported.'); return }
-    if (file.size > 20 * 1024 * 1024) { setNotice('Files must be 20 MB or smaller.'); return }
-    setBusy(true); setNotice(`Uploading “${file.name}”…`)
-    const path = `${activeWorkspace}/${crypto.randomUUID()}-${file.name.replace(/[^\w.-]+/g, '_')}`
-    const { error: upErr } = await supabase.storage.from('sources').upload(path, file, { contentType: file.type || undefined })
-    if (upErr) { setBusy(false); setNotice(`Upload failed: ${upErr.message}`); return }
-    const isText = !/\.pdf$/i.test(file.name)
-    const snippet = isText ? (await file.text()).slice(0, 2000) : null
-    const { data, error } = await supabase.from('sources').insert({ workspace_id: activeWorkspace, collection_id: collectionId, title: file.name, source_type: 'file', file_path: path, status: isText ? 'ready' : 'indexing', content_snippet: snippet, metadata: { size: file.size, mime: file.type } }).select('id, title, source_type, status, collection_id, engineering_analysis_status, engineering_summary').single()
-    setBusy(false)
-    if (error) { await supabase.storage.from('sources').remove([path]); setNotice(`Could not save source: ${error.message}`); return }
-    setSources(s => [...s, data]); setNotice(`Added “${file.name}”.`)
-    if (isText) void analyze(data.id)
-  }
-
-  const addLink = async () => {
-    let url: URL
-    try { url = new URL(linkUrl.trim()); if (!/^https?:$/.test(url.protocol)) throw new Error() } catch { setNotice('Enter a valid http(s) link.'); return }
-    setBusy(true)
-    const { data, error } = await supabase.from('sources').insert({ workspace_id: activeWorkspace, collection_id: collectionId, title: url.hostname + url.pathname.replace(/\/$/, ''), source_type: 'link', url: url.toString(), status: 'ready' }).select('id, title, source_type, status, collection_id, engineering_analysis_status, engineering_summary').single()
-    setBusy(false)
-    if (error) { setNotice(`Could not add link: ${error.message}`); return }
-    setSources(s => [...s, data]); setLinkUrl(''); setLinkOpen(false); setNotice('Link added.')
-  }
-
-  const removeSource = async (src: Source) => {
-    if (!window.confirm(`Remove “${src.title}”?`)) return
-    const { data: row } = await supabase.from('sources').select('file_path').eq('id', src.id).single()
-    const { error } = await supabase.from('sources').delete().eq('id', src.id)
-    if (error) { setNotice(`Could not remove: ${error.message}`); return }
-    if (row?.file_path) await supabase.storage.from('sources').remove([row.file_path])
-    setSources(s => s.filter(x => x.id !== src.id)); setNotice(`Removed “${src.title}”.`)
-  }
-
-  const renameCollection = async () => {
-    const name = collectionName.trim()
-    if (!collectionId || !name) return
-    const { error } = await supabase.from('collections').update({ name }).eq('id', collectionId)
-    if (error) { setNotice(`Could not rename: ${error.message}`); return }
-    setCollections(c => c.map(x => x.id === collectionId ? { ...x, name } : x)); setNotice('Collection renamed.')
   }
 
   const openUpload = () => fileInput.current?.click()

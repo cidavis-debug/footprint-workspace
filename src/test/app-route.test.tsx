@@ -77,6 +77,9 @@ const pick = (container: HTMLElement, f: File) => {
 type AskResult = Awaited<ReturnType<typeof askFootprint>>
 const answer = (text: string, citations: AskResult['citations'] = []): AskResult => ({ answer: text, citations, error: null })
 
+// Importing the route pulls in the whole app graph; do it once up front so the first test is not slow.
+beforeAll(async () => { await import("@/routes/app") }, 30_000)
+
 beforeEach(() => {
   installBrowserStubs()
   fake.reset()
