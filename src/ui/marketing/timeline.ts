@@ -1,57 +1,50 @@
 /**
- * Scroll timeline for the cinematic landing page.
- * `u` is scroll progress measured in viewport heights from the top of the track.
- * Everything here is pure so it can be unit tested and driven from one rAF loop.
+ * Scroll timelines for the cinematic blocks on the landing page.
+ *
+ * The page is mostly normal scrolling content. Three short "blocks" pin the viewport and scrub a
+ * video with the scroll position. Within a block, `u` is scroll progress in viewport heights from
+ * the top of the block's track. Everything here is pure so it can be unit tested.
  */
 
-export type LayerName = 'hero' | 'v1' | 's2' | 'v2' | 'v3' | 'v4'
-export type VideoName = 'v1' | 'v2' | 'v3' | 'v4'
+export type BlockId = 'intro' | 'stream' | 'vault'
+export type VideoName = 'v1' | 'v2' | 'v4'
 
-/** Scroll ranges (in viewport heights) during which each video is scrubbed. */
-export const VIDEO_RANGE: Record<VideoName, readonly [number, number]> = {
-  v1: [1.0, 3.5],
-  v2: [5.0, 7.5],
-  v3: [9.0, 10.8],
-  v4: [12.5, 15.0],
+type Block = {
+  /** Track height in viewport heights; the stage stays pinned for `height - 1`. */
+  height: number
+  video: VideoName
+  /** [start, end] of the video scrub, in viewport heights from the top of the track. */
+  range: readonly [number, number]
 }
 
-/** Scrolling stops this far down the track; the last viewport is the held final frame. */
-export const HOLD_END = 16.5
-export const TRACK_VH = HOLD_END + 1
+export const BLOCKS: Record<BlockId, Block> = {
+  intro: { height: 2.7, video: 'v1', range: [0.3, 1.6] },
+  stream: { height: 2.0, video: 'v2', range: [0.05, 0.95] },
+  vault: { height: 2.2, video: 'v4', range: [0.05, 1.15] },
+}
+
+export const pinnedLength = (id: BlockId) => BLOCKS[id].height - 1
 
 export const clamp01 = (x: number) => Math.min(1, Math.max(0, x))
 export const range = (u: number, a: number, b: number) => clamp01((u - a) / (b - a))
 export const smooth = (x: number) => x * x * (3 - 2 * x)
 export const ss = (u: number, a: number, b: number) => smooth(range(u, a, b))
 
-/** Opacity of each full-bleed layer at scroll position `u`. */
-export function layerOpacity(name: LayerName, u: number): number {
-  switch (name) {
-    case 'hero': return 1 - ss(u, 0.95, 1.25)
-    case 'v1': return 1 - ss(u, 3.4, 3.9)
-    case 's2': return ss(u, 3.4, 3.9) * (1 - ss(u, 4.9, 5.25))
-    case 'v2': return ss(u, 4.9, 5.25) * (1 - ss(u, 8.7, 9.1))
-    case 'v3': return ss(u, 8.7, 9.1) * (1 - ss(u, 12.3, 12.7))
-    case 'v4': return ss(u, 12.3, 12.7) * (1 - 0.55 * ss(u, 15.2, 16.4))
-  }
-}
-
-/** 0..1 playback position of a video at scroll position `u` (clamped at both ends). */
-export function videoProgress(name: VideoName, u: number): number {
-  const [a, b] = VIDEO_RANGE[name]
+/** 0..1 playback position of the block's video (clamped at both ends). */
+export function videoProgress(id: BlockId, u: number): number {
+  const [a, b] = BLOCKS[id].range
   return range(u, a, b)
 }
 
-/** True when a video is visible or about to be, so we only seek decoders that matter. */
-export function videoIsNear(name: VideoName, u: number, margin = 1.2): boolean {
-  const [a, b] = VIDEO_RANGE[name]
-  // The first video sits under the hero from scroll 0.
-  const started = name === 'v1' || u >= a - margin - 0.4
-  return started && u <= b + margin + 3
-}
+/** The hero still sits on top of the first video and fades out as the aircraft starts to move. */
+export const heroStillOpacity = (u: number) => 1 - ss(u, 0.3, 0.65)
+
+/** Hero + first video are framed slightly small so text has room, then push in as the video plays. */
+export const HERO_SCALE_FROM = 0.86
+export const heroScale = (u: number) => HERO_SCALE_FROM + (1 - HERO_SCALE_FROM) * ss(u, 0.25, 0.9)
 
 export type TextAnim = {
-  /** [start, end] of the reveal, in viewport heights. Omitted = already visible. */
+  /** [start, end] of the reveal. Omitted = already visible. */
   in?: readonly [number, number]
   /** [start, end] of the exit. Omitted = stays. */
   out?: readonly [number, number]

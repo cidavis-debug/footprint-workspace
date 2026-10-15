@@ -1,40 +1,39 @@
 import { describe, expect, it } from 'vitest'
 
-import { HOLD_END, TRACK_VH, VIDEO_RANGE, layerOpacity, parsePair, textVisibility, videoIsNear, videoProgress, type LayerName } from '@/ui/marketing/timeline'
+import { BLOCKS, HERO_SCALE_FROM, heroScale, heroStillOpacity, parsePair, pinnedLength, textVisibility, videoProgress, type BlockId } from '@/ui/marketing/timeline'
 
-describe('landing timeline', () => {
-  it('starts on the hero and ends on the held security frame', () => {
-    expect(layerOpacity('hero', 0)).toBe(1)
-    expect(layerOpacity('v1', 0)).toBe(1)
-    expect(layerOpacity('v4', 0)).toBe(0)
-    expect(layerOpacity('v4', HOLD_END)).toBeGreaterThan(0.4)
-    expect(TRACK_VH).toBe(HOLD_END + 1)
+const ids = Object.keys(BLOCKS) as BlockId[]
+
+describe('landing timelines', () => {
+  it('uses only the three kept transition videos (no conflict-detection video)', () => {
+    expect(ids.map(id => BLOCKS[id].video).sort()).toEqual(['v1', 'v2', 'v4'])
   })
 
-  it('never shows two stills at once and keeps one layer fully visible at each hold', () => {
-    const holds: Array<[number, LayerName]> = [[0, 'hero'], [4.4, 's2'], [8.2, 'v2'], [11.6, 'v3'], [15.8, 'v4']]
-    for (const [u, name] of holds) expect(layerOpacity(name, u)).toBeCloseTo(name === 'v4' ? layerOpacity('v4', u) : 1, 5)
-    expect(layerOpacity('hero', 4.4)).toBe(0)
+  it('keeps every scrub inside its pinned scroll length and keeps blocks short', () => {
+    for (const id of ids) {
+      const [a, b] = BLOCKS[id].range
+      expect(a).toBeGreaterThanOrEqual(0)
+      expect(b).toBeLessThanOrEqual(pinnedLength(id))
+      expect(a).toBeLessThan(b)
+      expect(BLOCKS[id].height).toBeLessThanOrEqual(3)
+    }
   })
 
-  it('maps scroll to video position and clamps outside its range', () => {
-    const [a, b] = VIDEO_RANGE.v2
-    expect(videoProgress('v2', a - 1)).toBe(0)
-    expect(videoProgress('v2', (a + b) / 2)).toBeCloseTo(0.5)
-    expect(videoProgress('v2', b + 3)).toBe(1)
-  })
-
-  it('is reversible: the same scroll position always yields the same state', () => {
-    const forward = [0.2, 1.5, 3, 6, 9.5].map(u => videoProgress('v1', u))
-    const backward = [9.5, 6, 3, 1.5, 0.2].map(u => videoProgress('v1', u)).reverse()
+  it('maps scroll to video position, clamped at both ends and reversible', () => {
+    const [a, b] = BLOCKS.stream.range
+    expect(videoProgress('stream', a - 1)).toBe(0)
+    expect(videoProgress('stream', (a + b) / 2)).toBeCloseTo(0.5)
+    expect(videoProgress('stream', b + 3)).toBe(1)
+    const forward = [0.1, 0.5, 0.9].map(u => videoProgress('stream', u))
+    const backward = [0.9, 0.5, 0.1].map(u => videoProgress('stream', u)).reverse()
     expect(backward).toEqual(forward)
-    expect(layerOpacity('s2', 4.4)).toBe(layerOpacity('s2', 4.4))
   })
 
-  it('only wakes decoders near the viewport', () => {
-    expect(videoIsNear('v4', 0)).toBe(false)
-    expect(videoIsNear('v1', 0)).toBe(true)
-    expect(videoIsNear('v4', 12.4)).toBe(true)
+  it('shows the hero still first, then hands over to the video as the aircraft pushes in', () => {
+    expect(heroStillOpacity(0)).toBe(1)
+    expect(heroStillOpacity(1)).toBe(0)
+    expect(heroScale(0)).toBeCloseTo(HERO_SCALE_FROM)
+    expect(heroScale(pinnedLength('intro'))).toBe(1)
   })
 
   it('computes text entrance and exit visibility', () => {
