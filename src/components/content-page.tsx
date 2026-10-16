@@ -8,5 +8,5 @@ export function PageIntroduction({ kicker, title, description, illustration }: {
 }
 
 export function PageInvitation() {
-  return <section className="content-invitation"><div className="invitation-copy"><Illustration name="insight" /><div><p className="section-kicker">A little more clarity</p><h2 className="section-title">Give your knowledge a home.</h2><p>Explore the workspace preview. Live accounts, uploads, and answers are not connected yet.</p></div></div><div className="invitation-actions"><NavigationButton to="/app">Open Footprint <Icon name="ArrowUpRight" /></NavigationButton><Link to="/pricing" className="site-link">Explore proposed plans ↗</Link></div></section>
+  return <section className="content-invitation"><div className="invitation-copy"><Illustration name="insight" /><div><p className="section-kicker">A little more clarity</p><h2 className="section-title">Give your knowledge a home.</h2><p>Explore the workspace preview. Live accounts, uploads, and answers are not connected yet.</p></div></div><div className="invitation-actions"><NavigationButton to="/app">Open Footprint AI <Icon name="ArrowUpRight" /></NavigationButton><Link to="/pricing" className="site-link">Explore proposed plans ↗</Link></div></section>
 }

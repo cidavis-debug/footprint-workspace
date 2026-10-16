@@ -20,7 +20,7 @@ type Workspace = WorkspaceNode
 type Collection = { id: string; name: string; description: string | null }
 type Source = { id: string; title: string; source_type: string; status: string; collection_id: string | null; engineering_analysis_status: string; engineering_summary: string | null }
 
-export const Route = createFileRoute('/app')({ ssr: false, validateSearch: (s: Record<string, unknown>): { workspace?: string; sources?: boolean } => ({ ...(typeof s['workspace'] === 'string' ? { workspace: s['workspace'] } : {}), ...(s['sources'] === true ? { sources: true } : {}) }), head: () => pageHead('Workspace — Footprint', 'A focused workspace for questions, documents, and shared team knowledge.'), component: Workspace })
+export const Route = createFileRoute('/app')({ ssr: false, validateSearch: (s: Record<string, unknown>): { workspace?: string; sources?: boolean } => ({ ...(typeof s['workspace'] === 'string' ? { workspace: s['workspace'] } : {}), ...(s['sources'] === true ? { sources: true } : {}) }), head: () => pageHead('Workspace — Footprint AI', 'A focused workspace for questions, documents, and shared team knowledge.'), component: Workspace })
 
 function sourceStatus(status: string): 'indexed' | 'processing' | 'reference' {
   if (status === 'ready' || status === 'indexed') return 'indexed'
@@ -133,7 +133,7 @@ function Workspace() {
       if (currentWorkspace.current !== askedWorkspace) { setAsking(false); return }
       if (r.error) { setNotice(r.error); setThread(t => t.slice(0, -1)) }
       else setThread(t => [...t.slice(0, -1), { question, answer: r.answer, citations: r.citations, pending: false }])
-    } catch { if (run !== requestId.current) return; if (currentWorkspace.current === askedWorkspace) { setNotice('Something went wrong asking Footprint.'); setThread(t => t.slice(0, -1)) } }
+    } catch { if (run !== requestId.current) return; if (currentWorkspace.current === askedWorkspace) { setNotice('Something went wrong asking Footprint AI.'); setThread(t => t.slice(0, -1)) } }
     setAsking(false)
   }
   const stop = () => {
@@ -307,7 +307,7 @@ function Workspace() {
           {thread.map((m, i) => <article key={i} className="ax-turn" ref={i === thread.length - 1 ? lastTurn : undefined} aria-label={`Question ${i + 1}`}>
             <header className="ax-q"><span className="ax-who lp-mono"><i aria-hidden="true" />You</span><h2>{m.question}</h2></header>
             <div className="ax-a">
-              <span className="ax-who lp-mono ax-who-ai">Footprint</span>
+              <span className="ax-who lp-mono ax-who-ai">Footprint AI</span>
               {m.pending
                 ? <p role="status" className="ax-pending">Reading your sources…</p>
                 : <>

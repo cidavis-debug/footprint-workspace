@@ -5,7 +5,7 @@ import { pageHead } from '@/components/page-head'
 import { MarketingPage, Reveal, SplitHeading } from '@/components/landing/shared'
 
 export const Route = createFileRoute('/collections')({
-  head: () => pageHead('Collections — Footprint', 'How Footprint workspaces, sub-workspaces, and collections organize engineering sources.'),
+  head: () => pageHead('Collections — Footprint AI', 'How Footprint AI workspaces, sub-workspaces, and collections organize engineering sources.'),
   component: Collections,
 })
 
@@ -56,7 +56,7 @@ function Collections() {
       </div>
     </section>
 
-    <section className="lp-col-bento-wrap" aria-label="How Footprint organizes information">
+    <section className="lp-col-bento-wrap" aria-label="How Footprint AI organizes information">
       <div className="lp-inner lp-bento">
         <Reveal dir="left" className="lp-lit lp-steel lp-b-explorer"><Explorer /></Reveal>
         <Reveal dir="right" delay={120} className="lp-b-boundary lp-slate-tile">

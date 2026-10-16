@@ -169,7 +169,6 @@
   .ax-center { grid-column: 1; }
   .ax-mobile-ws { display: block; }
   .ax-top { grid-template-columns: auto 1fr auto; gap: 8px; }
-  .ax-brand span { display: none; }
   .ax-mode { padding: 9px 14px; font-size: 13.5px; }
   .ax-right { top: 72px; }
 }
@@ -192,7 +191,6 @@
   .ax, .ax.ax-no-right { grid-template-rows: 112px minmax(0, 1fr); }
   .ax-modes { grid-column: 1 / -1; grid-row: 2; justify-self: stretch; }
   .ax-mode { justify-content: center; }
-  .ax-brand span { display: none; }
   .ax-right { top: 120px; }
 }
 
@@ -330,3 +328,15 @@
 @media (min-width: 881px) { .ax .ax-left-toggle { display: inline-grid; } }
 .ax .ax-manage { z-index: 2; }
 .ax-glow::after { display: none; }
+.ax-brand { white-space: nowrap; }
+@media (max-width: 880px) {
+  .ax-brand { font-size: 17px; gap: 7px; }
+  .ax-mobile-ws button { max-width: 112px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ax-top { column-gap: 6px; grid-template-columns: auto minmax(0, 1fr) auto; }
+  .ax-brandrow { grid-column: 1; } .ax-account { grid-column: 2 / 4; }
+  .ax-modes { grid-column: 1 / -1; }
+}
+@media (max-width: 880px) {
+  .ax-account { gap: 2px; min-width: 0; } .ax-signout { white-space: nowrap; padding: 8px 8px; font-size: 13px; }
+  .ax-mobile-ws { min-width: 0; } .ax-mobile-ws button { max-width: 92px; padding-inline: 8px; font-size: 13px; }
+}

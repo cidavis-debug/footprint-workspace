@@ -40,7 +40,7 @@ export function ShowcaseSandbox() {
       <div className="preview-body">
         <div ref={demo.ref} className="question typewriter-question"><span className="question-reserve">{asked.question}</span><span className="typed-question" aria-hidden="true">{demo.text}<span className="typewriter-cursor" data-active={!demo.complete} /></span><span className="sr-only">{asked.question}</span></div>
         <div className="demo-response" data-complete={demo.complete} aria-hidden={!demo.complete} inert={!demo.complete}>
-          <div className="answer-heading"><Illustration name="answer" size="small" /><span>Footprint</span></div>
+          <div className="answer-heading"><Illustration name="answer" size="small" /><span>Footprint AI</span></div>
           <Answer key={asked.id} sources={[`${asked.name} · Example source`]} copyText={`${asked.opening}\n${asked.points.join('\n')}`}><p>{asked.opening}</p><ol className="preview-list">{asked.points.map(point => <li key={point}>{point}</li>)}</ol></Answer>
         </div>
       </div>

@@ -5,7 +5,7 @@ import { pageHead } from '@/components/page-head'
 import { MarketingPage, Reveal, SplitHeading } from '@/components/landing/shared'
 
 export const Route = createFileRoute('/pricing')({
-  head: () => pageHead('Pricing — Footprint', 'Draft Free, Pro, and Team plans for Footprint, clearly labeled as proposals.'),
+  head: () => pageHead('Pricing — Footprint AI', 'Draft Free, Pro, and Team plans for Footprint AI, clearly labeled as proposals.'),
   component: Pricing,
 })
 
@@ -27,7 +27,7 @@ const rows: { label: string; vals: [string, string, string]; note?: string }[] =
 
 const faq = [
   { q: 'Can I subscribe now?', a: 'No. These prices and limits are draft proposals. No plan can be purchased or activated, and there is no checkout.' },
-  { q: 'What counts as a source?', a: 'An uploaded file (PDF, Markdown or text, up to 20 MB each) or a saved web link. A link is a reference only; Footprint does not fetch or read its contents.' },
+  { q: 'What counts as a source?', a: 'An uploaded file (PDF, Markdown or text, up to 20 MB each) or a saved web link. A link is a reference only; Footprint AI does not fetch or read its contents.' },
   { q: 'How would Team pricing work?', a: 'The proposed Team price would include five members rather than charging per person, with source and question limits shared across the team’s workspaces. Extra-member pricing has not been defined, and multi-member workspaces do not exist yet.' },
   { q: 'Are taxes and overages included?', a: 'Tax treatment has not been decided. The proposal has no automatic overage charges; limits and any upgrade options would be confirmed before launch.' },
 ]
@@ -41,7 +41,7 @@ function Pricing() {
     <section className="lp-pagehero lp-price-hero">
       <div className="lp-inner lp-price-hero-inner">
         <div>
-          <p className="lp-mono lp-eyebrow">Footprint pricing · draft</p>
+          <p className="lp-mono lp-eyebrow">Footprint AI pricing · draft</p>
           <SplitHeading className="lp-mega" lines={[{ t: 'Good knowledge.' }, { t: 'A considered plan.', accent: true }]} />
         </div>
         <Reveal dir="right" delay={400} className="lp-price-note lp-glass-light">

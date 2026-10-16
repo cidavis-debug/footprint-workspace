@@ -1,0 +1,51 @@
+/*
+ * Shared material tokens — the single place the stainless-steel edge is defined.
+ * Reference: design-references/images/stainless_steel_borders.png (brushed silver, bright specular bands
+ * alternating with darker steel, a thin white inner highlight).
+ *
+ *   --steel-edge-light  for edges that sit on light/gray backgrounds (darker mid-tones keep it visible)
+ *   --steel-edge-dark   for edges that sit on charcoal/slate backgrounds (brighter mid-tones)
+ *   --steel-w           edge thickness; keep it thin
+ */
+:root {
+  --steel-w: 2px;
+  --steel-edge-light: linear-gradient(135deg, #ffffff 0%, #b0b7bf 9%, #f7f9fb 20%, #7a828b 34%, #d6dade 47%, #5d646c 61%, #e7eaed 75%, #939aa2 88%, #ffffff 100%);
+  --steel-edge-dark: linear-gradient(135deg, #f6f8fa 0%, #9199a2 11%, #e6eaee 24%, #5b626b 39%, #cdd2d8 53%, #737a83 68%, #eef0f3 84%, #a3aab2 100%);
+  --steel-shadow-light: 0 0 0 1px rgba(18, 21, 27, .2), 0 1px 0 rgba(255, 255, 255, .9) inset, 0 2px 3px -1px rgba(18, 21, 27, .18), 0 34px 70px -42px rgba(18, 21, 27, .5);
+  --steel-shadow-dark: 0 0 0 1px rgba(255, 255, 255, .14), 0 1px 0 rgba(255, 255, 255, .12) inset, 0 2px 4px -1px rgba(0, 0, 0, .6), 0 40px 90px -40px rgba(0, 0, 0, .85);
+}
+
+/* Reusable edge for any positioned element: add class "steel-ring" (+ "steel-ring-dark" on dark backgrounds). */
+.steel-ring { position: relative; }
+.steel-ring::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: var(--steel-w); pointer-events: none; z-index: 2;
+  background: var(--steel-edge-light);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.steel-ring-dark::before { background: var(--steel-edge-dark); }
+
+/* Existing steel-framed surfaces (landing + marketing pages) */
+.lp-steel { border-width: var(--steel-w); border-style: solid; border-color: transparent;
+  background: linear-gradient(var(--steel-fill), var(--steel-fill)) padding-box, var(--steel-edge-light) border-box;
+  box-shadow: var(--steel-shadow-light); }
+.lp-steel-dark { background: linear-gradient(var(--steel-fill), var(--steel-fill)) padding-box, var(--steel-edge-dark) border-box; box-shadow: var(--steel-shadow-dark); }
+
+/* Glass panels get the same machined edge: the sheen moves into the background so ::before can carry the ring. */
+.lp-glass { background:
+    radial-gradient(420px 220px at 12% 0%, rgba(255, 255, 255, .22), transparent 70%),
+    linear-gradient(150deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .05) 55%, rgba(255, 255, 255, .09));
+  border-color: transparent; box-shadow: var(--steel-shadow-dark), inset 0 -40px 60px -50px rgba(255, 255, 255, .12); }
+.lp-glass::before { content: ""; inset: 0; padding: var(--steel-w); z-index: 2; background: var(--steel-edge-dark);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.lp-glass-light { border-color: transparent; box-shadow: var(--steel-shadow-light); position: relative; }
+.lp-glass-light::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: var(--steel-w); pointer-events: none; background: var(--steel-edge-light);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+
+/* Interactive surfaces: steel edge on selected states */
+.lp-fq button[aria-pressed="true"], .lp-qlist button[aria-pressed="true"] { box-shadow: 0 0 0 1.5px var(--orange), 0 18px 34px -20px rgba(255, 94, 0, .6); }
+.lp-table thead button[aria-pressed="true"] { box-shadow: 0 0 0 1.5px var(--orange), 0 0 0 3px rgba(255, 255, 255, .8), 0 0 0 4px rgba(18, 21, 27, .18); }
+
+/* Header: a visible brushed-steel hairline under the glass bar once scrolled */
+.lp-header[data-scrolled="true"]::after { height: 2px; background: linear-gradient(90deg, transparent, #8f979f 10%, #ffffff 24%, #5f666e 46%, #eef0f2 68%, #8f979f 88%, transparent); }
+
+/* App: composer + mode switcher use the same tokens, with a stronger edge */
+.ax-composer { border-width: var(--steel-w); background: linear-gradient(#fff, #fff) padding-box, var(--steel-edge-light) border-box; box-shadow: var(--steel-shadow-light); }
+.ax-modes { border-width: var(--steel-w); background: linear-gradient(#14171c, #14171c) padding-box, var(--steel-edge-dark) border-box; }

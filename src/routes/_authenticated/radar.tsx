@@ -17,7 +17,7 @@ export const Route = createFileRoute('/_authenticated/radar')({
   validateSearch: (s: Record<string, unknown>): { workspace?: string } => typeof s['workspace'] === 'string' && /^[0-9a-f-]{36}$/i.test(s['workspace']) ? { workspace: s['workspace'] } : {},
   loaderDeps: ({ search }) => ({ workspace: search.workspace }),
   loader: ({ context, deps }) => context.queryClient.ensureQueryData(radarQuery(context.radarUserId, deps.workspace)),
-  head: () => pageHead('Radar — Footprint', 'Review possible engineering conflicts, constraints, interfaces, and assumptions with their supporting evidence.'),
+  head: () => pageHead('Radar — Footprint AI', 'Review possible engineering conflicts, constraints, interfaces, and assumptions with their supporting evidence.'),
   pendingComponent: () => <main className="site-width"><p className="workspace-status" role="status">Opening Radar…</p></main>,
   errorComponent: ({ error, reset }) => <main className="site-width"><h1 className="font-heading text-h1">Radar unavailable</h1><p role="alert">{error instanceof Error ? error.message : 'Could not load Radar.'}</p><Button variant="quiet" onClick={reset}>Try again</Button><Link to="/app" className="site-link">Return to chat</Link></main>,
   component: Radar,
@@ -46,7 +46,7 @@ function Radar() {
       <p className="section-kicker">Engineering attention</p><h1 className="font-heading text-h1">Radar</h1>
       <div className="radar-filters" role="group" aria-label="Filter engineering alerts">{radarFilters.map(f => <Button key={f} variant={f === filter ? 'primary' : 'ghost'} size="sm" aria-pressed={f === filter} onClick={() => setFilter(f)}>{f}</Button>)}</div>
       {error && <p role="alert" className="text-destructive">{error}</p>}
-      {visible.length === 0 ? <div className="radar-empty"><Illustration name="verified" /><h2 className="font-heading text-h2">{filter === 'All' ? 'Nothing needs your attention.' : `No ${filter.toLowerCase()} alerts.`}</h2><p className="text-muted-foreground">Footprint analyzes new sources for possible engineering conflicts, changed constraints, interface mismatches, and unsupported assumptions.</p></div> : <div className="radar-feed">{visible.map(a => {
+      {visible.length === 0 ? <div className="radar-empty"><Illustration name="verified" /><h2 className="font-heading text-h2">{filter === 'All' ? 'Nothing needs your attention.' : `No ${filter.toLowerCase()} alerts.`}</h2><p className="text-muted-foreground">Footprint AI analyzes new sources for possible engineering conflicts, changed constraints, interface mismatches, and unsupported assumptions.</p></div> : <div className="radar-feed">{visible.map(a => {
         const claims = [data.claims.find(c => c.id === a.new_claim_id), data.claims.find(c => c.id === a.related_claim_id)].filter(c => c !== undefined)
         const sources = data.sources.filter(s => claims.some(c => c.source_id === s.id))
         return <article className="radar-alert" key={a.id} aria-label={a.title}>

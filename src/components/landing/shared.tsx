@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/use-auth'
 import { startEntry } from '@/components/app/entry'
 import './landing.css'
 import './pages.css'
+import '../materials.css'
 
 /* ---------- helpers ---------- */
 
@@ -54,15 +55,8 @@ export function useInView<T extends HTMLElement>(threshold = 0.4) {
 /* ---------- brand + header ---------- */
 
 export function Mark({ size = 28 }: { size?: number }) {
-  return <svg width={size} height={size * 1.7} viewBox="0 0 40 68" aria-hidden="true" className="lp-mark">
-    <g fill="currentColor">
-      <path d="M3 9c2-5 6-7 10-7s7 3 7 8l0 10-7 5L3 16z" />
-      <path d="M23 4c3-3 8-1 8 4v8l-4 3-4-2z" /><path d="M33 12c3-1 6 1 6 5l-1 6-5 0-1-5z" />
-      <path d="M14 29l8-3 8 3-4 14h-8z" />
-      <path d="M5 30l8 2 3 14-6 5-6-12z" /><path d="M35 30l-8 2-3 14 6 5 6-12z" />
-      <path d="M15 48h10l1 10-3 5h-6l-3-5z" /><path d="M8 52l5 3-1 10-5-2zM32 52l-5 3 1 10 5-2z" />
-    </g>
-  </svg>
+  // Updated brand mark (orange footprint). Height follows the old mark so existing layouts keep their proportions.
+  return <img src="/footprint-logo.png" alt="" aria-hidden="true" className="lp-mark" width={Math.round(size * 1.7 * 0.467)} height={Math.round(size * 1.7)} draggable={false} />
 }
 
 export const nav = [
@@ -100,7 +94,7 @@ export function Header({ onOpen, tone = 'light' }: { onOpen: OpenHandler; tone?:
   }, [menu])
   return <header className="lp-header" data-scrolled={scrolled} data-tone={tone}>
     <div className="lp-header-bar">
-      <Link to="/" className="lp-brand" aria-label="Footprint home"><Mark size={20} /><span>Footprint</span></Link>
+      <Link to="/" className="lp-brand" aria-label="Footprint AI home"><Mark size={20} /><span>Footprint AI</span></Link>
       <nav className="lp-nav" aria-label="Main navigation">
         {nav.map(n => <Link key={n.to} to={n.to} className="lp-nav-link" activeProps={{ 'aria-current': 'page' }}>{n.label}</Link>)}
       </nav>
@@ -108,7 +102,7 @@ export function Header({ onOpen, tone = 'light' }: { onOpen: OpenHandler; tone?:
         {!loading && (user
           ? <button type="button" className="lp-nav-link lp-signin" onClick={() => void signOut()}>Log out</button>
           : <Link to="/login" className="lp-nav-link lp-signin">Sign in</Link>)}
-        <Link to="/app" className="lp-btn lp-btn-primary" onClick={onOpen}>Open Footprint <ArrowRight size={16} aria-hidden="true" /></Link>
+        <Link to="/app" className="lp-btn lp-btn-primary" onClick={onOpen}>Open Footprint AI <ArrowRight size={16} aria-hidden="true" /></Link>
         <button type="button" className="lp-menu-btn" aria-label={menu ? 'Close menu' : 'Open menu'} aria-expanded={menu} aria-controls="lp-mobile-nav" onClick={() => setMenu(m => !m)}>{menu ? <X size={20} /> : <Menu size={20} />}</button>
       </div>
     </div>
@@ -154,18 +148,18 @@ export function SplitHeading({ lines, className = '', as: Tag = 'h1' }: { lines:
 
 /** Closing band shared by the inner marketing pages. */
 export function ClosingBand({ onOpen, joined = false }: { onOpen: OpenHandler; joined?: boolean }) {
-  return <section className={`lp-section lp-dark lp-slate lp-closing-band${joined ? ' lp-joined' : ''}`} aria-label="Open Footprint">
+  return <section className={`lp-section lp-dark lp-slate lp-closing-band${joined ? ' lp-joined' : ''}`} aria-label="Open Footprint AI">
     <div className="lp-dark-bg" aria-hidden="true" />
     <div className="lp-inner">
       <Reveal dir="clip" className="lp-lit lp-glass lp-closing">
         <h2 className="lp-h2">Give your team <span>one place to start.</span></h2>
         <div className="lp-actions">
-          <Link to="/app" className="lp-btn lp-btn-primary lp-btn-lg" onClick={onOpen}>Open Footprint <ArrowRight size={18} aria-hidden="true" /></Link>
+          <Link to="/app" className="lp-btn lp-btn-primary lp-btn-lg" onClick={onOpen}>Open Footprint AI <ArrowRight size={18} aria-hidden="true" /></Link>
           <Link to="/how-it-works" className="lp-btn lp-btn-dark lp-btn-lg">See how it works</Link>
         </div>
       </Reveal>
       <footer className="lp-footer">
-        <Link to="/" className="lp-brand" aria-label="Footprint home"><Mark size={16} /><span>Footprint</span></Link>
+        <Link to="/" className="lp-brand" aria-label="Footprint AI home"><Mark size={16} /><span>Footprint AI</span></Link>
         <nav aria-label="Footer navigation">{nav.map(n => <Link key={n.to} to={n.to} className="lp-nav-link">{n.label}</Link>)}</nav>
       </footer>
     </div>

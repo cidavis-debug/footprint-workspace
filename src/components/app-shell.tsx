@@ -5,6 +5,7 @@ import { Mark } from '@/components/landing/shared'
 import { entryReady } from '@/components/app/entry'
 import { WorkspacePicker, type WorkspaceNode } from '@/components/workspace-picker'
 import './app/app.css'
+import './materials.css'
 
 type Props = {
   workspaces: WorkspaceNode[]
@@ -59,7 +60,7 @@ export function AppShell({ workspaces, value, onChange, onCreate, busy, mode, em
   return <div className={`ax ${right ? '' : 'ax-no-right'}`} data-mode={mode} data-lc={leftCollapsed} data-rc={!!rightCollapsed}>
     <div className="ax-glow" aria-hidden="true" />
     <header className="ax-top">
-      <div className="ax-brandrow"><Link to="/" className="ax-brand" aria-label="Footprint home"><Mark size={18} /><span>Footprint</span></Link><button type="button" className="ax-iconbtn ax-left-toggle" onClick={toggleLeft} aria-expanded={!leftCollapsed} aria-controls="ax-left" aria-label={leftCollapsed ? 'Show workspaces' : 'Hide workspaces'} title={leftCollapsed ? 'Show workspaces' : 'Hide workspaces'}><PanelLeft size={18} aria-hidden="true" /></button></div>
+      <div className="ax-brandrow"><Link to="/" className="ax-brand" aria-label="Footprint AI home"><Mark size={18} /><span>Footprint AI</span></Link><button type="button" className="ax-iconbtn ax-left-toggle" onClick={toggleLeft} aria-expanded={!leftCollapsed} aria-controls="ax-left" aria-label={leftCollapsed ? 'Show workspaces' : 'Hide workspaces'} title={leftCollapsed ? 'Show workspaces' : 'Hide workspaces'}><PanelLeft size={18} aria-hidden="true" /></button></div>
       <nav className="ax-modes" data-mode={mode} aria-label="Mode">
         <i className="ax-modes-thumb" aria-hidden="true" />
         <Link to="/app" search={search} className="ax-mode" data-active={mode === 'ask'} aria-current={mode === 'ask' ? 'page' : undefined}><MessageSquare size={16} aria-hidden="true" /> Ask Mode</Link>

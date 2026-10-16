@@ -33,7 +33,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <div className="top-scroll-fade" aria-hidden="true" />
       <div className="site-width">
       <div className="site-header">
-        <Link to="/" className="wordmark" aria-label="Footprint home"><Brand iconOnly /></Link>
+        <Link to="/" className="wordmark" aria-label="Footprint AI home"><Brand /></Link>
         <nav aria-label="Main navigation" className="site-nav">
           {directory.map(item => <Link key={item.to} to={item.to} className="site-link" activeProps={{ 'aria-current': 'page' }}>{item.label}</Link>)}
         </nav>
@@ -41,12 +41,12 @@ export function SiteLayout({ children }: { children: ReactNode }) {
           {!loading && (user
             ? <span className="desktop-account flex items-center gap-2"><Badge variant="neutral" aria-label={user.email ?? 'Account'} title={user.email ?? ''}>{(user.email?.[0] ?? '?').toUpperCase()}</Badge><Button variant="ghost" onClick={signOut}>Log out</Button></span>
             : <Link to="/login" className="site-link desktop-account">Log in</Link>)}
-          <NavigationButton to="/app"><span className="desktop-open-label">Open Footprint</span><span className="compact-open-label">Open</span><ArrowUpRight className="fp-icon" aria-hidden="true" /></NavigationButton>
+          <NavigationButton to="/app"><span className="desktop-open-label">Open Footprint AI</span><span className="compact-open-label">Open</span><ArrowUpRight className="fp-icon" aria-hidden="true" /></NavigationButton>
           <Button ref={menuButton} variant="ghost" size="icon" className="mobile-menu-trigger" aria-label={menuOpen ? 'Close menu' : 'Open menu'} title={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X className="fp-icon" aria-hidden="true" /> : <MoreHorizontal className="fp-icon" aria-hidden="true" />}</Button>
         </div>
       </div>
       {menuOpen && <nav id="mobile-navigation" aria-label="Mobile navigation" className="mobile-menu" onKeyDown={e => { if (e.key === 'Escape') closeMenu() }}>
-        <Link to="/" className="wordmark" aria-label="Footprint home" onClick={closeMenu}><Brand iconOnly /></Link>
+        <Link to="/" className="wordmark" aria-label="Footprint AI home" onClick={closeMenu}><Brand /></Link>
         {directory.map(item => <Link key={item.to} to={item.to} className="site-link" activeProps={{ 'aria-current': 'page' }} onClick={closeMenu}>{item.label}</Link>)}
         {!loading && (user
           ? <Button variant="ghost" onClick={() => { closeMenu(); void signOut() }}>Log out</Button>
@@ -59,7 +59,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
     <footer className="site-width"><div className="site-footer">
       <Link to="/" className="wordmark"><Brand /></Link>
       <span className="demo-label">A little more clarity. A lot less searching.</span>
-      <nav aria-label="Footer navigation" className="footer-links">{directory.map(item => <Link key={item.to} to={item.to} className="site-link">{item.label}</Link>)}<Link to="/app" className="site-link">Open Footprint <span aria-hidden="true">↗</span></Link></nav>
+      <nav aria-label="Footer navigation" className="footer-links">{directory.map(item => <Link key={item.to} to={item.to} className="site-link">{item.label}</Link>)}<Link to="/app" className="site-link">Open Footprint AI <span aria-hidden="true">↗</span></Link></nav>
     </div></footer>
     </div>
   </>

@@ -11,7 +11,7 @@ const GOOGLE_ENABLED = false
 
 export const Route = createFileRoute('/login')({
   validateSearch: (s: Record<string, unknown>): { redirect?: string } => (typeof s['redirect'] === 'string' ? { redirect: s['redirect'] } : {}),
-  head: () => pageHead('Log in — Footprint', 'Sign in or create your Footprint account.'),
+  head: () => pageHead('Log in — Footprint AI', 'Sign in or create your Footprint AI account.'),
   component: Login,
 })
 
@@ -46,7 +46,7 @@ function Login() {
   }
 
   return <SiteLayout><main className="site-width"><section className="simple-page">
-    <p className="section-kicker">Your Footprint account</p>
+    <p className="section-kicker">Your Footprint AI account</p>
     <h1>{mode === 'signin' ? 'Welcome back.' : 'Create your account.'}</h1>
     <form onSubmit={submit} className="flex flex-col gap-4 mt-6">
       <label className="flex flex-col gap-2"><span>Email</span><Input type="email" required autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} /></label>

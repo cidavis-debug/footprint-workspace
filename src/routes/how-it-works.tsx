@@ -5,7 +5,7 @@ import { pageHead } from '@/components/page-head'
 import { MarketingPage, Reveal, SplitHeading, WordReveal, clamp, prefersReducedMotion, useScrollProgress, type Dir } from '@/components/landing/shared'
 
 export const Route = createFileRoute('/how-it-works')({
-  head: () => pageHead('How it works — Footprint', 'The Footprint workflow: create a workspace, add files and links, organize collections, ask cited questions, and analyze sources for potential conflicts.'),
+  head: () => pageHead('How it works — Footprint AI', 'The Footprint AI workflow: create a workspace, add files and links, organize collections, ask cited questions, and analyze sources for potential conflicts.'),
   component: HowItWorks,
 })
 
@@ -21,7 +21,7 @@ const steps: Step[] = [
       <li><b>Test Campaign</b><span className="lp-mono">Workspace</span></li>
     </ul> },
   { id: 'add', n: '02', title: 'Add files and links', dir: 'right',
-    lead: 'Upload files or save web links into the active workspace. Footprint accepts what it can use today and is plain about the rest.',
+    lead: 'Upload files or save web links into the active workspace. Footprint AI accepts what it can use today and is plain about the rest.',
     body: <dl className="lp-facts">
       <div><dt>Files</dt><dd>PDF, Markdown, plain text</dd></div>
       <div><dt>Size</dt><dd>Up to 20 MB each</dd></div>
@@ -46,12 +46,12 @@ const steps: Step[] = [
       <p className="lp-fine">No answer is guaranteed to be perfect. Check important details against the original.</p>
     </div> },
   { id: 'analyze', n: '05', title: 'Analyze for conflicts', dir: 'left',
-    lead: 'Run analysis on supported sources. Footprint extracts engineering claims — interfaces, requirements, decisions, constraints and assumptions — and compares them across the workspace. Possible conflicts land in Radar for your review.',
+    lead: 'Run analysis on supported sources. Footprint AI extracts engineering claims — interfaces, requirements, decisions, constraints and assumptions — and compares them across the workspace. Possible conflicts land in Radar for your review.',
     body: <div className="lp-conflict">
       <div><span className="lp-mono">Interface Drawing</span><strong>8<small>mm</small></strong></div>
       <div className="vs lp-mono">vs</div>
       <div className="hot"><span className="lp-mono">Assembly Specification</span><strong>10<small>mm</small></strong></div>
-      <p>Potential conflict — review required. Footprint flags it; your team decides which source is correct.</p>
+      <p>Potential conflict — review required. Footprint AI flags it; your team decides which source is correct.</p>
     </div> },
 ]
 
@@ -99,13 +99,13 @@ function HowItWorks() {
         <Reveal delay={500} className="lp-hiw-sub"><p className="lp-lead">One workflow, from the first file to the first conflict flagged for review. Follow it down the page.</p></Reveal>
       </div>
     </section>
-    <section className="lp-journey-wrap" aria-label="The Footprint workflow"><div className="lp-inner"><Journey /></div></section>
+    <section className="lp-journey-wrap" aria-label="The Footprint AI workflow"><div className="lp-inner"><Journey /></div></section>
     <section className="lp-section lp-dark lp-slate lp-honest" aria-labelledby="lp-honest-h">
       <div className="lp-dark-bg" aria-hidden="true" />
       <div className="lp-inner">
         <p className="lp-mono lp-eyebrow">A note on links</p>
         <h2 id="lp-honest-h" className="lp-sr">Links stay honest</h2>
-        <WordReveal className="lp-statement lp-statement-dark" text="Links stay honest. A saved URL is a reference, not an imported document — Footprint does not silently read private Google Drive or OneDrive content." />
+        <WordReveal className="lp-statement lp-statement-dark" text="Links stay honest. A saved URL is a reference, not an imported document — Footprint AI does not silently read private Google Drive or OneDrive content." />
         <Reveal dir="right" delay={150}><p className="lp-body">To use a document’s text, upload a supported file. <Link to="/security" className="lp-textlink">Read the data boundaries <ArrowUpRight size={15} aria-hidden="true" /></Link></p></Reveal>
       </div>
     </section>

@@ -50,10 +50,11 @@
 
 /* layering */
 /* 1. hero: scroll-scrubbed mechanical bloom */
-.lp-hero { --t: 0; --text: 1; --wash: 0; --grow: 0; position: relative; --shift: 45vh; --scale: 1.1; --edge: 1; height: 355vh; margin-top: -68px; background: #e8eaed; z-index: 2; }
+.lp-hero { --t: 0; --text: 1; --wash: 0; --grow: 0; position: relative; --shift: 45vh; --scale: 1.1; --edge: 1; height: 222vh; margin-top: -68px; background: #e8eaed; z-index: 2; }
 .lp-hero-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; background: #e8eaed; }
 .lp-bloom { position: absolute; inset: 0; transform: translate3d(0, var(--shift), 0) scale(var(--scale)); transform-origin: 70% 50%; will-change: transform; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--edge) * 18%)); mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--edge) * 18%)); }
 .lp-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 24%; z-index: 2; pointer-events: none; opacity: calc(var(--edge) * .9); background: linear-gradient(to top, #e8eaed 0, rgba(232, 234, 237, .75) 28%, rgba(232, 234, 237, 0) 100%); }
+.lp-bloom-canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 .lp-bloom-video { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; background: transparent; }
 .lp-wash { position: absolute; inset: 0; background: #e8eaed; opacity: var(--wash); pointer-events: none; z-index: 1; }
 .lp-hero-inner { position: relative; z-index: 3; height: 100%; display: flex; align-items: center; padding: 68px var(--pad) 0; }
@@ -238,7 +239,7 @@
   .lp-hero .lp-lead { font-size: 1rem; }
   .lp-trio { display: none; }
   .lp-bloom { top: auto; bottom: 0; height: calc(52% + var(--grow) * 48%); -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--edge) * 18% + (1 - var(--grow)) * 12%)); mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--edge) * 18% + (1 - var(--grow)) * 12%)); }
-  .lp-bloom-video { object-position: 76% center; }
+  .lp-bloom-video, .lp-bloom-canvas { object-position: 76% center; }
   .lp-btn-lg { width: 100%; }
   .lp-header-actions .lp-btn-primary { height: 40px; padding: 0 16px; }
   .lp-mrow { grid-template-columns: 1fr; gap: 12px; }
