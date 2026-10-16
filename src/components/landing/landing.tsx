@@ -16,34 +16,64 @@ function Hero({ onOpen }: { onOpen: OpenHandler }) {
   useEffect(() => {
     const el = outer.current, vid = video.current
     if (!el || !vid) return
-    const reduce = prefersReducedMotion()
-    if (reduce) { el.style.setProperty('--t', '0'); el.style.setProperty('--text', '1'); return }
-    let target = 0, shown = 0, raf = 0, running = true
-    const readTarget = () => {
-      const max = Math.max(el.offsetHeight - window.innerHeight, 1)
-      const y = clamp(-el.getBoundingClientRect().top / max)
-      target = y
+    const set = (k: string, val: number | string) => el.style.setProperty(k, String(val))
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+
+    // Scroll budget: REVEAL_VH of travel to uncover the flower, then BLOOM_VH of travel to scrub the video.
+    // Keep these in sync with the .lp-hero height in landing.css (100vh + both).
+    const REVEAL_VH = 0.55, BLOOM_VH = 2
+
+    let vh = window.innerHeight, vw = window.innerWidth, reveal = REVEAL_VH * vh, shiftPx = 0, objX = 50
+    const measure = () => {
+      vh = window.innerHeight; vw = window.innerWidth; reveal = REVEAL_VH * vh
+      // Rendered video frame under object-fit: cover (frame is 16:9).
+      const frameH = Math.max(vh, vw * 9 / 16), frameW = Math.max(vw, vh * 16 / 9)
+      if (vw <= 640) { shiftPx = vh * 0.24; objX = 76; return }
+      // Push the frame down until ~55% of the flower (frame y 4%..96%) is above the bottom edge.
+      shiftPx = Math.max(0, vh - (vh - frameH) / 2 - (0.04 + 0.92 * 0.55) * frameH)
+      // On narrower-than-16:9 viewports keep the flower in view on the right while the frame is cropped.
+      const crop = frameW - vw
+      objX = crop > 1 ? clamp(-(0.66 * vw - 0.64 * frameW) / crop, 0, 1) * 100 : 50
     }
+    measure()
+
+    const apply = (y: number) => {
+      const r = clamp(y / reveal)
+      const t = clamp((y - reveal) / (BLOOM_VH * vh))
+      const re = smooth(r)
+      set('--shift', `${(shiftPx * (1 - re)).toFixed(1)}px`)
+      set('--scale', (1 + 0.1 * (1 - re)).toFixed(4))
+      set('--edge', (1 - re).toFixed(4))
+      set('--text', (1 - smooth((r - 0.3) / 0.6)).toFixed(4))
+      set('--t', t.toFixed(4))
+      set('--wash', smooth((t - 0.86) / 0.14).toFixed(4))
+      set('--grow', smooth(t / 0.3).toFixed(4))
+      el.dataset['phase'] = r < 1 ? 'reveal' : 'bloom'
+      vid.style.objectPosition = `${lerp(objX, 50, re).toFixed(1)}% center`
+      return t
+    }
+
+    if (prefersReducedMotion()) { apply(reveal); return }
+
+    let target = 0, shown = 0, raf = 0, running = true
     const frame = () => {
       if (!running) return
-      readTarget()
+      target = Math.max(0, -el.getBoundingClientRect().top)
       shown += (target - shown) * 0.2
-      if (Math.abs(target - shown) < 0.0004) shown = target
-      const t = shown
-      el.style.setProperty('--t', t.toFixed(4))
-      el.style.setProperty('--text', String(1 - clamp(target / 0.12)))
-      el.style.setProperty('--wash', smooth((t - 0.86) / 0.14).toFixed(4))
-      el.style.setProperty('--grow', smooth(t / 0.3).toFixed(4))
+      if (Math.abs(target - shown) < 0.4) shown = target
+      const t = apply(shown)
       const d = vid.duration
       if (d && isFinite(d) && !vid.seeking) {
-        const want = clamp(t) * (d - 0.04)
+        const want = t * (d - 0.04)
         if (Math.abs(vid.currentTime - want) > 1 / 90) vid.currentTime = want
       }
       raf = requestAnimationFrame(frame)
     }
+    const onResize = () => measure()
+    window.addEventListener('resize', onResize)
     vid.pause()
     raf = requestAnimationFrame(frame)
-    return () => { running = false; cancelAnimationFrame(raf) }
+    return () => { running = false; cancelAnimationFrame(raf); window.removeEventListener('resize', onResize) }
   }, [])
 
   return <section className="lp-hero" ref={outer}>
@@ -51,6 +81,7 @@ function Hero({ onOpen }: { onOpen: OpenHandler }) {
       <div className="lp-bloom">
         <video ref={video} className="lp-bloom-video" src={encodeURI(BLOOM_SRC)} poster={BLOOM_POSTER} muted playsInline preload="auto" aria-hidden="true" tabIndex={-1} />
       </div>
+      <div className="lp-floor" aria-hidden="true" />
       <div className="lp-wash" aria-hidden="true" />
       <div className="lp-inner lp-hero-inner">
         <div className="lp-hero-copy">

@@ -50,19 +50,23 @@
 
 /* layering */
 /* 1. hero: scroll-scrubbed mechanical bloom */
-.lp-hero { --t: 0; --text: 1; --wash: 0; --grow: 0; position: relative; height: 320vh; margin-top: -68px; background: #e8eaed; z-index: 2; }
-.lp-hero-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; background: #e8eaed url('/footprint-bloom-poster.jpg') center / cover no-repeat; }
-.lp-bloom { position: absolute; inset: 0; }
+.lp-hero { --t: 0; --text: 1; --wash: 0; --grow: 0; position: relative; --shift: 45vh; --scale: 1.1; --edge: 1; height: 355vh; margin-top: -68px; background: #e8eaed; z-index: 2; }
+.lp-hero-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; background: #e8eaed; }
+.lp-bloom { position: absolute; inset: 0; transform: translate3d(0, var(--shift), 0) scale(var(--scale)); transform-origin: 70% 50%; will-change: transform; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--edge) * 18%)); mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--edge) * 18%)); }
+.lp-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 24%; z-index: 2; pointer-events: none; opacity: calc(var(--edge) * .9); background: linear-gradient(to top, #e8eaed 0, rgba(232, 234, 237, .75) 28%, rgba(232, 234, 237, 0) 100%); }
 .lp-bloom-video { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; background: transparent; }
 .lp-wash { position: absolute; inset: 0; background: #e8eaed; opacity: var(--wash); pointer-events: none; z-index: 1; }
-.lp-hero-inner { position: relative; z-index: 3; height: 100%; display: flex; align-items: center; padding-top: 68px; }
+.lp-hero-inner { position: relative; z-index: 3; height: 100%; display: flex; align-items: center; padding: 68px var(--pad) 0; }
 .lp-hero-copy { max-width: min(640px, 46%); display: flex; flex-direction: column; gap: 24px; opacity: var(--text); transform: translateY(calc((1 - var(--text)) * -28px)); will-change: opacity, transform; pointer-events: auto; }
 .lp-hero-copy[style], .lp-hero[data-inert] .lp-hero-copy { pointer-events: auto; }
 .lp-actions { display: flex; flex-wrap: wrap; gap: 14px; }
 .lp-trio { display: flex; flex-wrap: wrap; gap: 10px 28px; color: var(--ink-soft); font-size: 15px; }
 .lp-trio li { display: inline-flex; align-items: center; gap: 8px; }
 .lp-trio svg { color: var(--orange); }
-.lp-scrollcue { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 3; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); opacity: var(--text); }
+.lp-scrollcue { position: absolute; left: calc(50% - min(660px, 50% - var(--pad))); bottom: 28px; z-index: 3; display: flex; align-items: center; gap: 12px; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); opacity: var(--text); }
+.lp-scrollcue::after { content: ""; width: 1px; height: 34px; background: linear-gradient(to bottom, var(--orange), transparent); animation: lp-cue 1.8s ease-in-out infinite; transform-origin: top; }
+@keyframes lp-cue { 0% { transform: scaleY(0); opacity: 0; } 40% { opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
+.lp-hero[data-phase="bloom"] .lp-hero-copy { visibility: hidden; }
 .lp-hero .lp-eyebrow, .lp-hero .lp-lead, .lp-hero .lp-trio { text-shadow: 0 0 24px rgba(232, 234, 237, .9); }
 
 /* ===== Materials ===== */
@@ -228,13 +232,13 @@
   .lp-rules em { grid-column: 2; }
 }
 @media (max-width: 640px) {
+  .lp-hero { --shift: 24vh; }
   .lp-hero-inner { align-items: flex-start; padding-top: 84px; }
   .lp-hero-copy { max-width: none; gap: 16px; }
   .lp-hero .lp-lead { font-size: 1rem; }
   .lp-trio { display: none; }
-  .lp-bloom { top: auto; bottom: 0; height: calc(52% + var(--grow) * 48%); }
+  .lp-bloom { top: auto; bottom: 0; height: calc(52% + var(--grow) * 48%); -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--edge) * 18% + (1 - var(--grow)) * 12%)); mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--edge) * 18% + (1 - var(--grow)) * 12%)); }
   .lp-bloom-video { object-position: 76% center; }
-  .lp-hero-sticky { background-position: 76% 100%; background-size: auto 56%; }
   .lp-btn-lg { width: 100%; }
   .lp-header-actions .lp-btn-primary { height: 40px; padding: 0 16px; }
   .lp-mrow { grid-template-columns: 1fr; gap: 12px; }
