@@ -2,7 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ArrowUpRight, FileText, Link2 } from 'lucide-react'
 import { pageHead } from '@/components/page-head'
-import { MarketingPage, Reveal, SplitHeading, WordReveal, clamp, prefersReducedMotion, useScrollProgress, type Dir } from '@/components/landing/shared'
+import { Emerge, MarketingPage, Plane, Reveal, SplitHeading, Stage, WordReveal, clamp, prefersReducedMotion, useScrollProgress, type Dir } from '@/components/landing/shared'
 
 export const Route = createFileRoute('/how-it-works')({
   head: () => pageHead('How it works — Footprint AI', 'The Footprint AI workflow: create a workspace, add files and links, organize collections, ask cited questions, and analyze sources for potential conflicts.'),
@@ -12,7 +12,7 @@ export const Route = createFileRoute('/how-it-works')({
 type Step = { id: string; n: string; title: string; lead: string; dir: Dir; body: ReactNode; tone?: 'slate' }
 
 const steps: Step[] = [
-  { id: 'workspace', n: '01', title: 'Create a workspace', dir: 'left',
+  { id: 'workspace', n: '01', title: 'Create a workspace', dir: 'wipe-l',
     lead: 'A workspace is the home for one program or team’s sources. Sub-workspaces nest one level beneath it, so a subsystem can have its own space without losing the parent.',
     body: <ul className="lp-tree" aria-label="Example workspace structure">
       <li><b>Actuator Program</b><span className="lp-mono">Workspace</span></li>
@@ -20,7 +20,7 @@ const steps: Step[] = [
       <li className="sub"><b>Controller</b><span className="lp-mono">Sub-workspace</span></li>
       <li><b>Test Campaign</b><span className="lp-mono">Workspace</span></li>
     </ul> },
-  { id: 'add', n: '02', title: 'Add files and links', dir: 'right',
+  { id: 'add', n: '02', title: 'Add files and links', dir: 'wipe-r',
     lead: 'Upload files or save web links into the active workspace. Footprint AI accepts what it can use today and is plain about the rest.',
     body: <dl className="lp-facts">
       <div><dt>Files</dt><dd>PDF, Markdown, plain text</dd></div>
@@ -45,7 +45,7 @@ const steps: Step[] = [
       <div className="lp-cites"><span><b className="lp-mono">1</b>Interface Drawing</span><span><b className="lp-mono">2</b>Assembly Specification</span></div>
       <p className="lp-fine">No answer is guaranteed to be perfect. Check important details against the original.</p>
     </div> },
-  { id: 'analyze', n: '05', title: 'Analyze for conflicts', dir: 'left',
+  { id: 'analyze', n: '05', title: 'Analyze for conflicts', dir: 'wipe-l',
     lead: 'Run analysis on supported sources. Footprint AI extracts engineering claims — interfaces, requirements, decisions, constraints and assumptions — and compares them across the workspace. Possible conflicts land in Radar for your review.',
     body: <div className="lp-conflict">
       <div><span className="lp-mono">Interface Drawing</span><strong>8<small>mm</small></strong></div>
@@ -92,23 +92,25 @@ function Journey() {
 
 function HowItWorks() {
   return <MarketingPage endsDark>
-    <section className="lp-pagehero lp-hiw-hero">
+    <Stage className="lp-pagehero lp-hiw-hero">
+      <Plane className="arc-plane-cut" speed={0} />
+      <Plane className="arc-plane-cut-wire" speed={0} />
       <div className="lp-inner lp-hiw-hero-inner">
         <p className="lp-mono lp-eyebrow">How it works · five steps</p>
         <SplitHeading className="lp-mega" lines={[{ t: 'From scattered files' }, { t: 'to a cited answer.', accent: true }]} />
-        <Reveal delay={500} className="lp-hiw-sub"><p className="lp-lead">One workflow, from the first file to the first conflict flagged for review. Follow it down the page.</p></Reveal>
+        <Reveal dir="wipe-r" delay={500} className="lp-lit lp-glass lp-hiw-sub"><p className="lp-lead">One workflow, from the first file to the first conflict flagged for review. Follow it down the page.</p></Reveal>
       </div>
-    </section>
+    </Stage>
     <section className="lp-journey-wrap" aria-label="The Footprint AI workflow"><div className="lp-inner"><Journey /></div></section>
-    <section className="lp-section lp-dark lp-slate lp-honest" aria-labelledby="lp-honest-h">
+    <Stage className="lp-section lp-dark lp-slate lp-honest arc-sec arc-wt arc-t-l arc-b-l" aria-labelledby="lp-honest-h">
       <div className="lp-dark-bg" aria-hidden="true" />
       <div className="lp-inner">
         <p className="lp-mono lp-eyebrow">A note on links</p>
         <h2 id="lp-honest-h" className="lp-sr">Links stay honest</h2>
         <WordReveal className="lp-statement lp-statement-dark" text="Links stay honest. A saved URL is a reference, not an imported document — Footprint AI does not silently read private Google Drive or OneDrive content." />
-        <Reveal dir="right" delay={150}><p className="lp-body">To use a document’s text, upload a supported file. <Link to="/security" className="lp-textlink">Read the data boundaries <ArrowUpRight size={15} aria-hidden="true" /></Link></p></Reveal>
+        <Emerge from="left" delay={150}><p className="lp-body">To use a document’s text, upload a supported file. <Link to="/security" className="lp-textlink">Read the data boundaries <ArrowUpRight size={15} aria-hidden="true" /></Link></p></Emerge>
       </div>
-    </section>
+    </Stage>
   </MarketingPage>
 }
 

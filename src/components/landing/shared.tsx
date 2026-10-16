@@ -1,11 +1,12 @@
 import { Link, useNavigate } from '@tanstack/react-router'
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type HTMLAttributes, type ReactNode } from 'react'
 import { AlertTriangle, ArrowRight, ArrowUpRight, FileText, FolderOpen, Menu, RotateCcw, X } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { startEntry } from '@/components/app/entry'
 import './landing.css'
 import './pages.css'
 import '../materials.css'
+import './architecture.css'
 
 /* ---------- helpers ---------- */
 
@@ -118,10 +119,32 @@ export function Header({ onOpen, tone = 'light' }: { onOpen: OpenHandler; tone?:
 
 /* ---------- shared reveal helpers ---------- */
 
-export type Dir = 'up' | 'left' | 'right' | 'scale' | 'clip'
+export type Dir = 'up' | 'left' | 'right' | 'scale' | 'clip' | 'wipe-l' | 'wipe-r'
 export function Reveal({ children, className = '', delay = 0, dir = 'up' }: { children: ReactNode; className?: string; delay?: number; dir?: Dir }) {
-  const [ref, seen] = useInView<HTMLDivElement>(0.15)
+  const [ref, seen] = useInView<HTMLDivElement>(dir.startsWith('wipe') ? 0.01 : 0.15) // a wipe starts mostly clipped, so it needs a tiny threshold
   return <div ref={ref} className={`lp-reveal-in ${className}`} data-in={seen} data-dir={dir} style={v({ '--delay': `${delay}ms` })}>{children}</div>
+}
+
+/** Section wrapper that publishes scroll progress (--p) so child `Plane`s can drift at their own speed. */
+export function Stage({ children, className = '', ...rest }: { children: ReactNode; className?: string } & Omit<HTMLAttributes<HTMLElement>, 'className' | 'children'>) {
+  const ref = useScrollProgress<HTMLElement>()
+  return <section ref={ref} className={className} {...rest}>{children}</section>
+}
+
+/** Decorative material layer. Drifts vertically against scroll by `speed` px across the section's travel. */
+export function Plane({ className = '', speed = 60 }: { className?: string; speed?: number }) {
+  return <i className={`arc-plane ${className}`} style={v({ '--sp': speed })} aria-hidden="true" />
+}
+
+/** Reflective steel rail cut from stainless_steel_borders.png. */
+export function Rail({ className = '' }: { className?: string }) {
+  return <div className={`arc-rail ${className}`} aria-hidden="true" />
+}
+
+/** Text that slides out from behind a material edge: the wrapper clips, the content rises or slides into view. */
+export function Emerge({ children, className = '', delay = 0, from = 'bottom' }: { children: ReactNode; className?: string; delay?: number; from?: 'bottom' | 'left' | 'right' }) {
+  const [ref, seen] = useInView<HTMLDivElement>(0.2)
+  return <div ref={ref} className={`arc-emerge ${className}`} data-in={seen} data-from={from} style={v({ '--delay': `${delay}ms` })}><div className="arc-emerge-in">{children}</div></div>
 }
 
 /** Words darken progressively as the block scrolls through the viewport. */
@@ -146,12 +169,13 @@ export function SplitHeading({ lines, className = '', as: Tag = 'h1' }: { lines:
   </Tag>
 }
 
-/** Closing band shared by the inner marketing pages. */
-export function ClosingBand({ onOpen, joined = false }: { onOpen: OpenHandler; joined?: boolean }) {
-  return <section className={`lp-section lp-dark lp-slate lp-closing-band${joined ? ' lp-joined' : ''}`} aria-label="Open Footprint AI">
+/** Closing band shared by the inner marketing pages: slate wedge, a steel plane, and glass crossing the seam between them. */
+export function ClosingBand({ onOpen, joined = false, lean = 'r' }: { onOpen: OpenHandler; joined?: boolean; lean?: 'l' | 'r' }) {
+  return <Stage className={`lp-section lp-dark lp-slate lp-closing-band arc-sec arc-wt arc-t-${lean}${joined ? ' lp-joined arc-pull' : ''}`} aria-label="Open Footprint AI">
     <div className="lp-dark-bg" aria-hidden="true" />
+    <Plane className="arc-plane-closing" speed={50} />
     <div className="lp-inner">
-      <Reveal dir="clip" className="lp-lit lp-glass lp-closing">
+      <Reveal dir="wipe-l" className="lp-lit lp-glass lp-closing">
         <h2 className="lp-h2">Give your team <span>one place to start.</span></h2>
         <div className="lp-actions">
           <Link to="/app" className="lp-btn lp-btn-primary lp-btn-lg" onClick={onOpen}>Open Footprint AI <ArrowRight size={18} aria-hidden="true" /></Link>
@@ -163,11 +187,11 @@ export function ClosingBand({ onOpen, joined = false }: { onOpen: OpenHandler; j
         <nav aria-label="Footer navigation">{nav.map(n => <Link key={n.to} to={n.to} className="lp-nav-link">{n.label}</Link>)}</nav>
       </footer>
     </div>
-  </section>
+  </Stage>
 }
 
 /** Page frame for the inner marketing routes: shared header, closing band, white-light handoff, hover lighting. */
-export function MarketingPage({ children, tone = 'light', endsDark = false }: { children: ReactNode; tone?: 'light' | 'dark'; endsDark?: boolean }) {
+export function MarketingPage({ children, tone = 'light', endsDark = false, lean = 'r' }: { children: ReactNode; tone?: 'light' | 'dark'; endsDark?: boolean; lean?: 'l' | 'r' }) {
   const { open, reveal } = useOpenApp()
   const root = useRef<HTMLDivElement>(null)
   useEffect(() => {
@@ -186,7 +210,7 @@ export function MarketingPage({ children, tone = 'light', endsDark = false }: { 
   return <div className="lp lp-page" data-tone={tone} ref={root}>
     <Header onOpen={open} tone={tone} />
     <main>{children}</main>
-    <ClosingBand onOpen={open} joined={endsDark} />
+    <ClosingBand onOpen={open} joined={endsDark} lean={lean} />
     <div className="lp-reveal" data-on={reveal} aria-hidden="true" />
   </div>
 }

@@ -2,7 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { ArrowUpRight, Check } from 'lucide-react'
 import { pageHead } from '@/components/page-head'
-import { MarketingPage, Reveal, SplitHeading } from '@/components/landing/shared'
+import { MarketingPage, Rail, Reveal, SplitHeading, Stage } from '@/components/landing/shared'
 
 export const Route = createFileRoute('/pricing')({
   head: () => pageHead('Pricing — Footprint AI', 'Draft Free, Pro, and Team plans for Footprint AI, clearly labeled as proposals.'),
@@ -37,17 +37,22 @@ function Pricing() {
   const [sel, setSel] = useState(1)
   const p = plans[sel]!
   const price = (i: number) => annual ? plans[i]!.annual : plans[i]!.monthly
-  return <MarketingPage>
+  return <MarketingPage lean="l">
     <section className="lp-pagehero lp-price-hero">
-      <div className="lp-inner lp-price-hero-inner">
+      <div className="lp-inner">
+      <div className="arc-plate arc-f-steel arc-inset lp-price-slab">
+      <Rail className="arc-rail-wide" />
+      <div className="lp-price-hero-inner">
         <div>
           <p className="lp-mono lp-eyebrow">Footprint AI pricing · draft</p>
           <SplitHeading className="lp-mega" lines={[{ t: 'Good knowledge.' }, { t: 'A considered plan.', accent: true }]} />
         </div>
-        <Reveal dir="right" delay={400} className="lp-price-note lp-glass-light">
+        <Reveal dir="wipe-r" delay={400} className="lp-lit lp-price-note lp-glass-light">
           <b>Draft pricing · USD</b>
           <p>These plans are proposals, not a live offer. Subscriptions and payments are unavailable, and the product has no checkout.</p>
         </Reveal>
+      </div>
+      </div>
       </div>
     </section>
 
@@ -60,7 +65,7 @@ function Pricing() {
             <button type="button" aria-pressed={annual} onClick={() => setAnnual(true)}>Yearly</button>
           </div>
         </div>
-        <Reveal dir="up" className="lp-lit lp-steel lp-table-wrap">
+        <Reveal dir="wipe-l" className="lp-lit lp-glass-light lp-table-wrap">
           <table className="lp-table">
             <caption className="lp-sr">Proposed plans compared. Select a plan heading for details.</caption>
             <thead>
@@ -84,8 +89,9 @@ function Pricing() {
       </div>
     </section>
 
-    <section className="lp-section lp-dark lp-slate lp-price-spot" aria-live="polite" aria-label="Selected plan">
+    <Stage className="lp-section lp-dark lp-slate lp-price-spot arc-sec arc-wt arc-wb arc-t-l arc-b-r arc-tib" aria-live="polite" aria-label="Selected plan">
       <div className="lp-dark-bg" aria-hidden="true" />
+      <i className="arc-tiband" aria-hidden="true" />
       <div className="lp-inner lp-spot-grid">
         <div key={p.name} className="lp-spot-copy">
           <p className="lp-mono lp-eyebrow">Selected plan</p>
@@ -101,11 +107,11 @@ function Pricing() {
           <p className="lp-fine">Preview only · no checkout. Exploring the workspace does not start a subscription.</p>
         </div>
       </div>
-    </section>
+    </Stage>
 
     <section className="lp-section lp-price-faq" aria-labelledby="lp-faq-h">
       <div className="lp-inner lp-faq-grid">
-        <Reveal dir="left"><p className="lp-mono lp-eyebrow">Useful details</p><h2 id="lp-faq-h" className="lp-h2">Before you <span>ask.</span></h2></Reveal>
+        <Reveal dir="wipe-l" className="arc-plate arc-f-steel arc-inset arc-bleed-l"><p className="lp-mono lp-eyebrow">Useful details</p><h2 id="lp-faq-h" className="lp-h2">Before you <span>ask.</span></h2></Reveal>
         <div className="lp-faq">
           {faq.map((f, i) => <Reveal key={f.q} dir="right" delay={i * 70}><details className="lp-details"><summary>{f.q}</summary><p>{f.a}</p></details></Reveal>)}
           <Link to="/security" className="lp-textlink lp-textlink-ink">Understand the data boundaries <ArrowUpRight size={15} aria-hidden="true" /></Link>

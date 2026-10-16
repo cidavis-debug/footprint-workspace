@@ -1,0 +1,267 @@
+/*
+ * Architectural material system for the marketing pages (scoped under .lp).
+ *
+ * Textures are the supplied references in design-references/images, imported through Vite's CSS url() handling.
+ *   ceramic   – matte environment (page background, plates)       stainless – large inset surfaces
+ *   titanium  – satin dividers and bands                          frosted   – glass flutes
+ *   rail      – a crop of stainless_steel_borders.png             slate     – public/textures/slate.jpg (the reference webp has baked-in caption text)
+ *
+ * Geometry: add .arc-sec to a section, then any of .arc-t-l/.arc-t-r/.arc-b-l/.arc-b-r to cut that corner pair
+ * diagonally by --cut, .arc-wt/.arc-wb for the reflective wire along the cut, .arc-tib for a titanium band under it.
+ */
+.lp {
+  --steel-w: 3px;
+  --gutter: max(var(--pad), calc((100vw - 1320px) / 2));
+  --padv: clamp(96px, 11vw, 168px);
+  --wire: linear-gradient(90deg, #8d959d, #ffffff 11%, #69707a 29%, #e8ebee 47%, #7a828b 65%, #ffffff 82%, #8d959d);
+  --sweep: linear-gradient(100deg, transparent 42%, rgba(255, 255, 255, .95) 50%, transparent 58%);
+  --edge: var(--steel-edge-light);
+  background: linear-gradient(rgba(255, 255, 255, .48), rgba(255, 255, 255, .48)), url('../../../design-references/images/ceramic.png') top center / 1000px auto repeat, #e6e8eb;
+}
+.lp.lp-page { background: linear-gradient(rgba(255, 255, 255, .48), rgba(255, 255, 255, .48)), url('../../../design-references/images/ceramic.png') top center / 1000px auto repeat, #e6e8eb; }
+.lp .lp-steel-dark, .lp .lp-glass { --edge: var(--steel-edge-dark); }
+
+/* ===== Plates: bordered material surfaces. Edge sits in the border box, texture + veil in the padding box. ===== */
+.lp .arc-plate { position: relative; border: var(--steel-w) solid transparent; border-radius: 28px; box-shadow: var(--steel-shadow-light);
+  background-origin: padding-box, padding-box, border-box; background-clip: padding-box, padding-box, border-box; background-repeat: no-repeat, repeat, no-repeat; }
+.lp .arc-f-steel { background-image: linear-gradient(105deg, rgba(246, 248, 250, .78), rgba(246, 248, 250, .6) 50%, rgba(246, 248, 250, .76)), url('../../../design-references/images/stainless-steel-texture-solid.jpg'), var(--steel-edge-light); background-size: auto, cover, auto; background-repeat: no-repeat; }
+.lp .arc-f-ceramic { background-image: linear-gradient(rgba(255, 255, 255, .55), rgba(255, 255, 255, .55)), url('../../../design-references/images/ceramic.png'), var(--steel-edge-light); background-size: auto, 900px auto, auto; }
+.lp .arc-f-frost { background-image: linear-gradient(rgba(255, 255, 255, .8), rgba(255, 255, 255, .72)), url('../../../design-references/images/frosted-glass.png'), var(--steel-edge-light); background-size: auto, 380px auto, auto; }
+.lp .arc-f-slate { color: #f4f6f8; --ink-soft: #a9b2bf; --line: rgba(255, 255, 255, .16); box-shadow: var(--steel-shadow-dark), inset 0 14px 36px -10px rgba(0, 0, 0, .7);
+  background-image: radial-gradient(520px 260px at 90% 0, rgba(255, 94, 0, .22), transparent 70%), linear-gradient(rgba(8, 9, 12, .74), rgba(8, 9, 12, .74)), url('/textures/slate.jpg'), var(--steel-edge-dark);
+  background-size: auto, auto, 560px auto, auto; background-origin: padding-box, padding-box, padding-box, border-box; background-clip: padding-box, padding-box, padding-box, border-box; background-repeat: no-repeat, no-repeat, repeat, no-repeat; }
+.lp .arc-f-ti { color: #f4f6f8; --ink-soft: #b4bcc8; --line: rgba(255, 255, 255, .16); box-shadow: var(--steel-shadow-dark);
+  background-image: linear-gradient(rgba(14, 16, 20, .25), rgba(14, 16, 20, .25)), url('../../../design-references/images/brushed_titanium.webp'), var(--steel-edge-dark); background-size: auto, 652px auto, auto; }
+.lp .arc-inset { box-shadow: inset 0 3px 14px -2px rgba(18, 21, 27, .28), inset 0 -2px 0 rgba(255, 255, 255, .55), 0 1px 0 rgba(255, 255, 255, .9), 0 0 0 1px rgba(18, 21, 27, .2); }
+.lp .arc-bleed-r { margin-right: calc(var(--gutter) * -1); padding-right: calc(var(--gutter) + clamp(20px, 3vw, 44px)); border-right: 0; border-radius: 28px 0 0 28px; }
+.lp .arc-bleed-l { margin-left: calc(var(--gutter) * -1); padding-left: calc(var(--gutter) + clamp(20px, 3vw, 44px)); border-left: 0; border-radius: 0 28px 28px 0; }
+
+/* ===== Geometry ===== */
+.lp .arc-sec { --cut: clamp(32px, 6.5vw, 108px); --clip: polygon(0 var(--tl, 0px), 100% var(--tr, 0px), 100% calc(100% - var(--br, 0px)), 0 calc(100% - var(--bl, 0px))); }
+.lp .arc-t-l { --tl: var(--cut); } .lp .arc-t-r { --tr: var(--cut); } .lp .arc-b-l { --bl: var(--cut); } .lp .arc-b-r { --br: var(--cut); }
+.lp .arc-t-l, .lp .arc-t-r { padding-top: calc(var(--padv) + var(--cut)); }
+.lp .arc-b-l, .lp .arc-b-r { padding-bottom: calc(var(--padv) + var(--cut)); }
+.lp .arc-pull { margin-top: calc(var(--cut) * -1); }
+.lp .arc-sec .lp-dark-bg, .lp .arc-bg { clip-path: var(--clip); }
+.lp .arc-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.lp .arc-bg-steel { background: linear-gradient(180deg, rgba(246, 248, 250, .76), rgba(246, 248, 250, .58) 45%, rgba(246, 248, 250, .76)), url('../../../design-references/images/stainless-steel-texture-solid.jpg') 50% calc(var(--p, .5) * 100%) / cover; }
+.lp .lp-dark::before { content: none; }
+.lp .lp-ingest::after, .lp .lp-price-spot::after, .lp .lp-sec-journey::after, .lp .lp-sec-hero::after { content: none; }
+.lp .arc-sec .lp-dark-bg::after { background-position: 0 calc(var(--p, .5) * -80px); }
+
+/* reflective wire along a cut, with a slow light sweep travelling across it */
+.lp .arc-wt::before, .lp .arc-wb::after { content: ""; position: absolute; inset: 0; height: auto; border-radius: 0; box-shadow: none; z-index: 1; pointer-events: none; background: var(--sweep) no-repeat, var(--wire); background-size: 260% 100%, 100% 100%; animation: arc-sweep 9s ease-in-out infinite; }
+.lp .arc-wt::before { clip-path: polygon(0 var(--tl, 0px), 100% var(--tr, 0px), 100% calc(var(--tr, 0px) + 4px), 0 calc(var(--tl, 0px) + 4px)); }
+.lp .arc-wb::after { animation-delay: -4.5s; clip-path: polygon(0 calc(100% - var(--bl, 0px) - 4px), 100% calc(100% - var(--br, 0px) - 4px), 100% calc(100% - var(--br, 0px)), 0 calc(100% - var(--bl, 0px))); }
+@keyframes arc-sweep { 0%, 12% { background-position: 130% 0, 0 0; } 62%, 100% { background-position: -40% 0, 0 0; } }
+
+/* satin titanium band hugging the underside of a bottom cut */
+.lp .arc-tiband { position: absolute; left: 0; right: 0; bottom: -26px; height: calc(var(--cut) + 26px); z-index: 3; pointer-events: none;
+  clip-path: polygon(0 calc(var(--cut) - var(--bl, 0px)), 100% calc(var(--cut) - var(--br, 0px)), 100% calc(var(--cut) - var(--br, 0px) + 22px), 0 calc(var(--cut) - var(--bl, 0px) + 22px));
+  background: linear-gradient(180deg, rgba(255, 255, 255, .22), rgba(0, 0, 0, .25)), url('../../../design-references/images/brushed_titanium.webp') 0 0 / 652px 404px repeat-x; filter: drop-shadow(0 6px 8px rgba(0, 0, 0, .3)); }
+
+/* drifting plane + steel rail */
+.lp .arc-plane { position: absolute; z-index: 0; pointer-events: none; display: block; translate: 0 calc((var(--p, .5) - .5) * var(--sp, 60) * -1px); }
+.lp .arc-rail { --s: 1; width: min(100%, calc(770px * var(--s))); height: calc(11px * var(--s)); border-radius: 6px; background: url('../../../design-references/images/stainless_steel_borders.png') no-repeat; background-size: calc(2560px * var(--s)) calc(1440px * var(--s)); background-position: calc(-1480px * var(--s)) calc(-211px * var(--s));
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+.lp .arc-rail-wide { --s: 1.3; }
+
+/* ===== Glass: smoked or frosted, with fluted texture, a sheen that sweeps on hover, and pointer light ===== */
+@property --lit { syntax: '<number>'; inherits: false; initial-value: 0; }
+.lp .lp-glass {
+  --lit: 0; transition: --lit .35s, background-position 1.2s cubic-bezier(.2, .7, .2, 1);
+  background-image:
+    radial-gradient(300px circle at var(--lx, 50%) var(--ly, 0), rgba(255, 255, 255, calc(var(--lit) * .22)), transparent 62%),
+    var(--sweep),
+    radial-gradient(420px 220px at 12% 0%, rgba(255, 255, 255, .22), transparent 70%),
+    linear-gradient(150deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, .03) 55%, rgba(255, 255, 255, .08)),
+    linear-gradient(rgba(18, 22, 28, .46), rgba(18, 22, 28, .46));
+  background-size: auto, 260% 100%, auto, auto, auto; background-position: 0 0, 130% 0, 0 0, 0 0, 0 0; background-repeat: no-repeat;
+}
+.lp .lp-glass:hover { --lit: 1; background-position: 0 0, -40% 0, 0 0, 0 0, 0 0; }
+.lp .lp-glass-light {
+  --lit: 0; position: relative; transition: --lit .35s, background-position 1.2s cubic-bezier(.2, .7, .2, 1); -webkit-backdrop-filter: blur(22px) saturate(1.5); backdrop-filter: blur(22px) saturate(1.5);
+  background-image: radial-gradient(300px circle at var(--lx, 50%) var(--ly, 0), rgba(255, 255, 255, calc(var(--lit) * .5)), transparent 62%), var(--sweep), linear-gradient(150deg, rgba(255, 255, 255, .82), rgba(255, 255, 255, .6));
+  background-size: auto, 260% 100%, auto; background-position: 0 0, 130% 0, 0 0; background-repeat: no-repeat;
+}
+.lp .lp-glass-light:hover { --lit: 1; background-position: 0 0, -40% 0, 0 0; }
+.lp .lp-glass::after, .lp .lp-glass-light::after { content: ""; position: absolute; inset: var(--steel-w); border-radius: inherit; pointer-events: none; z-index: -1; opacity: .2; transition: none;
+  background: url('../../../design-references/images/frosted-glass.png') 0 0 / 340px auto repeat; -webkit-mask-image: linear-gradient(115deg, #000 0, transparent 66%); mask-image: linear-gradient(115deg, #000 0, transparent 66%); }
+.lp .lp-glass-light::after { opacity: .42; }
+.lp .lp-glass.lp-lit:hover::after, .lp .lp-lit.lp-glass:hover::after { opacity: .2; }
+
+/* steel plates: hover sheen sweeps once across the face (restrained, no pointer needed) */
+.lp .lp-steel::after { background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, .5) 49%, transparent 60%) no-repeat 130% 0 / 280% 100%, linear-gradient(115deg, rgba(255, 255, 255, .4) 0, rgba(255, 255, 255, 0) 22%); mix-blend-mode: normal; transition: background-position 1.2s cubic-bezier(.2, .7, .2, 1); }
+.lp .lp-steel:hover::after { background-position: -40% 0, 0 0; }
+.lp .lp-steel-dark::after { opacity: .5; }
+.lp .lp-btn-dark, .lp .lp-btn-ghost { position: relative; overflow: hidden; }
+.lp .lp-btn-dark::after, .lp .lp-btn-ghost::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: var(--sweep) no-repeat 130% 0 / 260% 100%; opacity: .5; transition: background-position .9s cubic-bezier(.2, .7, .2, 1); }
+.lp .lp-btn-dark:hover::after, .lp .lp-btn-ghost:hover::after { background-position: -40% 0; }
+
+/* ===== Motion: wipes + emerge ===== */
+.lp .lp-reveal-in[data-dir="wipe-l"], .lp .lp-reveal-in[data-dir="wipe-r"] { opacity: 1; transition: transform 1.15s cubic-bezier(.2, .8, .2, 1) var(--delay, 0ms), clip-path 1.15s cubic-bezier(.2, .8, .2, 1) var(--delay, 0ms); }
+.lp .lp-reveal-in[data-dir="wipe-l"] { transform: translateX(-70px); clip-path: inset(-80px -80px -80px calc(100% - 28px)); } /* sliver stays on the viewport-facing edge so bleeding panels still register as visible */
+.lp .lp-reveal-in[data-dir="wipe-r"] { transform: translateX(70px); clip-path: inset(-80px calc(100% - 28px) -80px -80px); }
+.lp .lp-reveal-in[data-dir^="wipe"][data-in="true"] { transform: none; clip-path: inset(-80px -80px -80px -80px); }
+.lp .arc-emerge { overflow: hidden; padding-bottom: .14em; margin-bottom: -.14em; }
+.lp .arc-emerge-in { transform: translateY(108%); transition: transform 1s cubic-bezier(.2, .8, .2, 1) var(--delay, 0ms); }
+.lp .arc-emerge[data-from="left"] .arc-emerge-in { transform: translateX(-108%); }
+.lp .arc-emerge[data-from="right"] .arc-emerge-in { transform: translateX(108%); }
+.lp .arc-emerge[data-in="true"] .arc-emerge-in { transform: none; }
+
+/* ===== Landing ===== */
+.lp .lp-problem { background: linear-gradient(180deg, #e8eaed 0, rgba(232, 234, 237, 0) 380px); padding-bottom: clamp(110px, 12vw, 180px); }
+.lp .lp-problem .lp-split-text { grid-template-columns: minmax(0, .72fr) minmax(0, 1.28fr); }
+.lp .lp-rules-slab { padding-top: clamp(14px, 2vw, 28px); padding-bottom: clamp(14px, 2vw, 28px); padding-left: clamp(20px, 3vw, 44px); border-radius: 28px 0 0 28px; }
+.lp .lp-rules-slab .lp-rules li:first-child { border-top: 0; }
+.lp .lp-rules-slab .lp-rules li { border-top-color: rgba(18, 21, 27, .16); }
+.lp .arc-plane-ti-problem { right: 0; top: 42%; width: min(22vw, 320px); height: 12px; background: url('../../../design-references/images/brushed_titanium.webp') 0 0 / 652px auto; border-radius: 6px 0 0 6px; box-shadow: 0 10px 20px -10px rgba(0, 0, 0, .5); }
+
+.lp .lp-ingest { --padv: clamp(88px, 9vw, 140px); }
+.lp .lp-ingest .lp-spec { margin-top: calc(var(--cut) * -2.5); }
+.lp .lp-ingest-top { align-items: start; }
+.lp .lp-ingest-title { padding-top: calc(var(--cut) * .25); }
+.lp .lp-columns { padding-inline: 0; border: var(--steel-w) solid transparent; background-image: linear-gradient(rgba(6, 7, 9, .8), rgba(6, 7, 9, .8)), url('/textures/slate.jpg'), var(--steel-edge-dark); background-size: auto, 520px auto, auto; background-origin: padding-box, padding-box, border-box; background-clip: padding-box, padding-box, border-box; background-repeat: no-repeat, repeat, no-repeat; box-shadow: var(--steel-shadow-dark), inset 0 16px 40px -8px rgba(0, 0, 0, .75); }
+
+.lp .lp-intel { padding-bottom: clamp(110px, 12vw, 180px); }
+.lp .arc-overlap { position: relative; }
+.lp .arc-overlap .arc-slab { position: absolute; z-index: 0; top: clamp(-52px, -4vw, -28px); bottom: clamp(-52px, -4vw, -28px); left: 18%; right: calc(var(--gutter) * -1); border-radius: 28px 0 0 28px; border-right: 0; }
+.lp .arc-overlap .lp-answer-panel { position: relative; z-index: 1; margin-right: clamp(0px, 4vw, 56px); padding: clamp(24px, 3.4vw, 52px); min-height: 440px; border-radius: 28px; box-shadow: 0 40px 80px -40px rgba(18, 21, 27, .6); border: var(--steel-w) solid transparent; background-clip: padding-box; }
+.lp .arc-overlap .lp-answer-panel::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: var(--steel-w); pointer-events: none; background: var(--steel-edge-light); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+
+.lp .lp-radar { padding-top: calc(var(--padv) + var(--cut)); }
+.lp .lp-radar-head .lp-eyebrow { color: #3d4551; }
+.lp .lp-radar .lp-body { color: #353d49; }
+.lp .lp-radar .lp-details { border-top-color: rgba(18, 21, 27, .22); }
+.lp .lp-radar .lp-details p, .lp .lp-radar .lp-expand { color: #353d49; border-bottom-color: rgba(18, 21, 27, .22); }
+.lp .lp-radar .lp-measure { background-image: linear-gradient(rgba(255, 255, 255, .94), rgba(255, 255, 255, .94)), url('../../../design-references/images/ceramic.png'), var(--steel-edge-light); background-size: auto, 900px auto, auto; background-origin: padding-box, padding-box, border-box; background-clip: padding-box, padding-box, border-box; background-repeat: no-repeat, repeat, no-repeat; }
+
+.lp .lp-security { padding-top: calc(var(--padv) + var(--cut)); }
+.lp .arc-plane-closing, .lp .arc-plane-sec { right: 0; bottom: 0; width: 46%; height: min(46%, 560px); clip-path: polygon(34% 0, 100% 0, 100% 100%, 0 100%); background: linear-gradient(rgba(12, 14, 18, .5), rgba(12, 14, 18, .7)), url('../../../design-references/images/stainless-steel-texture-solid.jpg') 50% 50% / cover; opacity: .95; }
+.lp .lp-closing-band .arc-plane-closing { height: 74%; width: 52%; }
+.lp .lp-closing-band .lp-closing { margin-top: clamp(60px, 8vw, 110px); }
+.lp .lp-closing-band .lp-closing .lp-h2 { max-width: 12em; }
+
+/* ===== How it works ===== */
+.lp .lp-hiw-hero, .lp .lp-col-hero, .lp .lp-price-hero { background: none; }
+.lp .lp-hiw-hero { position: relative; overflow: hidden; padding-bottom: clamp(110px, 12vw, 190px); }
+.lp .arc-plane-cut { top: 76px; bottom: 0; right: 0; width: 34%; clip-path: polygon(36% 0, 100% 0, 100% 88%, 0 100%); background: radial-gradient(520px 360px at 70% 20%, rgba(255, 94, 0, .24), transparent 70%), linear-gradient(rgba(8, 9, 12, .74), rgba(8, 9, 12, .74)), url('/textures/slate.jpg') 0 0 / 560px auto repeat, #101318; }
+.lp .arc-plane-cut-wire { top: 76px; bottom: 0; right: 0; width: 34%; clip-path: polygon(36% 0, calc(36% + 4px) 0, 4px 100%, 0 100%); background: var(--wire); }
+.lp .lp-hiw-hero-inner { position: relative; gap: 22px; }
+.lp .lp-hiw-sub.lp-glass { margin-left: auto; max-width: 31rem; padding: 26px 30px; margin-top: clamp(20px, 4vw, 56px); }
+.lp .lp-hiw-sub .lp-lead { color: #e1e5ea; font-size: clamp(1rem, 1.3vw, 1.15rem); }
+.lp .lp-journey-wrap { background: none; }
+.lp .lp-rail-track { width: 5px; left: 9px; background: url('../../../design-references/images/brushed_titanium.webp') 0 0 / 652px auto; border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12); }
+.lp .lp-panels > section:nth-child(1) .lp-step { background-image: linear-gradient(rgba(255, 255, 255, .55), rgba(255, 255, 255, .55)), url('../../../design-references/images/ceramic.png'), var(--steel-edge-light); background-size: auto, 900px auto, auto; }
+.lp .lp-panels > section:nth-child(2) .lp-step { background-image: linear-gradient(105deg, rgba(246, 248, 250, .8), rgba(246, 248, 250, .62) 50%, rgba(246, 248, 250, .78)), url('../../../design-references/images/stainless-steel-texture-solid.jpg'), var(--steel-edge-light); background-size: auto, cover, auto; }
+.lp .lp-panels > section:nth-child(3) .lp-step { background-image: linear-gradient(rgba(255, 255, 255, .8), rgba(255, 255, 255, .72)), url('../../../design-references/images/frosted-glass.png'), var(--steel-edge-light); background-size: auto, 380px auto, auto; }
+.lp .lp-panels > section:nth-child(5) .lp-step { background-image: linear-gradient(rgba(255, 255, 255, .55), rgba(255, 255, 255, .55)), url('../../../design-references/images/ceramic.png'), var(--steel-edge-light); background-size: auto, 900px auto, auto; }
+.lp .lp-step.lp-steel { background-origin: padding-box, padding-box, border-box; background-clip: padding-box, padding-box, border-box; background-repeat: no-repeat, repeat, no-repeat; }
+.lp .lp-panels > section:nth-child(odd) { margin-right: clamp(0px, 7vw, 120px); }
+.lp .lp-panels > section:nth-child(even) { margin-left: clamp(0px, 5vw, 80px); }
+.lp .lp-step-slate { border: var(--steel-w) solid transparent; background-image: radial-gradient(600px 300px at 90% 0, rgba(255, 94, 0, .22), transparent 70%), linear-gradient(#101318, #101318), var(--steel-edge-dark); background-size: auto; background-repeat: no-repeat; background-origin: padding-box, padding-box, border-box; background-clip: padding-box, padding-box, border-box; box-shadow: var(--steel-shadow-dark), inset 0 14px 36px -10px rgba(0, 0, 0, .7); }
+.lp .lp-step-slate::before { top: 0; }
+.lp .lp-honest { padding-top: calc(var(--padv) + var(--cut)); padding-bottom: calc(var(--padv) + var(--cut)); }
+
+/* ===== Collections ===== */
+.lp .lp-col-hero { position: relative; overflow: hidden; }
+.lp .arc-plane-col { top: 0; bottom: 0; right: 0; width: 36%; border-left: 5px solid transparent; background-image: linear-gradient(180deg, rgba(246, 248, 250, .3), rgba(246, 248, 250, .12)), url('../../../design-references/images/stainless-steel-texture-solid.jpg'), var(--steel-edge-light); background-size: auto, cover, auto; background-origin: padding-box, padding-box, border-box; background-clip: padding-box, padding-box, border-box; background-repeat: no-repeat; box-shadow: -30px 0 60px -30px rgba(18, 21, 27, .45); }
+.lp .lp-col-hero-inner { grid-template-columns: minmax(0, 1.5fr) minmax(0, .5fr); }
+.lp .lp-col-hero-inner > .lp-glass-light { margin-left: -38%; padding: 24px 26px; border-radius: 22px; }
+.lp .lp-col-hero-inner .lp-lead { font-size: clamp(1rem, 1.25vw, 1.15rem); color: #353d49; }
+.lp .lp-col-bento-wrap { position: relative; }
+.lp .lp-b-boundary.arc-f-slate { border-radius: 28px; padding: clamp(26px, 3vw, 40px); display: flex; flex-direction: column; gap: 16px; justify-content: space-between; margin-top: clamp(24px, 4vw, 56px); }
+.lp .lp-b-boundary.arc-f-slate::before { content: none; }
+.lp .lp-b-sub { background-image: linear-gradient(rgba(255, 255, 255, .6), rgba(255, 255, 255, .6)), url('../../../design-references/images/ceramic.png'), var(--steel-edge-light); background-size: auto, 900px auto, auto; background-origin: padding-box, padding-box, border-box; background-clip: padding-box, padding-box, border-box; background-repeat: no-repeat, repeat, no-repeat; border: var(--steel-w) solid transparent; box-shadow: var(--steel-shadow-light); }
+.lp .lp-b-kinds { background-image: linear-gradient(105deg, rgba(246, 248, 250, .8), rgba(246, 248, 250, .62) 55%, rgba(246, 248, 250, .78)), url('../../../design-references/images/stainless-steel-texture-solid.jpg'), var(--steel-edge-light); background-size: auto, cover, auto; background-origin: padding-box, padding-box, border-box; background-clip: padding-box, padding-box, border-box; background-repeat: no-repeat; border: var(--steel-w) solid transparent; box-shadow: var(--steel-shadow-light); }
+.lp .lp-b-kinds p:not(.lp-eyebrow), .lp .lp-b-sub p:not(.lp-eyebrow) { color: #3b4350; }
+.lp .lp-b-status.arc-f-frost { padding: clamp(24px, 3.4vw, 48px); }
+.lp .lp-col-end { position: relative; padding-top: clamp(72px, 8vw, 120px); }
+.lp .lp-col-end .arc-rail { margin-bottom: clamp(36px, 5vw, 64px); }
+
+/* ===== Security ===== */
+.lp .lp-sec-hero { position: relative; padding-bottom: calc(clamp(110px, 12vw, 190px) + var(--cut)); }
+.lp .arc-plane-sec { top: 0; bottom: 0; right: 0; height: auto; width: 44%; }
+.lp .arc-plane-sec-wire { top: 0; bottom: 0; right: 0; width: 44%; clip-path: polygon(34% 0, calc(34% + 5px) 0, 5px 100%, 0 100%); background: var(--wire); }
+.lp .lp-sec-hero-inner { position: relative; z-index: 2; }
+.lp .lp-sec-verified { background: none; padding-bottom: clamp(110px, 12vw, 170px); }
+.lp .lp-ver-grid .arc-rail { margin-top: 28px; }
+.lp .lp-ver-list .lp-steel { background-origin: padding-box, padding-box, border-box; background-clip: padding-box, padding-box, border-box; background-repeat: no-repeat, repeat, no-repeat; }
+.lp .lp-ver-list li:nth-child(1) .lp-steel { background-image: linear-gradient(105deg, rgba(246, 248, 250, .8), rgba(246, 248, 250, .62) 50%, rgba(246, 248, 250, .78)), url('../../../design-references/images/stainless-steel-texture-solid.jpg'), var(--steel-edge-light); background-size: auto, cover, auto; background-repeat: no-repeat; }
+.lp .lp-ver-list li:nth-child(2) .lp-steel { background-image: linear-gradient(rgba(255, 255, 255, .55), rgba(255, 255, 255, .55)), url('../../../design-references/images/ceramic.png'), var(--steel-edge-light); background-size: auto, 900px auto, auto; }
+.lp .lp-ver-list li:nth-child(3) .lp-steel { background-image: linear-gradient(rgba(255, 255, 255, .8), rgba(255, 255, 255, .72)), url('../../../design-references/images/frosted-glass.png'), var(--steel-edge-light); background-size: auto, 380px auto, auto; }
+.lp .lp-ver-list li:nth-child(4) .lp-steel { background-image: linear-gradient(105deg, rgba(246, 248, 250, .8), rgba(246, 248, 250, .62) 50%, rgba(246, 248, 250, .78)), url('../../../design-references/images/stainless-steel-texture-solid.jpg'), var(--steel-edge-light); background-size: auto, cover, auto; background-repeat: no-repeat; }
+.lp .lp-ver-list p { color: #3b4350; }
+.lp .lp-sec-journey { --padv: clamp(88px, 9vw, 140px); }
+.lp .lp-djourney.lp-steel-dark { background-image: linear-gradient(rgba(6, 7, 9, .7), rgba(6, 7, 9, .7)), url('/textures/slate.jpg'), var(--steel-edge-dark); background-size: auto, 520px auto, auto; background-origin: padding-box, padding-box, border-box; background-clip: padding-box, padding-box, border-box; background-repeat: no-repeat, repeat, no-repeat; box-shadow: var(--steel-shadow-dark), inset 0 16px 40px -8px rgba(0, 0, 0, .75); }
+.lp .lp-dtabs { padding: 4px; border-radius: 16px; border-bottom: 0; background: linear-gradient(rgba(255, 255, 255, .05), rgba(0, 0, 0, .25)), url('../../../design-references/images/brushed_titanium.webp') 0 0 / 652px auto; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), inset 0 0 0 1px rgba(255, 255, 255, .08); gap: 4px; }
+.lp .lp-dtabs button { border-bottom: 0; margin-bottom: 0; border-radius: 12px; padding: 12px 14px; }
+.lp .lp-dtabs button[aria-selected="true"] { background: rgba(255, 255, 255, .13); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22), 0 6px 14px -8px rgba(0, 0, 0, .6); }
+.lp .lp-sec-claims { background: none; position: relative; }
+.lp .lp-nc-copy.arc-bleed-r { padding-block: clamp(28px, 4vw, 56px); padding-left: clamp(24px, 3.4vw, 52px); }
+.lp .lp-nc-copy .lp-body { color: #2f3743; }
+
+/* ===== Pricing ===== */
+.lp .lp-price-hero { padding-bottom: clamp(70px, 8vw, 110px); }
+.lp .lp-price-slab { padding: clamp(32px, 5vw, 76px); padding-bottom: clamp(56px, 7vw, 100px); border-radius: 36px; overflow: visible; }
+.lp .lp-price-slab::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(520px 340px at 94% 12%, rgba(255, 94, 0, .22), transparent 70%); }
+.lp .lp-price-slab .arc-rail { position: absolute; left: 50%; translate: -50% 0; top: -7px; }
+.lp .lp-price-slab .lp-price-hero-inner { position: relative; grid-template-columns: minmax(0, 1.5fr) minmax(0, .8fr); align-items: end; }
+.lp .lp-price-hero .lp-mega { font-size: clamp(2.3rem, 4.4vw, 4.4rem); }
+.lp .lp-price-note.lp-glass-light { translate: 0 calc(clamp(56px, 7vw, 100px) * 1.3); }
+.lp .lp-price-note p { color: #353d49; }
+.lp .lp-price-compare { position: relative; padding-top: clamp(40px, 5vw, 70px); }
+.lp .lp-price-compare::before { content: ""; position: absolute; left: 0; right: 0; top: clamp(70px, 9vw, 120px); height: clamp(180px, 22vw, 300px); z-index: 0; clip-path: polygon(0 0, 100% 24%, 100% 100%, 0 76%);
+  background: linear-gradient(rgba(255, 255, 255, .16), rgba(255, 255, 255, .04)), url('../../../design-references/images/brushed_titanium.webp') 0 0 / 652px auto repeat; }
+.lp .lp-price-compare .lp-inner { z-index: 1; }
+.lp .lp-table-wrap.lp-glass-light { border-radius: 28px; border: var(--steel-w) solid transparent; box-shadow: 0 40px 80px -44px rgba(18, 21, 27, .65); }
+.lp .lp-table-wrap.lp-glass-light > .lp-table { position: relative; z-index: 1; }
+.lp .lp-table-wrap.lp-glass-light::after { opacity: .26; }
+.lp .lp-table-wrap.lp-glass-light { background-image: radial-gradient(300px circle at var(--lx, 50%) var(--ly, 0), rgba(255, 255, 255, calc(var(--lit) * .5)), transparent 62%), var(--sweep), linear-gradient(150deg, rgba(255, 255, 255, .88), rgba(255, 255, 255, .78)); }
+.lp .lp-price-spot { padding-top: calc(var(--padv) + var(--cut)); padding-bottom: calc(var(--padv) + var(--cut)); }
+.lp .lp-price-faq { background: none; position: relative; }
+.lp .lp-faq-grid > .lp-reveal-in:first-child.arc-bleed-l { padding-block: clamp(28px, 4vw, 56px); padding-right: clamp(20px, 3vw, 44px); }
+
+/* full-span planes drift through their background, not their position, so they never detach from the section edge */
+.lp .arc-plane-cut, .lp .arc-plane-cut-wire, .lp .arc-plane-col, .lp .arc-plane-sec, .lp .arc-plane-sec-wire, .lp .arc-plane-closing { translate: none; }
+.lp .arc-plane-cut { background-position: 0 0, 0 0, 0 calc(var(--p, .5) * -140px), 0 0; }
+.lp .arc-plane-col { background-position: 0 0, 50% calc(var(--p, .5) * 100%), 0 0; }
+.lp .arc-plane-sec, .lp .arc-plane-closing { background-position: 0 0, 50% calc(var(--p, .5) * 100%); }
+.lp .lp-b-boundary h2 { font: 600 clamp(1.9rem, 3vw, 2.8rem)/1.05 var(--f-body); letter-spacing: -.035em; margin: 0; }
+.lp .lp-b-boundary p:not(.lp-eyebrow) { color: #c3cad4; line-height: 1.6; }
+.lp .lp-sec-hero { overflow: visible; }
+
+/* ===== Responsive + reduced motion ===== */
+@media (max-width: 1000px) {
+  .lp .lp-problem .lp-split-text { grid-template-columns: 1fr; }
+  .lp .arc-bleed-r, .lp .arc-bleed-l { margin-inline: calc(var(--pad) * -1); padding-inline: var(--pad); border-radius: 0; }
+  .lp .arc-overlap .arc-slab { left: -6%; right: calc(var(--pad) * -1); }
+  .lp .arc-overlap .lp-answer-panel { margin-right: 0; }
+  .lp .arc-plane-cut, .lp .arc-plane-cut-wire { top: auto; bottom: 0; width: 100%; height: 46%; clip-path: polygon(0 26%, 100% 0, 100% 100%, 0 100%); }
+  .lp .arc-plane-cut-wire { height: 46%; clip-path: polygon(0 26%, 100% 0, 100% calc(0% + 4px), 0 calc(26% + 4px)); }
+    .lp .lp-hiw-sub.lp-glass { max-width: none; margin-top: 44px; }
+  .lp .arc-plane-col { top: auto; bottom: 0; width: 100%; height: 38%; border-left: 0; border-top: 5px solid transparent; background-clip: padding-box, padding-box, border-box; }
+  .lp .lp-col-hero-inner { grid-template-columns: 1fr; }
+  .lp .lp-col-hero-inner > .lp-glass-light { margin-left: 0; margin-top: 12px; }
+  .lp .lp-col-hero { padding-bottom: clamp(150px, 30vw, 240px); }
+  .lp .arc-plane-sec, .lp .arc-plane-sec-wire { width: 100%; top: auto; bottom: 0; height: 30%; clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 100%); }
+  .lp .arc-plane-sec-wire { clip-path: polygon(0 40%, 100% 0, 100% 4px, 0 calc(40% + 4px)); }
+  .lp .lp-price-slab .lp-price-hero-inner { grid-template-columns: 1fr; }
+  .lp .lp-price-note.lp-glass-light { translate: 0 0; margin-top: 24px; }
+  .lp .lp-panels > section:nth-child(n) { margin-inline: 0; }
+  .lp .lp-ingest .lp-spec { margin-top: 0; }
+}
+@media (max-width: 700px) {
+  .lp .arc-rail { --s: .5; }
+  .lp .arc-plane-ti-problem { display: none; }
+  .lp .arc-plane-closing { width: 100%; height: 38%; clip-path: polygon(0 30%, 100% 0, 100% 100%, 0 100%); }
+  .lp .lp-closing-band .arc-plane-closing { width: 100%; height: 38%; }
+  .lp .lp-columns { padding-inline: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp .arc-wt::before, .lp .arc-wb::after { animation: none; background-position: 50% 0, 0 0; }
+  .lp .arc-plane { translate: none; }
+  .lp .lp-reveal-in[data-dir^="wipe"] { transform: none; clip-path: none; }
+  .lp .arc-emerge-in { transform: none; }
+  .lp .lp-glass, .lp .lp-glass-light, .lp .lp-steel::after, .lp .lp-btn-dark::after, .lp .lp-btn-ghost::after { transition: none; }
+}

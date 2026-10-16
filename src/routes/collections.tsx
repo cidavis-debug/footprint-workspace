@@ -2,7 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { ArrowUpRight, FileText, FolderOpen, Link2 } from 'lucide-react'
 import { pageHead } from '@/components/page-head'
-import { MarketingPage, Reveal, SplitHeading } from '@/components/landing/shared'
+import { Emerge, MarketingPage, Plane, Rail, Reveal, SplitHeading, Stage } from '@/components/landing/shared'
 
 export const Route = createFileRoute('/collections')({
   head: () => pageHead('Collections — Footprint AI', 'How Footprint AI workspaces, sub-workspaces, and collections organize engineering sources.'),
@@ -45,21 +45,22 @@ function Explorer() {
 }
 
 function Collections() {
-  return <MarketingPage>
-    <section className="lp-pagehero lp-col-hero">
+  return <MarketingPage lean="l">
+    <Stage className="lp-pagehero lp-col-hero">
+      <Plane className="arc-plane-col" speed={0} />
       <div className="lp-inner lp-col-hero-inner">
         <div>
           <p className="lp-mono lp-eyebrow">Collections · organized knowledge</p>
           <SplitHeading className="lp-mega" lines={[{ t: 'Related ideas.' }, { t: 'One shared home.', accent: true }]} />
         </div>
-        <Reveal dir="right" delay={400}><p className="lp-lead">Workspaces keep programs apart. Sub-workspaces break them into parts. Collections group the sources inside. Try the structure below.</p></Reveal>
+        <Reveal dir="wipe-r" delay={400} className="lp-lit lp-glass-light"><p className="lp-lead">Workspaces keep programs apart. Sub-workspaces break them into parts. Collections group the sources inside. Try the structure below.</p></Reveal>
       </div>
-    </section>
+    </Stage>
 
     <section className="lp-col-bento-wrap" aria-label="How Footprint AI organizes information">
       <div className="lp-inner lp-bento">
-        <Reveal dir="left" className="lp-lit lp-steel lp-b-explorer"><Explorer /></Reveal>
-        <Reveal dir="right" delay={120} className="lp-b-boundary lp-slate-tile">
+        <Reveal dir="wipe-l" className="lp-lit lp-steel lp-b-explorer"><Explorer /></Reveal>
+        <Reveal dir="right" delay={120} className="arc-plate arc-f-slate lp-b-boundary">
           <p className="lp-mono lp-eyebrow">The boundary</p>
           <h2>The workspace is the boundary.</h2>
           <p>Sources, questions and answers are scoped to the workspace you are in. Collections organize what is inside it. They are not separate permission groups.</p>
@@ -75,7 +76,7 @@ function Collections() {
           <h3>Files and links.</h3>
           <p>PDF, Markdown and text files up to 20 MB, plus saved web links. Links are references; they are not fetched or read.</p>
         </Reveal>
-        <Reveal dir="up" delay={100} className="lp-lit lp-steel lp-b-status">
+        <Reveal dir="wipe-r" delay={100} className="lp-lit arc-plate arc-f-frost lp-b-status">
           <div>
             <p className="lp-mono lp-eyebrow">Available today</p>
             <ul className="lp-checks">
@@ -97,9 +98,12 @@ function Collections() {
     </section>
 
     <section className="lp-section lp-col-end" aria-label="Next">
-      <div className="lp-inner lp-col-end-inner">
-        <Reveal dir="left"><h2 className="lp-h2">Simple structure. <span>Shared context.</span></h2></Reveal>
+      <div className="lp-inner">
+      <Rail className="arc-rail-wide" />
+      <div className="lp-col-end-inner">
+        <Emerge from="left"><h2 className="lp-h2">Simple structure. <span>Shared context.</span></h2></Emerge>
         <Reveal dir="right" delay={120}><p className="lp-body">Keep source names clear and group documents around a question, a program, or a recurring topic. <Link to="/how-it-works" className="lp-textlink lp-textlink-ink">Follow the full workflow <ArrowUpRight size={15} aria-hidden="true" /></Link></p></Reveal>
+      </div>
       </div>
     </section>
   </MarketingPage>

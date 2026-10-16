@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import { AlertTriangle, ArrowRight, ArrowUpRight, FileText, FolderOpen, RotateCcw } from 'lucide-react'
-import { Header, Mark, Reveal, WordReveal, clamp, nav, prefersReducedMotion, smooth, useInView, useOpenApp, useScrollProgress, v, type OpenHandler } from './shared'
+import { Header, Mark, Plane, Reveal, Stage, WordReveal, clamp, nav, prefersReducedMotion, smooth, useInView, useOpenApp, useScrollProgress, v, type OpenHandler } from './shared'
 
 /* ---------- 1. hero: mechanical bloom, scrubbed by scroll ---------- */
 
@@ -152,33 +152,36 @@ const hiding = [
 ] as const
 
 function Problem() {
-  return <section className="lp-section lp-problem" aria-labelledby="lp-problem-h">
+  return <Stage className="lp-section lp-problem" aria-labelledby="lp-problem-h">
     <div className="lp-inner">
       <p className="lp-mono lp-eyebrow">01 — The problem</p>
       <h2 id="lp-problem-h" className="lp-sr">The problem</h2>
       <WordReveal className="lp-statement" text="The answer exists. It’s spread across drawings, requirements, test reports, and decisions — and teams lose time rebuilding context instead of using it." />
       <div className="lp-split-text">
         <Reveal><p className="lp-body">Every hardware program accumulates documents that each hold part of the truth. When they drift apart, nobody notices until it is expensive.</p></Reveal>
-        <ul className="lp-rules">
-          {hiding.map((h, i) => <li key={h.n}><Reveal delay={i * 70}><span className="lp-mono">{h.n}</span><b>{h.t}</b><em>{h.d}</em></Reveal></li>)}
-        </ul>
+        <Reveal dir="wipe-r" className="arc-plate arc-f-steel arc-inset arc-bleed-r lp-rules-slab">
+          <ul className="lp-rules">
+            {hiding.map(h => <li key={h.n}><div><span className="lp-mono">{h.n}</span><b>{h.t}</b><em>{h.d}</em></div></li>)}
+          </ul>
+        </Reveal>
       </div>
     </div>
-  </section>
+  </Stage>
 }
 
 /* ---------- 3. ingest: slate + glass ---------- */
 
 function Ingest() {
-  return <section className="lp-section lp-dark lp-slate lp-ingest" aria-labelledby="lp-ingest-h">
+  return <Stage className="lp-section lp-dark lp-slate lp-ingest arc-sec arc-wt arc-wb arc-t-l arc-b-r" aria-labelledby="lp-ingest-h">
     <div className="lp-dark-bg" aria-hidden="true" />
+    <i className="arc-tiband" aria-hidden="true" />
     <div className="lp-inner">
       <div className="lp-ingest-top">
         <Reveal className="lp-ingest-title">
           <p className="lp-mono lp-eyebrow">02 — Bring it together</p>
           <h2 className="lp-h2" id="lp-ingest-h">Files and links, <span>one shared workspace.</span></h2>
         </Reveal>
-        <Reveal className="lp-glass lp-spec" delay={120}>
+        <Reveal dir="wipe-r" className="lp-lit lp-glass lp-spec" delay={120}>
           <p className="lp-mono lp-spec-title">What you can add</p>
           <dl>
             <div><dt>Files</dt><dd>PDF, Markdown, text</dd></div>
@@ -194,7 +197,7 @@ function Ingest() {
         <Reveal delay={180}><b>Collections</b><p>Group related sources so questions start from the right material.</p></Reveal>
       </div>
     </div>
-  </section>
+  </Stage>
 }
 
 /* ---------- 4. connected intelligence ---------- */
@@ -214,7 +217,7 @@ const demoQuestions: { q: string; sources: string[]; a: string; excerpt: string 
 function Intelligence() {
   const [i, setI] = useState(0)
   const cur = demoQuestions[i]!
-  return <section className="lp-section lp-intel" aria-labelledby="lp-intel-h">
+  return <Stage className="lp-section lp-intel" aria-labelledby="lp-intel-h">
     <div className="lp-inner">
       <div className="lp-intel-grid">
         <Reveal className="lp-intel-left">
@@ -224,7 +227,9 @@ function Intelligence() {
             {demoQuestions.map((d, n) => <li key={d.q}><button type="button" aria-pressed={n === i} onClick={() => setI(n)}><span className="lp-mono">0{n + 1}</span>{d.q}</button></li>)}
           </ol>
         </Reveal>
-        <Reveal className="lp-steel lp-answer-panel" delay={100}>
+        <div className="arc-overlap">
+        <i className="arc-plate arc-f-steel arc-slab" aria-hidden="true" />
+        <Reveal dir="wipe-r" className="lp-lit lp-glass-light lp-answer-panel" delay={100}>
           <div key={i} className="lp-answer-inner" aria-live="polite">
             <p className="lp-mono lp-answer-label">Answer · illustrative example</p>
             <p className="lp-answer-text">{cur.a}</p>
@@ -238,9 +243,10 @@ function Intelligence() {
             </details>
           </div>
         </Reveal>
+        </div>
       </div>
     </div>
-  </section>
+  </Stage>
 }
 
 /* ---------- 5. radar ---------- */
@@ -249,7 +255,8 @@ function Radar() {
   const [ref, seen] = useInView<HTMLDivElement>(0.4)
   const [run, setRun] = useState(0)
   const [hover, setHover] = useState<'a' | 'b' | null>(null)
-  return <section className="lp-section lp-radar" aria-labelledby="lp-radar-h">
+  return <Stage className="lp-section lp-radar arc-sec arc-wt arc-t-r arc-b-l" aria-labelledby="lp-radar-h">
+    <div className="arc-bg arc-bg-steel" aria-hidden="true" />
     <div className="lp-inner">
       <div className="lp-radar-head">
         <Reveal><p className="lp-mono lp-eyebrow">04 — Engineering Change Radar</p><h2 className="lp-h2" id="lp-radar-h">Two sources. <span>One number that doesn’t match.</span></h2></Reveal>
@@ -276,7 +283,7 @@ function Radar() {
         <button type="button" className="lp-btn lp-btn-ghost" onClick={() => setRun(r => r + 1)}><RotateCcw size={15} aria-hidden="true" /> Replay</button>
       </div>
     </div>
-  </section>
+  </Stage>
 }
 
 /* ---------- 6. security + conclusion ---------- */
@@ -288,15 +295,16 @@ const claims = [
 ] as const
 
 function Security({ onOpen }: { onOpen: OpenHandler }) {
-  return <section className="lp-section lp-dark lp-slate lp-security" aria-labelledby="lp-sec-h">
+  return <Stage className="lp-section lp-dark lp-slate lp-security arc-sec arc-wt arc-t-r arc-pull" aria-labelledby="lp-sec-h">
     <div className="lp-dark-bg" aria-hidden="true" />
+    <Plane className="arc-plane-closing" speed={0} />
     <div className="lp-inner">
       <Reveal><p className="lp-mono lp-eyebrow">05 — Security</p><h2 className="lp-h2 lp-sec-h2" id="lp-sec-h">Your engineering information <span>stays in your workspace.</span></h2></Reveal>
       <ol className="lp-claims">
         {claims.map((c, i) => <li key={c.n}><Reveal delay={i * 90}><span className="lp-mono">{c.n}</span><b>{c.h}</b><p>{c.t}</p></Reveal></li>)}
       </ol>
       <Link to="/security" className="lp-textlink">Read the security details <ArrowUpRight size={15} aria-hidden="true" /></Link>
-      <Reveal className="lp-glass lp-closing">
+      <Reveal dir="wipe-l" className="lp-lit lp-glass lp-closing">
         <h2 className="lp-h2">Give your team <span>one place to start.</span></h2>
         <div className="lp-actions">
           <Link to="/app" className="lp-btn lp-btn-primary lp-btn-lg" onClick={onOpen}>Open Footprint AI <ArrowRight size={18} aria-hidden="true" /></Link>
@@ -308,7 +316,7 @@ function Security({ onOpen }: { onOpen: OpenHandler }) {
         <nav aria-label="Footer navigation">{nav.map(n => <Link key={n.to} to={n.to} className="lp-nav-link">{n.label}</Link>)}</nav>
       </footer>
     </div>
-  </section>
+  </Stage>
 }
 
 /* ---------- page ---------- */
