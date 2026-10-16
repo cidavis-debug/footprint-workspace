@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { MessageSquare, PanelRight, Plus, Radar } from 'lucide-react'
+import { MessageSquare, PanelLeft, PanelRight, Plus, Radar } from 'lucide-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Mark } from '@/components/landing/shared'
 import { entryReady } from '@/components/app/entry'
@@ -20,11 +20,16 @@ type Props = {
   right?: ReactNode
   rightOpen?: boolean
   onRightClose?: () => void
+  /** Desktop collapse state for the right panel (owned by the page so actions can re-expand it). */
+  rightCollapsed?: boolean
+  onToggleRight?: () => void
   children: ReactNode
 }
 
 /** Authenticated frame: workspaces (glass, left), centre canvas, optional right panel, slate Ask/Radar switcher on top. */
-export function AppShell({ workspaces, value, onChange, onCreate, busy, mode, email, onSources, onSignOut, right, rightOpen, onRightClose, children }: Props) {
+export function AppShell({ workspaces, value, onChange, onCreate, busy, mode, email, onSources, onSignOut, right, rightOpen, onRightClose, rightCollapsed, onToggleRight, children }: Props) {
+  const [leftCollapsed, setLeftCollapsed] = useState(() => { try { return localStorage.getItem('fp-left-collapsed') === '1' } catch { return false } })
+  const toggleLeft = () => setLeftCollapsed(c => { const n = !c; try { localStorage.setItem('fp-left-collapsed', n ? '1' : '0') } catch { /* ignore */ } return n })
   const [adding, setAdding] = useState<string | 'root' | null>(null)
   const [name, setName] = useState('')
   const railRef = useRef<HTMLElement>(null)
@@ -51,10 +56,10 @@ export function AppShell({ workspaces, value, onChange, onCreate, busy, mode, em
   </form>
   const initials = (email ?? '?').slice(0, 2).toUpperCase()
 
-  return <div className={`ax ${right ? '' : 'ax-no-right'}`} data-mode={mode}>
+  return <div className={`ax ${right ? '' : 'ax-no-right'}`} data-mode={mode} data-lc={leftCollapsed} data-rc={!!rightCollapsed}>
     <div className="ax-glow" aria-hidden="true" />
     <header className="ax-top">
-      <Link to="/" className="ax-brand" aria-label="Footprint home"><Mark size={18} /><span>Footprint</span></Link>
+      <div className="ax-brandrow"><Link to="/" className="ax-brand" aria-label="Footprint home"><Mark size={18} /><span>Footprint</span></Link><button type="button" className="ax-iconbtn ax-left-toggle" onClick={toggleLeft} aria-expanded={!leftCollapsed} aria-controls="ax-left" aria-label={leftCollapsed ? 'Show workspaces' : 'Hide workspaces'} title={leftCollapsed ? 'Show workspaces' : 'Hide workspaces'}><PanelLeft size={18} aria-hidden="true" /></button></div>
       <nav className="ax-modes" data-mode={mode} aria-label="Mode">
         <i className="ax-modes-thumb" aria-hidden="true" />
         <Link to="/app" search={search} className="ax-mode" data-active={mode === 'ask'} aria-current={mode === 'ask' ? 'page' : undefined}><MessageSquare size={16} aria-hidden="true" /> Ask Mode</Link>
@@ -62,14 +67,14 @@ export function AppShell({ workspaces, value, onChange, onCreate, busy, mode, em
       </nav>
       <div className="ax-account">
         <div className="ax-mobile-ws"><WorkspacePicker workspaces={workspaces} value={value} onChange={onChange} {...(onCreate ? { onCreate } : {})} {...(busy !== undefined ? { busy } : {})} /></div>
-        {onSources && <button type="button" className="ax-iconbtn ax-sources-toggle" onClick={onSources} aria-label="Sources" title="Sources"><PanelRight size={18} aria-hidden="true" /></button>}
+        {onSources && <button type="button" className="ax-iconbtn ax-sources-toggle" onClick={() => (window.matchMedia('(min-width: 1181px)').matches && onToggleRight ? onToggleRight() : onSources())} aria-expanded={!rightCollapsed} aria-label="Toggle sources" title="Toggle sources"><PanelRight size={18} aria-hidden="true" /></button>}
         {email && <span className="ax-avatar" title={email} aria-hidden="true">{initials}</span>}
         {email && <span className="ax-email">{email}</span>}
         {onSignOut && <button type="button" className="ax-signout" onClick={onSignOut}>Log out</button>}
       </div>
     </header>
 
-    <nav ref={railRef} className="ax-glass ax-left" aria-label="Workspaces">
+    <nav ref={railRef} id="ax-left" className="ax-glass ax-left" aria-label="Workspaces" inert={leftCollapsed || undefined}>
       <div className="ax-panel-head"><h2>Workspaces</h2>{onCreate && <button type="button" className="ax-iconbtn" aria-label="Add workspace" aria-expanded={adding === 'root'} onClick={() => { setName(''); setAdding(a => a === 'root' ? null : 'root') }}><Plus size={16} aria-hidden="true" /></button>}</div>
       {adding === 'root' && form(null, 'New workspace name')}
       <ul className="ax-ws">
@@ -91,7 +96,7 @@ export function AppShell({ workspaces, value, onChange, onCreate, busy, mode, em
 
     {right && <>
       <div className="ax-scrim" data-open={!!rightOpen} onClick={onRightClose} aria-hidden="true" />
-      <div className="ax-right" data-open={!!rightOpen}>{right}</div>
+      <div className="ax-right" data-open={!!rightOpen} inert={rightCollapsed || undefined}>{right}</div>
     </>}
   </div>
 }

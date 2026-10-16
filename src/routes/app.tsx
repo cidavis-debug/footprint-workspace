@@ -2,7 +2,7 @@ import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Input } from '@/design-system/apple-inspired-bec754'
-import { ArrowUp, Copy, FilePlus2, FileText, Link2, Paperclip, Search, Sparkles, Square, X } from 'lucide-react'
+import { ArrowUp, ChevronRight, Copy, Ellipsis, FilePlus2, FileText, Link2, Paperclip, Plus, RotateCw, Search, SlidersHorizontal, Sparkles, Square, Trash2, X } from 'lucide-react'
 import { entryReady } from '@/components/app/entry'
 import { askFootprint, type Citation } from '@/lib/ask.functions'
 import { analyzeEngineeringSource } from '@/lib/engineering.functions'
@@ -32,7 +32,16 @@ function Workspace() {
   const { workspace: requestedWorkspace, sources: requestedSources } = Route.useSearch()
   const { user, loading, signOut } = useAuth()
   const [sourcesOpen, setSourcesOpen] = useState(false)
-  useEffect(() => { if (requestedSources) setSourcesOpen(true) }, [requestedSources])
+  const [rightCollapsed, setRightCollapsed] = useState(false)
+  const [menu, setMenu] = useState<string | null>(null)
+  const [expanded, setExpanded] = useState<string | null>(null)
+  useEffect(() => { if (requestedSources) { setSourcesOpen(true); setRightCollapsed(false) } }, [requestedSources])
+  useEffect(() => {
+    if (!menu) return
+    const close = (e: Event) => { if (e instanceof KeyboardEvent ? e.key === 'Escape' : !(e.target as HTMLElement).closest('.ax-menu, .ax-menu-trigger')) setMenu(null) }
+    document.addEventListener('mousedown', close); document.addEventListener('keydown', close)
+    return () => { document.removeEventListener('mousedown', close); document.removeEventListener('keydown', close) }
+  }, [menu])
   const [notice, setNotice] = useState('')
   const [workspaces, setWorkspaces] = useState<Workspace[]>([])
   const [activeWorkspace, setActiveWorkspace] = useState('')
@@ -205,7 +214,7 @@ function Workspace() {
   }
 
   const openUpload = () => fileInput.current?.click()
-  const openLink = () => { setLinkOpen(true); setSourcesOpen(true) }
+  const openLink = () => { setLinkOpen(true); setSourcesOpen(true); setRightCollapsed(false) }
 
   const createWorkspace = async (name: string, parentId: string | null) => {
     if (!user) return
@@ -219,41 +228,73 @@ function Workspace() {
   }
 
   const statusLine = dataLoading ? 'Loading your workspace…' : workspaces.length > 0 ? `Answering from “${workspaces.find(w => w.id === activeWorkspace)?.name ?? 'Personal'}” sources.` : 'No workspace found for this account.'
+  const isLink = (t: string) => t === 'link' || t === 'url'
   const sourcesPanel = <aside className="ax-glass ax-sources" aria-label="Sources">
-    <div className="ax-panel-head"><h2>Sources</h2><span className="ax-count lp-mono">{sources.length}</span><button type="button" className="ax-iconbtn ax-close" aria-label="Close sources" onClick={() => setSourcesOpen(false)}><X size={16} aria-hidden="true" /></button></div>
-    <label className="ax-search"><Search size={15} aria-hidden="true" /><input aria-label="Search sources" placeholder="Search sources" value={search} onChange={e => setSearch(e.target.value)} /></label>
-    <div className="ax-actions">
-      <button type="button" onClick={openUpload} disabled={busy}><FilePlus2 size={15} aria-hidden="true" /> Upload file</button>
-      <button type="button" onClick={() => setLinkOpen(o => !o)} aria-expanded={linkOpen}><Link2 size={15} aria-hidden="true" /> Add link</button>
+    <div className="ax-src-head">
+      <div className="ax-panel-head"><h2>Sources</h2><span className="ax-count lp-mono">{sources.length}</span><button type="button" className="ax-iconbtn ax-close" aria-label="Close sources" onClick={() => setSourcesOpen(false)}><X size={16} aria-hidden="true" /></button></div>
+      <label className="ax-search"><Search size={15} aria-hidden="true" /><input aria-label="Search sources" placeholder="Search sources" value={search} onChange={e => setSearch(e.target.value)} /></label>
+      <div className="ax-menu-wrap">
+        <button type="button" className="ax-addsrc ax-menu-trigger" aria-haspopup="menu" aria-expanded={menu === 'add'} onClick={() => setMenu(m => m === 'add' ? null : 'add')} disabled={busy}><Plus size={16} aria-hidden="true" /> Add source</button>
+        {menu === 'add' && <div className="ax-menu" role="menu">
+          <button type="button" role="menuitem" onClick={() => { setMenu(null); openUpload() }}><FilePlus2 size={15} aria-hidden="true" /> Upload file<span className="lp-mono">PDF · MD · TXT</span></button>
+          <button type="button" role="menuitem" onClick={() => { setMenu(null); setLinkOpen(true) }}><Link2 size={15} aria-hidden="true" /> Add link<span className="lp-mono">http(s)</span></button>
+        </div>}
+      </div>
+      {linkOpen && <form className="ax-inline" onSubmit={e => { e.preventDefault(); void addLink() }}>
+        <Input aria-label="Link URL" type="url" placeholder="https://…" value={linkUrl} onChange={e => setLinkUrl(e.target.value)} autoFocus />
+        <Button type="submit" size="sm" loading={busy}>Add</Button>
+      </form>}
     </div>
-    {linkOpen && <form className="ax-inline" onSubmit={e => { e.preventDefault(); void addLink() }}>
-      <Input aria-label="Link URL" type="url" placeholder="https://…" value={linkUrl} onChange={e => setLinkUrl(e.target.value)} autoFocus />
-      <Button type="submit" size="sm" loading={busy}>Add</Button>
-    </form>}
-    {collectionId && <form className="ax-inline ax-collection" onSubmit={e => { e.preventDefault(); void renameCollection() }}>
-      <span className="lp-mono">Collection</span>
-      <Input aria-label="Collection name" value={collectionName} onChange={e => setCollectionName(e.target.value)} />
-      <Button type="submit" variant="ghost" size="sm">Rename</Button>
-    </form>}
+
     {notice && sourcesOpen && <p role="status" className="ax-note">{notice}</p>}
-    <div className="ax-analyze"><button type="button" onClick={() => void analyzeExisting()} disabled={!!bulk}><Sparkles size={15} aria-hidden="true" /> Analyze existing sources</button>{bulk && <span role="status" className="lp-mono">{bulk}</span>}</div>
     <EngineeringAlerts workspaceId={activeWorkspace} refreshKey={alertKey} />
     {focusSource && <p className="ax-note">Cited source: <strong>{focusSource}</strong></p>}
+
     <ul className="ax-src-list">
       {visibleSources.length > 0
-        ? visibleSources.map(src => <li key={src.id} className="ax-src">
-            <div className="ax-src-row">
-              <span className="ax-src-icon">{src.source_type === 'link' || src.source_type === 'url' ? <Link2 size={16} aria-hidden="true" /> : <FileText size={16} aria-hidden="true" />}</span>
-              <div className="ax-src-main"><b title={src.title}>{src.title}</b><span className="lp-mono"><i data-status={sourceStatus(src.status)} aria-hidden="true" />{src.source_type === 'link' || src.source_type === 'url' ? 'Link' : 'File'} · {statusLabel(sourceStatus(src.status))}</span></div>
-              <button type="button" className="ax-iconbtn" aria-label={`Remove ${src.title}`} title="Remove source" onClick={() => void removeSource(src)}><X size={15} aria-hidden="true" /></button>
-            </div>
-            {src.status === 'ready' && <SourceEngineering sourceId={src.id} status={src.engineering_analysis_status} summary={src.engineering_summary} busy={analyzing === src.id} onReanalyze={() => void analyze(src.id)} />}
-          </li>)
-        : <li className="ax-empty"><b>{sources.length > 0 ? 'No matches.' : 'No sources yet.'}</b><span>{sources.length > 0 ? 'Try a different search.' : `Your “${collections[0]?.name ?? 'General'}” collection is ready — upload a file or add a link.`}</span></li>}
+        ? visibleSources.map(src => {
+            const st = sourceStatus(src.status), open = expanded === src.id
+            return <li key={src.id} className="ax-src" data-open={open}>
+              <div className="ax-src-row">
+                <button type="button" className="ax-src-main-btn" aria-expanded={open} onClick={() => setExpanded(e => e === src.id ? null : src.id)}>
+                  <ChevronRight size={14} className="ax-chev" aria-hidden="true" />
+                  <span className="ax-src-icon">{isLink(src.source_type) ? <Link2 size={15} aria-hidden="true" /> : <FileText size={15} aria-hidden="true" />}</span>
+                  <b title={src.title}>{src.title}</b>
+                  <i className="ax-dot" data-status={st} title={statusLabel(st)} aria-label={statusLabel(st)} />
+                </button>
+                <div className="ax-menu-wrap">
+                  <button type="button" className="ax-iconbtn ax-menu-trigger" aria-label={`Actions for ${src.title}`} aria-haspopup="menu" aria-expanded={menu === src.id} onClick={() => setMenu(m => m === src.id ? null : src.id)}><Ellipsis size={16} aria-hidden="true" /></button>
+                  {menu === src.id && <div className="ax-menu ax-menu-right" role="menu">
+                    <button type="button" role="menuitem" disabled={src.status !== 'ready' || analyzing === src.id} onClick={() => { setMenu(null); setExpanded(src.id); void analyze(src.id) }}><RotateCw size={15} aria-hidden="true" /> {src.engineering_analysis_status === 'complete' ? 'Reanalyze' : 'Analyze'}</button>
+                    <button type="button" role="menuitem" className="ax-danger" onClick={() => { setMenu(null); void removeSource(src) }}><Trash2 size={15} aria-hidden="true" /> Remove</button>
+                  </div>}
+                </div>
+              </div>
+              {open && <div className="ax-src-detail">
+                <p className="lp-mono ax-src-meta">{isLink(src.source_type) ? 'Link' : 'File'} · {statusLabel(st)}</p>
+                {src.status === 'ready'
+                  ? <SourceEngineering sourceId={src.id} status={src.engineering_analysis_status} summary={src.engineering_summary} busy={analyzing === src.id} onReanalyze={() => void analyze(src.id)} defaultOpen />
+                  : <p className="ax-note">Engineering analysis is available once the source has readable text.</p>}
+              </div>}
+            </li>
+          })
+        : <li className="ax-empty"><b>{sources.length > 0 ? 'No matches.' : 'No sources yet.'}</b><span>{sources.length > 0 ? 'Try a different search.' : `Your “${collections[0]?.name ?? 'General'}” collection is ready — add a file or a link.`}</span></li>}
     </ul>
+
+    <details className="ax-manage">
+      <summary><SlidersHorizontal size={14} aria-hidden="true" /> Manage<ChevronRight size={14} className="ax-chev" aria-hidden="true" /></summary>
+      <div className="ax-manage-body">
+        {collectionId && <form className="ax-inline ax-collection" onSubmit={e => { e.preventDefault(); void renameCollection() }}>
+          <label><span className="lp-mono">Collection name</span><Input aria-label="Collection name" value={collectionName} onChange={e => setCollectionName(e.target.value)} /></label>
+          <Button type="submit" variant="ghost" size="sm">Rename</Button>
+        </form>}
+        <button type="button" className="ax-wide" onClick={() => void analyzeExisting()} disabled={!!bulk}><Sparkles size={15} aria-hidden="true" /> Analyze existing sources</button>
+        {bulk && <span role="status" className="lp-mono ax-note">{bulk}</span>}
+      </div>
+    </details>
   </aside>
 
-  return <AppShell workspaces={workspaces} value={activeWorkspace} onChange={setActiveWorkspace} onCreate={createWorkspace} busy={busy} mode="ask" email={user.email ?? null} onSources={() => setSourcesOpen(o => !o)} onSignOut={signOut} right={sourcesPanel} rightOpen={sourcesOpen} onRightClose={() => setSourcesOpen(false)}>
+  return <AppShell workspaces={workspaces} value={activeWorkspace} onChange={setActiveWorkspace} onCreate={createWorkspace} busy={busy} mode="ask" email={user.email ?? null} onSources={() => setSourcesOpen(o => !o)} onSignOut={signOut} right={sourcesPanel} rightOpen={sourcesOpen} onRightClose={() => setSourcesOpen(false)} rightCollapsed={rightCollapsed} onToggleRight={() => setRightCollapsed(c => !c)}>
     <main className="ax-chat" ref={mainRef}>
       <div className="ax-scroll">
         <div className="ax-column">
@@ -261,7 +302,7 @@ function Workspace() {
             <p className="lp-mono ax-kicker">Ask mode</p>
             <h1>What’s on your mind?</h1>
             <p>Ask about the sources in this workspace. Answers cite what they used.</p>
-            <ul className="ax-starters">{suggestedQuestions.map(q => <li key={q}><button type="button" onClick={() => void ask(q)} disabled={asking || !activeWorkspace}>{q}<ArrowUp size={15} aria-hidden="true" /></button></li>)}</ul>
+            <ul className="ax-starters">{suggestedQuestions.map(q => <li key={q}><button type="button" onClick={() => void ask(q)} disabled={asking || !activeWorkspace}><span>{q}</span><ArrowUp size={16} aria-hidden="true" /></button></li>)}</ul>
           </div>}
           {thread.map((m, i) => <article key={i} className="ax-turn" ref={i === thread.length - 1 ? lastTurn : undefined} aria-label={`Question ${i + 1}`}>
             <header className="ax-q"><span className="ax-who lp-mono"><i aria-hidden="true" />You</span><h2>{m.question}</h2></header>

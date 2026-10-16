@@ -13,8 +13,8 @@ export function analysisLabel(status: string) {
   return status === 'processing' ? 'Analyzing' : status === 'complete' ? 'Analyzed' : status === 'failed' ? 'Analysis failed' : 'Not analyzed'
 }
 
-export function SourceEngineering({ sourceId, status, summary, onReanalyze, busy }: { sourceId: string; status: string; summary: string | null; onReanalyze: () => void; busy: boolean }) {
-  const [open, setOpen] = useState(false)
+export function SourceEngineering({ sourceId, status, summary, onReanalyze, busy, defaultOpen = false }: { sourceId: string; status: string; summary: string | null; onReanalyze: () => void; busy: boolean; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen)
   const [claims, setClaims] = useState<Claim[]>([])
   const [editing, setEditing] = useState<string | null>(null)
   const [draft, setDraft] = useState('')
@@ -35,7 +35,7 @@ export function SourceEngineering({ sourceId, status, summary, onReanalyze, busy
     if (!error) setClaims(c => c.filter(x => x.id !== id))
   }
 
-  return <details className="mb-3 ml-4 text-xs" onToggle={e => setOpen((e.target as HTMLDetailsElement).open)}>
+  return <details className="mb-3 ml-4 text-xs" open={defaultOpen || undefined} onToggle={e => setOpen((e.target as HTMLDetailsElement).open)}>
     <summary className="cursor-pointer text-muted-foreground">Engineering context · {analysisLabel(status)}</summary>
     <div className="mt-2 space-y-2">
       {summary && <p>{summary}</p>}
