@@ -1,10 +1,10 @@
 import { Link } from '@tanstack/react-router'
-import { ChevronRight } from 'lucide-react'
+import { MessageSquare, PanelRight, Plus, Radar } from 'lucide-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { Button, Input } from '@/design-system/apple-inspired-bec754'
-import { ChevronDown, Folder, Plus } from 'lucide-react'
-import { Brand } from '@/components/brand'
+import { Mark } from '@/components/landing/shared'
+import { entryReady } from '@/components/app/entry'
 import { WorkspacePicker, type WorkspaceNode } from '@/components/workspace-picker'
+import './app/app.css'
 
 type Props = {
   workspaces: WorkspaceNode[]
@@ -16,75 +16,82 @@ type Props = {
   email?: string | null
   onSources?: () => void
   onSignOut?: () => void
+  /** Optional right-hand panel (Sources on /app). Radar passes none. */
+  right?: ReactNode
+  rightOpen?: boolean
+  onRightClose?: () => void
   children: ReactNode
 }
 
-
-/** Authenticated app frame: workspace rail (desktop), utility header, and Ask/Radar switch. */
-export function AppShell({ workspaces, value, onChange, onCreate, busy, mode, email, onSources, onSignOut, children }: Props) {
-  const [flyout, setFlyout] = useState<string | null>(null)
-  const [adding, setAdding] = useState(false)
+/** Authenticated frame: workspaces (glass, left), centre canvas, optional right panel, slate Ask/Radar switcher on top. */
+export function AppShell({ workspaces, value, onChange, onCreate, busy, mode, email, onSources, onSignOut, right, rightOpen, onRightClose, children }: Props) {
+  const [adding, setAdding] = useState<string | 'root' | null>(null)
   const [name, setName] = useState('')
-  const [subName, setSubName] = useState('')
   const railRef = useRef<HTMLElement>(null)
   const mains = workspaces.filter(w => !w.parent_id)
-  const active = workspaces.find(w => w.id === value)
-  const activeMain = active?.parent_id ?? active?.id
-  const parent = active?.parent_id ? workspaces.find(w => w.id === active.parent_id) : null
-  const title = active ? (parent ? `${parent.name} / ${active.name}` : active.name) : 'Workspace'
+  const search = value ? { workspace: value } : {}
 
+  useEffect(() => { entryReady() }, [])
   useEffect(() => {
     if (!adding) return
-    const close = () => setAdding(false)
-    const onDoc = (e: MouseEvent) => { if (railRef.current && !railRef.current.contains(e.target as Node)) close() }
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
+    const onDoc = (e: MouseEvent) => { if (railRef.current && !railRef.current.contains(e.target as Node)) setAdding(null) }
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setAdding(null) }
     document.addEventListener('mousedown', onDoc); document.addEventListener('keydown', onKey)
     return () => { document.removeEventListener('mousedown', onDoc); document.removeEventListener('keydown', onKey) }
   }, [adding])
 
-  const create = async (n: string, parentId: string | null, clear: () => void) => {
-    if (!n.trim() || !onCreate) return
-    await onCreate(n.trim(), parentId); clear(); setAdding(false)
+  const create = async (parentId: string | null) => {
+    const n = name.trim()
+    if (!n || !onCreate) return
+    await onCreate(n, parentId); setName(''); setAdding(null)
   }
+  const form = (parentId: string | null, label: string) => <form className="ax-newform" onSubmit={e => { e.preventDefault(); void create(parentId) }}>
+    <input aria-label={label} placeholder={parentId ? 'New sub-workspace…' : 'New workspace…'} value={name} onChange={e => setName(e.target.value)} autoFocus />
+    <button type="submit" disabled={busy || !name.trim()} aria-label={parentId ? 'Create sub-workspace' : 'Create workspace'}><Plus size={15} aria-hidden="true" /></button>
+  </form>
+  const initials = (email ?? '?').slice(0, 2).toUpperCase()
 
-  return <div className="app-shell">
-    <nav ref={railRef} className="app-rail" aria-label="Workspaces">
-      <Link to="/" className="app-rail-logo" aria-label="Footprint home"><Brand iconOnly /></Link>
-      <ul className="app-rail-list">
-        {mains.map(w => { const kids = workspaces.filter(k => k.parent_id === w.id); const open = flyout === w.id || activeMain === w.id; return <li key={w.id}>
-          <div className="app-rail-row">
-            <button type="button" className="app-rail-item" data-active={value === w.id} aria-current={value === w.id ? 'true' : undefined} onClick={() => onChange(w.id)}>{w.name}</button>
-            <button type="button" className="app-rail-toggle" aria-label={`${open ? 'Collapse' : 'Expand'} ${w.name}`} aria-expanded={open} onClick={() => setFlyout(f => f === w.id ? null : w.id)}>{open ? <ChevronDown className="fp-icon" aria-hidden="true" /> : <ChevronRight className="fp-icon" />}</button>
-          </div>
-          {open && <ul className="app-rail-subs">
-            {kids.map(k => <li key={k.id}><button type="button" className="app-rail-sub" data-active={value === k.id} aria-current={value === k.id ? 'true' : undefined} onClick={() => onChange(k.id)}>{k.name}</button></li>)}
-            {onCreate && <li><form className="flex gap-1" onSubmit={e => { e.preventDefault(); void create(subName, w.id, () => setSubName('')) }}>
-              <Input aria-label={`New sub-workspace in ${w.name}`} placeholder="New sub-workspace…" value={subName} onChange={e => setSubName(e.target.value)} />
-              <Button type="submit" variant="ghost" size="icon" disabled={busy} aria-label="Create sub-workspace" title="Create sub-workspace"><Plus className="fp-icon" aria-hidden="true" /></Button>
-            </form></li>}
-          </ul>}
-        </li> })}
-      </ul>
-      {onCreate && <Button variant="ghost" size="sm" aria-expanded={adding} onClick={() => setAdding(a => !a)}><Plus className="fp-icon" aria-hidden="true" /> Add workspace</Button>}
-      {adding && <form className="app-rail-flyout app-rail-flyout-bottom flex gap-1" onSubmit={e => { e.preventDefault(); void create(name, null, () => setName('')) }}>
-        <Input aria-label="New workspace name" placeholder="New workspace…" value={name} onChange={e => setName(e.target.value)} autoFocus />
-        <Button type="submit" variant="ghost" size="icon" disabled={busy} aria-label="Create workspace" title="Create workspace"><Plus className="fp-icon" aria-hidden="true" /></Button>
-      </form>}
-    </nav>
-    <div className="app-body">
-      <header className="app-header">
-        <div className="app-mobile-workspaces"><WorkspacePicker workspaces={workspaces} value={value} onChange={onChange} {...(onCreate ? { onCreate } : {})} {...(busy !== undefined ? { busy } : {})} /></div>
-        <span className="app-header-title">{title}</span>
-        {onSources && <Button variant="ghost" size="sm" onClick={onSources}><Folder className="fp-icon" aria-hidden="true" /> Sources</Button>}
-        <span className="app-header-spacer" />
-        {email && <span className="app-header-email">{email}</span>}
-        {onSignOut && <Button variant="ghost" size="sm" onClick={onSignOut}>Log out</Button>}
-      </header>
-      <div className="app-mode" role="tablist" aria-label="Mode">
-        <Link to="/app" search={value ? { workspace: value } : {}} role="tab" aria-selected={mode === 'ask'} className="app-mode-tab" data-active={mode === 'ask'}>Ask</Link>
-        <Link to="/radar" search={value ? { workspace: value } : {}} role="tab" aria-selected={mode === 'radar'} className="app-mode-tab" data-active={mode === 'radar'}>Radar</Link>
+  return <div className={`ax ${right ? '' : 'ax-no-right'}`} data-mode={mode}>
+    <div className="ax-glow" aria-hidden="true" />
+    <header className="ax-top">
+      <Link to="/" className="ax-brand" aria-label="Footprint home"><Mark size={18} /><span>Footprint</span></Link>
+      <nav className="ax-modes" data-mode={mode} aria-label="Mode">
+        <i className="ax-modes-thumb" aria-hidden="true" />
+        <Link to="/app" search={search} className="ax-mode" data-active={mode === 'ask'} aria-current={mode === 'ask' ? 'page' : undefined}><MessageSquare size={16} aria-hidden="true" /> Ask Mode</Link>
+        <Link to="/radar" search={search} className="ax-mode" data-active={mode === 'radar'} aria-current={mode === 'radar' ? 'page' : undefined}><Radar size={16} aria-hidden="true" /> Radar Mode</Link>
+      </nav>
+      <div className="ax-account">
+        <div className="ax-mobile-ws"><WorkspacePicker workspaces={workspaces} value={value} onChange={onChange} {...(onCreate ? { onCreate } : {})} {...(busy !== undefined ? { busy } : {})} /></div>
+        {onSources && <button type="button" className="ax-iconbtn ax-sources-toggle" onClick={onSources} aria-label="Sources" title="Sources"><PanelRight size={18} aria-hidden="true" /></button>}
+        {email && <span className="ax-avatar" title={email} aria-hidden="true">{initials}</span>}
+        {email && <span className="ax-email">{email}</span>}
+        {onSignOut && <button type="button" className="ax-signout" onClick={onSignOut}>Log out</button>}
       </div>
-      {children}
-    </div>
+    </header>
+
+    <nav ref={railRef} className="ax-glass ax-left" aria-label="Workspaces">
+      <div className="ax-panel-head"><h2>Workspaces</h2>{onCreate && <button type="button" className="ax-iconbtn" aria-label="Add workspace" aria-expanded={adding === 'root'} onClick={() => { setName(''); setAdding(a => a === 'root' ? null : 'root') }}><Plus size={16} aria-hidden="true" /></button>}</div>
+      {adding === 'root' && form(null, 'New workspace name')}
+      <ul className="ax-ws">
+        {mains.map(w => <li key={w.id}>
+          <div className="ax-ws-row">
+            <button type="button" className="ax-ws-item" data-active={value === w.id} aria-current={value === w.id ? 'true' : undefined} onClick={() => onChange(w.id)}>{w.name}</button>
+            {onCreate && <button type="button" className="ax-ws-add" aria-label={`Add sub-workspace to ${w.name}`} aria-expanded={adding === w.id} onClick={() => { setName(''); setAdding(a => a === w.id ? null : w.id) }}><Plus size={14} aria-hidden="true" /></button>}
+          </div>
+          <ul className="ax-subs">
+            {workspaces.filter(k => k.parent_id === w.id).map(k => <li key={k.id}><button type="button" className="ax-ws-item ax-ws-sub" data-active={value === k.id} aria-current={value === k.id ? 'true' : undefined} onClick={() => onChange(k.id)}>{k.name}</button></li>)}
+            {adding === w.id && <li>{form(w.id, `New sub-workspace in ${w.name}`)}</li>}
+          </ul>
+        </li>)}
+      </ul>
+      {mains.length === 0 && <p className="ax-empty">No workspace found for this account.</p>}
+    </nav>
+
+    <div className="ax-center">{children}</div>
+
+    {right && <>
+      <div className="ax-scrim" data-open={!!rightOpen} onClick={onRightClose} aria-hidden="true" />
+      <div className="ax-right" data-open={!!rightOpen}>{right}</div>
+    </>}
   </div>
 }

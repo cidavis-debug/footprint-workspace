@@ -2,13 +2,12 @@ import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Input } from '@/design-system/apple-inspired-bec754'
-import { Answer, CitationChip, Composer, SourceItem, SourcesDrawer } from '@/design-system/footprint-0a8b1a'
-import { FilePlus2, Link2, Sparkles, X } from 'lucide-react'
+import { ArrowUp, Copy, FilePlus2, FileText, Link2, Paperclip, Search, Sparkles, Square, X } from 'lucide-react'
+import { entryReady } from '@/components/app/entry'
 import { askFootprint, type Citation } from '@/lib/ask.functions'
 import { analyzeEngineeringSource } from '@/lib/engineering.functions'
 import { EngineeringAlerts, SourceEngineering } from '@/components/engineering-context'
 import { pageHead } from '@/components/page-head'
-import { Illustration } from '@/components/illustration'
 import { type WorkspaceNode } from '@/components/workspace-picker'
 import { AppShell } from '@/components/app-shell'
 import { useAuth } from '@/hooks/use-auth'
@@ -68,6 +67,9 @@ function Workspace() {
     return () => ro.disconnect()
   })
   currentWorkspace.current = activeWorkspace
+  const lastTurn = useRef<HTMLElement>(null)
+  useEffect(() => { if (!loading) entryReady() }, [loading])
+  useEffect(() => { if (thread.length) lastTurn.current?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }) }, [thread.length])
   useEffect(() => { setThread([]); setEvidence(null) }, [activeWorkspace])
 
   useEffect(() => {
@@ -216,64 +218,95 @@ function Workspace() {
     setNotice(`Workspace “${name}” created.`)
   }
 
-  return <AppShell workspaces={workspaces} value={activeWorkspace} onChange={setActiveWorkspace} onCreate={createWorkspace} busy={busy} mode="ask" email={user.email ?? null} onSources={() => setSourcesOpen(true)} onSignOut={signOut}>
-    <main className="chat-main" ref={mainRef}>
-      <div className="chat-scroll">
-        <div className="chat-column">
-          {thread.length === 0 && <div className="chat-empty">
-            <Illustration name="empty" eager />
+  const statusLine = dataLoading ? 'Loading your workspace…' : workspaces.length > 0 ? `Answering from “${workspaces.find(w => w.id === activeWorkspace)?.name ?? 'Personal'}” sources.` : 'No workspace found for this account.'
+  const sourcesPanel = <aside className="ax-glass ax-sources" aria-label="Sources">
+    <div className="ax-panel-head"><h2>Sources</h2><span className="ax-count lp-mono">{sources.length}</span><button type="button" className="ax-iconbtn ax-close" aria-label="Close sources" onClick={() => setSourcesOpen(false)}><X size={16} aria-hidden="true" /></button></div>
+    <label className="ax-search"><Search size={15} aria-hidden="true" /><input aria-label="Search sources" placeholder="Search sources" value={search} onChange={e => setSearch(e.target.value)} /></label>
+    <div className="ax-actions">
+      <button type="button" onClick={openUpload} disabled={busy}><FilePlus2 size={15} aria-hidden="true" /> Upload file</button>
+      <button type="button" onClick={() => setLinkOpen(o => !o)} aria-expanded={linkOpen}><Link2 size={15} aria-hidden="true" /> Add link</button>
+    </div>
+    {linkOpen && <form className="ax-inline" onSubmit={e => { e.preventDefault(); void addLink() }}>
+      <Input aria-label="Link URL" type="url" placeholder="https://…" value={linkUrl} onChange={e => setLinkUrl(e.target.value)} autoFocus />
+      <Button type="submit" size="sm" loading={busy}>Add</Button>
+    </form>}
+    {collectionId && <form className="ax-inline ax-collection" onSubmit={e => { e.preventDefault(); void renameCollection() }}>
+      <span className="lp-mono">Collection</span>
+      <Input aria-label="Collection name" value={collectionName} onChange={e => setCollectionName(e.target.value)} />
+      <Button type="submit" variant="ghost" size="sm">Rename</Button>
+    </form>}
+    {notice && sourcesOpen && <p role="status" className="ax-note">{notice}</p>}
+    <div className="ax-analyze"><button type="button" onClick={() => void analyzeExisting()} disabled={!!bulk}><Sparkles size={15} aria-hidden="true" /> Analyze existing sources</button>{bulk && <span role="status" className="lp-mono">{bulk}</span>}</div>
+    <EngineeringAlerts workspaceId={activeWorkspace} refreshKey={alertKey} />
+    {focusSource && <p className="ax-note">Cited source: <strong>{focusSource}</strong></p>}
+    <ul className="ax-src-list">
+      {visibleSources.length > 0
+        ? visibleSources.map(src => <li key={src.id} className="ax-src">
+            <div className="ax-src-row">
+              <span className="ax-src-icon">{src.source_type === 'link' || src.source_type === 'url' ? <Link2 size={16} aria-hidden="true" /> : <FileText size={16} aria-hidden="true" />}</span>
+              <div className="ax-src-main"><b title={src.title}>{src.title}</b><span className="lp-mono"><i data-status={sourceStatus(src.status)} aria-hidden="true" />{src.source_type === 'link' || src.source_type === 'url' ? 'Link' : 'File'} · {statusLabel(sourceStatus(src.status))}</span></div>
+              <button type="button" className="ax-iconbtn" aria-label={`Remove ${src.title}`} title="Remove source" onClick={() => void removeSource(src)}><X size={15} aria-hidden="true" /></button>
+            </div>
+            {src.status === 'ready' && <SourceEngineering sourceId={src.id} status={src.engineering_analysis_status} summary={src.engineering_summary} busy={analyzing === src.id} onReanalyze={() => void analyze(src.id)} />}
+          </li>)
+        : <li className="ax-empty"><b>{sources.length > 0 ? 'No matches.' : 'No sources yet.'}</b><span>{sources.length > 0 ? 'Try a different search.' : `Your “${collections[0]?.name ?? 'General'}” collection is ready — upload a file or add a link.`}</span></li>}
+    </ul>
+  </aside>
+
+  return <AppShell workspaces={workspaces} value={activeWorkspace} onChange={setActiveWorkspace} onCreate={createWorkspace} busy={busy} mode="ask" email={user.email ?? null} onSources={() => setSourcesOpen(o => !o)} onSignOut={signOut} right={sourcesPanel} rightOpen={sourcesOpen} onRightClose={() => setSourcesOpen(false)}>
+    <main className="ax-chat" ref={mainRef}>
+      <div className="ax-scroll">
+        <div className="ax-column">
+          {thread.length === 0 && <div className="ax-empty-chat">
+            <p className="lp-mono ax-kicker">Ask mode</p>
             <h1>What’s on your mind?</h1>
-            <p>A clear question. The right context. A place to think together.</p>
-            <div className="starter-grid">{suggestedQuestions.map(q => <button type="button" key={q} className="starter-card" onClick={() => void ask(q)} disabled={asking || !activeWorkspace}>{q}</button>)}</div>
+            <p>Ask about the sources in this workspace. Answers cite what they used.</p>
+            <ul className="ax-starters">{suggestedQuestions.map(q => <li key={q}><button type="button" onClick={() => void ask(q)} disabled={asking || !activeWorkspace}>{q}<ArrowUp size={15} aria-hidden="true" /></button></li>)}</ul>
           </div>}
-          {thread.length > 0 && <div className="w-full space-y-8 text-left">
-            {thread.map((m, i) => <div key={i} className="space-y-4">
-              <h2 className="font-heading text-h2 text-ink">{m.question}</h2>
+          {thread.map((m, i) => <article key={i} className="ax-turn" ref={i === thread.length - 1 ? lastTurn : undefined} aria-label={`Question ${i + 1}`}>
+            <header className="ax-q"><span className="ax-who lp-mono"><i aria-hidden="true" />You</span><h2>{m.question}</h2></header>
+            <div className="ax-a">
+              <span className="ax-who lp-mono ax-who-ai">Footprint</span>
               {m.pending
-                ? <p role="status" className="text-muted-foreground">Reading your sources…</p>
-                : <Answer copyText={m.answer} sources={m.citations.map(c => c.title)}>
-                    <p className="whitespace-pre-wrap">{m.answer}</p>
-                    {m.citations.length > 0 && <div className="mt-4 flex flex-wrap gap-2">
-                      {m.citations.map(c => <CitationChip key={c.id} kind={c.kind} href="#evidence" title={c.quote} onClick={e => { e.preventDefault(); void openEvidence(c) }}>{c.title}</CitationChip>)}
+                ? <p role="status" className="ax-pending">Reading your sources…</p>
+                : <>
+                    <div className="ax-prose">{m.answer.split(/\n{2,}/).map((para, k) => <p key={k}>{para}</p>)}</div>
+                    {m.citations.length > 0 && <div className="ax-cites" aria-label="Sources cited">
+                      {m.citations.map((c, n) => <button type="button" key={c.id} className="ax-cite" title={c.quote || c.title} onClick={() => void openEvidence(c)}><b className="lp-mono">{n + 1}</b>{c.kind === 'link' ? <Link2 size={13} aria-hidden="true" /> : <FileText size={13} aria-hidden="true" />}<span>{c.title}</span></button>)}
                     </div>}
-                  </Answer>}
-            </div>)}
-          </div>}
+                    <button type="button" className="ax-copy" onClick={() => void navigator.clipboard?.writeText(m.answer)}><Copy size={13} aria-hidden="true" /> Copy</button>
+                  </>}
+            </div>
+          </article>)}
         </div>
       </div>
-      <div className="chat-dock" ref={dockRef}>
-        <div className="chat-column"><div className="chat-dock-card">
-          {notice && <p className="chat-notice" role="status">{notice}</p>}
-          <p className="workspace-status">{dataLoading ? 'Loading your workspace…' : workspaces.length > 0 ? `Answering from “${workspaces.find(w => w.id === activeWorkspace)?.name ?? 'Personal'}” sources.` : 'No workspace found for this account.'}</p>
-          <div className="chat-composer-row">
-            <Composer className="flex-1" onSend={q => void ask(q)} onUpload={openUpload} onAddLink={openLink} disabled={asking} placeholder={asking ? 'Thinking…' : 'Ask a question…'} />
-            {asking && <Button variant="primary" size="icon" aria-label="Stop generating" title="Stop generating" onClick={stop}><X className="fp-icon" aria-hidden="true" /></Button>}
-          </div>
-        </div></div>
+      <div className="ax-dock" ref={dockRef}>
+        <div className="ax-column">
+          {notice && <p className="ax-notice" role="status">{notice}</p>}
+          <PromptBar onSend={q => void ask(q)} onUpload={openUpload} onAddLink={openLink} asking={asking} onStop={stop} placeholder={asking ? 'Thinking…' : 'Ask a question…'} />
+          <p className="ax-hint lp-mono">{statusLine} <span>Shift + Enter for new line</span></p>
+        </div>
       </div>
     </main>
     <input ref={fileInput} type="file" hidden accept=".pdf,.md,.markdown,.txt,application/pdf,text/markdown,text/plain" onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void uploadFile(f) }} />
-    <SourcesDrawer open={sourcesOpen} onClose={() => { setSourcesOpen(false); setLinkOpen(false) }} onAddSource={openUpload} onSearch={setSearch}>
-      {collectionId && <form className="mb-4 flex gap-2" onSubmit={e => { e.preventDefault(); void renameCollection() }}>
-        <Input aria-label="Collection name" value={collectionName} onChange={e => setCollectionName(e.target.value)} />
-        <Button type="submit" variant="ghost" size="sm">Rename</Button>
-      </form>}
-      <div className="mb-4 flex gap-2">
-        <Button variant="ghost" size="sm" onClick={openUpload} disabled={busy}><FilePlus2 className="fp-icon" aria-hidden="true" /> Upload file</Button>
-        <Button variant="ghost" size="sm" onClick={() => setLinkOpen(o => !o)}><Link2 className="fp-icon" aria-hidden="true" /> Add link</Button>
-      </div>
-      {linkOpen && <form className="mb-4 flex gap-2" onSubmit={e => { e.preventDefault(); void addLink() }}>
-        <Input aria-label="Link URL" type="url" placeholder="https://…" value={linkUrl} onChange={e => setLinkUrl(e.target.value)} autoFocus />
-        <Button type="submit" size="sm" loading={busy}>Add</Button>
-      </form>}
-      {notice && sourcesOpen && <p role="status" className="mb-4">{notice}</p>}
-      <div className="mb-4 flex items-center gap-2"><Button variant="ghost" size="sm" onClick={() => void analyzeExisting()} loading={!!bulk}><Sparkles className="fp-icon" aria-hidden="true" /> Analyze existing sources</Button>{bulk && <span role="status" className="text-muted-foreground">{bulk}</span>}</div>
-      <EngineeringAlerts workspaceId={activeWorkspace} refreshKey={alertKey} />
-      {focusSource && <p className="mb-4 text-muted-foreground">Cited source: <strong className="text-ink">{focusSource}</strong></p>}
-      {visibleSources.length > 0
-        ? visibleSources.map(s => <div key={s.id}><SourceItem name={s.title} kind={s.source_type === 'link' || s.source_type === 'url' ? 'link' : 'file'} status={sourceStatus(s.status)} onAction={() => void removeSource(s)} />{s.status === 'ready' && <SourceEngineering sourceId={s.id} status={s.engineering_analysis_status} summary={s.engineering_summary} busy={analyzing === s.id} onReanalyze={() => void analyze(s.id)} />}</div>)
-        : <div className="empty-sources"><h2>{sources.length > 0 ? 'No matches.' : 'No sources yet.'}</h2><p>{sources.length > 0 ? 'Try a different search.' : `Your “${collections[0]?.name ?? 'General'}” collection is ready — upload a file or add a link.`}</p></div>}
-    </SourcesDrawer>
     <SourceEvidenceDrawer source={evidence?.source ?? null} claims={evidence?.claims ?? []} quote={evidence?.quote} onClose={() => setEvidence(null)} />
   </AppShell>
+}
+
+function statusLabel(s: 'indexed' | 'processing' | 'reference') { return s === 'indexed' ? 'Indexed' : s === 'processing' ? 'Processing' : 'Reference' }
+
+/** Matte prompt bar: Enter sends, Shift+Enter inserts a newline. Send turns into Stop while a request is running. */
+function PromptBar({ onSend, onUpload, onAddLink, asking, onStop, placeholder }: { onSend: (q: string) => void; onUpload: () => void; onAddLink: () => void; asking: boolean; onStop: () => void; placeholder: string }) {
+  const [value, setValue] = useState('')
+  const area = useRef<HTMLTextAreaElement>(null)
+  const submit = () => { const q = value.trim(); if (!q || asking) return; onSend(q); setValue('') }
+  useEffect(() => { const el = area.current; if (!el) return; el.style.height = 'auto'; el.style.height = `${Math.min(el.scrollHeight, 180)}px` }, [value])
+  return <form className="ax-composer" onSubmit={e => { e.preventDefault(); submit() }}>
+    <button type="button" className="ax-iconbtn" aria-label="Upload a file" title="Upload a file" onClick={onUpload}><Paperclip size={18} aria-hidden="true" /></button>
+    <button type="button" className="ax-iconbtn ax-link-btn" aria-label="Add a link" title="Add a link" onClick={onAddLink}><Link2 size={18} aria-hidden="true" /></button>
+    <textarea ref={area} rows={1} aria-label="Ask your workspace" placeholder={placeholder} value={value} disabled={asking} onChange={e => setValue(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); submit() } }} />
+    {asking
+      ? <button type="button" className="ax-send ax-stop" aria-label="Stop generating" title="Stop generating" onClick={onStop}><Square size={14} fill="currentColor" aria-hidden="true" /></button>
+      : <button type="submit" className="ax-send" aria-label="Send question" title="Send question" disabled={!value.trim()}><ArrowUp size={18} aria-hidden="true" /></button>}
+  </form>
 }

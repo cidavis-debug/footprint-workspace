@@ -2,6 +2,7 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { AlertTriangle, ArrowRight, ArrowUpRight, FileText, FolderOpen, Menu, RotateCcw, X } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
+import { startEntry } from '@/components/app/entry'
 import './landing.css'
 import './pages.css'
 
@@ -75,14 +76,11 @@ export type OpenHandler = (e: { preventDefault: () => void }) => void
 
 export function useOpenApp() {
   const navigate = useNavigate()
-  const [reveal, setReveal] = useState(false)
   const open = useCallback<OpenHandler>(e => {
     e.preventDefault()
-    if (prefersReducedMotion()) { void navigate({ to: '/app' }); return }
-    setReveal(true)
-    window.setTimeout(() => void navigate({ to: '/app' }), 380)
+    startEntry(() => void navigate({ to: '/app' }))
   }, [navigate])
-  return { open, reveal }
+  return { open, reveal: false }
 }
 
 export function Header({ onOpen, tone = 'light' }: { onOpen: OpenHandler; tone?: 'light' | 'dark' }) {

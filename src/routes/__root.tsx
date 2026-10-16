@@ -9,6 +9,7 @@ import type { ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { AuthProvider } from "@/hooks/use-auth";
+import { EntryOverlay } from "@/components/app/entry";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -55,6 +56,7 @@ function RootComponent() {
       <AuthProvider>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
+        <EntryOverlay />
       </AuthProvider>
     </QueryClientProvider>
   );

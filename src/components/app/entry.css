@@ -1,0 +1,7 @@
+.entry { position: fixed; inset: 0; z-index: 300; display: none; background: #e8eaed; pointer-events: none; }
+.entry[data-phase="expand"], .entry[data-phase="hold"], .entry[data-phase="fade"] { display: block; pointer-events: all; }
+.entry[data-phase="expand"] { animation: entry-grow .4s cubic-bezier(.7, 0, .25, 1) both; }
+.entry[data-phase="hold"] { clip-path: circle(150vmax at 50% 50%); }
+.entry[data-phase="fade"] { clip-path: circle(150vmax at 50% 50%); animation: entry-fade .32s ease-out both; }
+@keyframes entry-grow { from { clip-path: circle(10px at 50% 50%); } to { clip-path: circle(150vmax at 50% 50%); } }
+@keyframes entry-fade { from { opacity: 1; } to { opacity: 0; } }
