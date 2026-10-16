@@ -1,25 +1,114 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Icon } from '@/design-system/footprint-0a8b1a'
-import { SiteLayout } from '@/components/site-layout'
-import { PageIntroduction, PageInvitation } from '@/components/content-page'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { ArrowUpRight, FileText, Link2 } from 'lucide-react'
 import { pageHead } from '@/components/page-head'
-import { Illustration } from '@/components/illustration'
+import { MarketingPage, Reveal, SplitHeading, WordReveal, clamp, prefersReducedMotion, useScrollProgress, type Dir } from '@/components/landing/shared'
 
 export const Route = createFileRoute('/how-it-works')({
-  head: () => pageHead('How it works — Footprint', 'Discover the Footprint workflow: gather documents and links, organize collections, and ask source-grounded questions.'),
+  head: () => pageHead('How it works — Footprint', 'The Footprint workflow: create a workspace, add files and links, organize collections, ask cited questions, and analyze sources for potential conflicts.'),
   component: HowItWorks,
 })
 
-function HowItWorks() {
-  return <SiteLayout><main className="site-width">
-    <PageIntroduction kicker="How it works" title="A question. A source. A clearer answer." description="Footprint is designed to bring scattered information into a shared workspace. Here’s the path from a pile of documents to a useful conversation." />
-    <p className="availability-note"><Icon name="Link2" /> Product preview · The workflow below describes intended capabilities, not a connected service.</p>
-    <section className="flow" aria-label="The Footprint workflow">
-      <article className="surface-raised panel flow-gather-wrap reveal"><div className="flow-head"><span className="big-number">01</span></div><div className="flow-gather"><div><p className="section-kicker">Gather</p><h2>Start with what you already know.</h2><p>Upload project briefs, meeting notes, or research. Save an external link with a title and, when you want it included in answers, paste the relevant text yourself.</p><ul className="source-examples mt-5"><li><Icon name="FileText" /><span>Launch brief.pdf</span></li><li><Icon name="FileText" /><span>Customer interviews.docx</span></li><li><Icon name="FileText" /><span>Research notes.txt</span></li></ul><p className="demo-label">Example sources · PDF, DOCX, and TXT · Up to 10 MB per file</p></div><Illustration name="gather" size="wide" /></div></article>
-      <article className="panel reveal"><div className="flow-head"><span className="big-number">02</span></div><p className="section-kicker">Organize</p><h2>Keep the right things together.</h2><p>A workspace gives your team a shared home. Collections group sources by project, topic, or purpose.</p><div className="surface-inset mini-preview"><Icon name="Folder" /><h3>Product launch</h3><p>Briefs · Research · Team notes</p><span className="demo-label">Illustrative collection</span></div><Link to="/collections" className="site-link">Find a collection that fits ↗</Link></article>
-      <article className="surface-raised panel flow-ask reveal"><div className="flow-head"><span className="big-number">03</span></div><div className="flow-ask-body"><div><p className="section-kicker">Ask</p><h2>Let your questions lead.</h2><p>Ask about information in the selected workspace. Answers are intended to use the available source text and cite the documents behind them, so you can check the original context.</p><p className="detail-note">No source can guarantee a perfect answer. Check important details against the original.</p></div><div className="mini-preview"><div className="question">“What’s still open before launch?”</div><p>Two decisions remain open: final pricing copy and the support handoff date.</p><p className="flex items-center gap-2 text-sm"><Icon name="FileText" /> Launch brief.pdf · Team decisions.docx</p><span className="demo-label">Example prompt and answer · Not a live response</span></div></div></article>
-    </section>
-    <section className="reading-band"><h2 className="section-title">Links stay honest.</h2><div><p>A saved URL is a reference, not an automatically imported document. Footprint does not silently read private Google Drive or OneDrive content. Paste the text you want to use, or upload a supported file.</p><Link to="/security" className="site-link">Read the data boundaries ↗</Link></div></section>
-    <PageInvitation />
-  </main></SiteLayout>
+type Step = { id: string; n: string; title: string; lead: string; dir: Dir; body: ReactNode; tone?: 'slate' }
+
+const steps: Step[] = [
+  { id: 'workspace', n: '01', title: 'Create a workspace', dir: 'left',
+    lead: 'A workspace is the home for one program or team’s sources. Sub-workspaces nest one level beneath it, so a subsystem can have its own space without losing the parent.',
+    body: <ul className="lp-tree" aria-label="Example workspace structure">
+      <li><b>Actuator Program</b><span className="lp-mono">Workspace</span></li>
+      <li className="sub"><b>Gearbox</b><span className="lp-mono">Sub-workspace</span></li>
+      <li className="sub"><b>Controller</b><span className="lp-mono">Sub-workspace</span></li>
+      <li><b>Test Campaign</b><span className="lp-mono">Workspace</span></li>
+    </ul> },
+  { id: 'add', n: '02', title: 'Add files and links', dir: 'right',
+    lead: 'Upload files or save web links into the active workspace. Footprint accepts what it can use today and is plain about the rest.',
+    body: <dl className="lp-facts">
+      <div><dt>Files</dt><dd>PDF, Markdown, plain text</dd></div>
+      <div><dt>Size</dt><dd>Up to 20 MB each</dd></div>
+      <div><dt>Links</dt><dd>Saved as references (http or https)</dd></div>
+      <div><dt>Read for answers</dt><dd>Markdown and text files today</dd></div>
+    </dl> },
+  { id: 'organize', n: '03', title: 'Organize into collections', dir: 'up',
+    lead: 'Every workspace starts with a collection named General. Rename it, and everything you add is grouped there, with the file or link type visible at a glance.',
+    body: <ul className="lp-rows" aria-label="Example collection">
+      <li><FileText size={16} aria-hidden="true" /><b>Interface drawing.pdf</b><span className="lp-mono">stored</span></li>
+      <li><FileText size={16} aria-hidden="true" /><b>Requirements.md</b><span className="lp-mono">read for answers</span></li>
+      <li><FileText size={16} aria-hidden="true" /><b>Test notes.txt</b><span className="lp-mono">read for answers</span></li>
+      <li><Link2 size={16} aria-hidden="true" /><b>Supplier datasheet</b><span className="lp-mono">reference link</span></li>
+    </ul> },
+  { id: 'ask', n: '04', title: 'Ask, with citations', dir: 'scale', tone: 'slate',
+    lead: 'Ask a question in plain language. The answer draws on the active workspace and names the sources it used, so you can open them and check.',
+    body: <div className="lp-qa">
+      <p className="lp-mono">Illustrative example</p>
+      <p className="lp-qa-q">What clearance does the actuator housing need?</p>
+      <p className="lp-qa-a">2 mm of radial clearance on all sides, as defined in the interface drawing and repeated in the assembly specification.</p>
+      <div className="lp-cites"><span><b className="lp-mono">1</b>Interface Drawing</span><span><b className="lp-mono">2</b>Assembly Specification</span></div>
+      <p className="lp-fine">No answer is guaranteed to be perfect. Check important details against the original.</p>
+    </div> },
+  { id: 'analyze', n: '05', title: 'Analyze for conflicts', dir: 'left',
+    lead: 'Run analysis on supported sources. Footprint extracts engineering claims — interfaces, requirements, decisions, constraints and assumptions — and compares them across the workspace. Possible conflicts land in Radar for your review.',
+    body: <div className="lp-conflict">
+      <div><span className="lp-mono">Interface Drawing</span><strong>8<small>mm</small></strong></div>
+      <div className="vs lp-mono">vs</div>
+      <div className="hot"><span className="lp-mono">Assembly Specification</span><strong>10<small>mm</small></strong></div>
+      <p>Potential conflict — review required. Footprint flags it; your team decides which source is correct.</p>
+    </div> },
+]
+
+function Journey() {
+  const scroll = useScrollProgress<HTMLDivElement>()
+  const [active, setActive] = useState(0)
+  const panels = useRef<(HTMLElement | null)[]>([])
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver(entries => {
+      for (const e of entries) if (e.isIntersecting) setActive(Number((e.target as HTMLElement).dataset['i']))
+    }, { rootMargin: '-38% 0px -52% 0px' })
+    panels.current.forEach(p => p && io.observe(p))
+    return () => io.disconnect()
+  }, [])
+  const go = (i: number) => panels.current[i]?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'center' })
+  return <div className="lp-journey" ref={scroll}>
+    <nav className="lp-rail" aria-label="Workflow steps">
+      <div className="lp-rail-track" aria-hidden="true"><i style={{ height: `${clamp((active + 0.5) / steps.length) * 100}%` }} /></div>
+      <ol>
+        {steps.map((s, i) => <li key={s.id}><button type="button" aria-current={i === active ? 'step' : undefined} data-done={i < active} onClick={() => go(i)}><span className="lp-mono">{s.n}</span>{s.title}</button></li>)}
+      </ol>
+    </nav>
+    <div className="lp-panels">
+      {steps.map((s, i) => <section key={s.id} id={s.id} data-i={i} ref={el => { panels.current[i] = el }} aria-labelledby={`${s.id}-h`}>
+        <Reveal dir={s.dir} className={`lp-lit lp-step ${s.tone === 'slate' ? 'lp-step-slate' : 'lp-steel'}`}>
+          <div className="lp-step-copy">
+            <p className="lp-mono lp-eyebrow">Step {s.n}</p>
+            <h2 id={`${s.id}-h`} className="lp-step-title">{s.title}</h2>
+            <p className="lp-body">{s.lead}</p>
+          </div>
+          <div className="lp-step-body">{s.body}</div>
+        </Reveal>
+      </section>)}
+    </div>
+  </div>
 }
+
+function HowItWorks() {
+  return <MarketingPage endsDark>
+    <section className="lp-pagehero lp-hiw-hero">
+      <div className="lp-inner lp-hiw-hero-inner">
+        <p className="lp-mono lp-eyebrow">How it works · five steps</p>
+        <SplitHeading className="lp-mega" lines={[{ t: 'From scattered files' }, { t: 'to a cited answer.', accent: true }]} />
+        <Reveal delay={500} className="lp-hiw-sub"><p className="lp-lead">One workflow, from the first file to the first conflict flagged for review. Follow it down the page.</p></Reveal>
+      </div>
+    </section>
+    <section className="lp-journey-wrap" aria-label="The Footprint workflow"><div className="lp-inner"><Journey /></div></section>
+    <section className="lp-section lp-dark lp-slate lp-honest" aria-labelledby="lp-honest-h">
+      <div className="lp-dark-bg" aria-hidden="true" />
+      <div className="lp-inner">
+        <p className="lp-mono lp-eyebrow">A note on links</p>
+        <h2 id="lp-honest-h" className="lp-sr">Links stay honest</h2>
+        <WordReveal className="lp-statement lp-statement-dark" text="Links stay honest. A saved URL is a reference, not an imported document — Footprint does not silently read private Google Drive or OneDrive content." />
+        <Reveal dir="right" delay={150}><p className="lp-body">To use a document’s text, upload a supported file. <Link to="/security" className="lp-textlink">Read the data boundaries <ArrowUpRight size={15} aria-hidden="true" /></Link></p></Reveal>
+      </div>
+    </section>
+  </MarketingPage>
+}
+

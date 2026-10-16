@@ -1,33 +1,116 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Button, Icon } from '@/design-system/footprint-0a8b1a'
-import { SiteLayout } from '@/components/site-layout'
+import { ArrowUpRight, Check } from 'lucide-react'
 import { pageHead } from '@/components/page-head'
-import { PageIntroduction, PageInvitation } from '@/components/content-page'
-import { NavigationButton } from '@/components/navigation-button'
+import { MarketingPage, Reveal, SplitHeading } from '@/components/landing/shared'
 
-export const Route = createFileRoute('/pricing')({ head: () => pageHead('Pricing — Footprint', 'Explore proposed Free, Pro, and Team pricing for Footprint, with transparent limits and monthly or annual options.'), component: Pricing })
+export const Route = createFileRoute('/pricing')({
+  head: () => pageHead('Pricing — Footprint', 'Draft Free, Pro, and Team plans for Footprint, clearly labeled as proposals.'),
+  component: Pricing,
+})
 
+/** Draft plan data carried over from the previous page. Proposed only — not a live offer. */
 const plans = [
-  { name: 'Free', description: 'A small home for a fresh idea.', monthly: 0, annual: 0, features: ['1 workspace · 1 member', '25 sources', '50 AI questions per month', 'Collections and source citations'] },
-  { name: 'Pro', description: 'More room for your everyday thinking.', monthly: 12, annual: 9, features: ['3 workspaces · 1 member', '500 sources across workspaces', '500 AI questions per month', 'Collections and source citations'] },
-  { name: 'Team', description: 'A common home for collective knowledge.', monthly: 29, annual: 24, features: ['10 workspaces · 5 members included', '2,000 sources across workspaces', '2,000 shared AI questions per month', 'Workspace membership and shared collections'] },
+  { name: 'Free', blurb: 'A small home for a fresh idea.', monthly: 0, annual: 0 },
+  { name: 'Pro', blurb: 'More room for your everyday thinking.', monthly: 12, annual: 9 },
+  { name: 'Team', blurb: 'A common home for collective knowledge.', monthly: 29, annual: 24 },
+] as const
+
+const rows: { label: string; vals: [string, string, string]; note?: string }[] = [
+  { label: 'Workspaces', vals: ['1', '3', '10'] },
+  { label: 'Members', vals: ['1', '1', '5 included'], note: 'Multi-member workspaces are not available in the product today.' },
+  { label: 'Sources', vals: ['25', '500 across workspaces', '2,000 across workspaces'] },
+  { label: 'AI questions per month', vals: ['50', '500', '2,000 shared'] },
+  { label: 'Collections and source citations', vals: ['Included', 'Included', 'Included'] },
+  { label: 'Shared collections', vals: ['—', '—', 'Proposed'], note: 'Proposed for Team; not available today.' },
+]
+
+const faq = [
+  { q: 'Can I subscribe now?', a: 'No. These prices and limits are draft proposals. No plan can be purchased or activated, and there is no checkout.' },
+  { q: 'What counts as a source?', a: 'An uploaded file (PDF, Markdown or text, up to 20 MB each) or a saved web link. A link is a reference only; Footprint does not fetch or read its contents.' },
+  { q: 'How would Team pricing work?', a: 'The proposed Team price would include five members rather than charging per person, with source and question limits shared across the team’s workspaces. Extra-member pricing has not been defined, and multi-member workspaces do not exist yet.' },
+  { q: 'Are taxes and overages included?', a: 'Tax treatment has not been decided. The proposal has no automatic overage charges; limits and any upgrade options would be confirmed before launch.' },
 ]
 
 function Pricing() {
   const [annual, setAnnual] = useState(false)
-  return <SiteLayout><main className="site-width">
-    <PageIntroduction illustration="team" kicker="Footprint pricing" title="Good knowledge. A considered plan." description="Start with a few sources, find your rhythm, and make room for your team. A proposed plan for each stage of your shared knowledge." />
-    <p className="availability-note"><Icon name="FileText" /> Draft pricing · USD · Illustrative plans, not a live offer. Subscriptions and payments are unavailable.</p>
-    <div className="billing-row"><div className="segmented surface-inset" role="group" aria-label="Billing period"><Button variant={annual ? 'quiet' : 'primary'} aria-pressed={!annual} onClick={() => setAnnual(false)}>Monthly</Button><Button variant={annual ? 'primary' : 'quiet'} aria-pressed={annual} onClick={() => setAnnual(true)}>Yearly</Button></div><span className="demo-label">Lower monthly equivalent with yearly billing</span></div>
-    <section className="pricing-plans" aria-label="Proposed plans">{plans.map(plan => <article className={`plan reveal plan-${plan.name.toLowerCase()}${plan.name === 'Pro' ? ' plan-featured' : ''}`} key={plan.name}><div className="plan-heading"><h2>{plan.name}</h2>{plan.name === 'Pro' && <span className="section-kicker">For everyday use</span>}</div><p>{plan.description}</p><p className="plan-price">${annual ? plan.annual : plan.monthly}<span> / month</span></p><p className="detail-note">{plan.monthly === 0 ? 'Proposed free plan' : annual ? `$${plan.annual * 12} billed yearly per ${plan.name === 'Team' ? 'team' : 'account'}` : `Billed monthly per ${plan.name === 'Team' ? 'team' : 'account'}`}</p><ul className="plan-features">{plan.features.map(feature => <li key={feature}><Icon name="Check" size="sm" /><span>{feature}</span></li>)}</ul><NavigationButton variant={plan.name === 'Pro' ? 'primary' : 'secondary'} to="/app">Explore workspace <Icon name="ArrowUpRight" /></NavigationButton><p className="demo-label plan-note">Preview only · No checkout</p></article>)}</section>
-    <section className="reading-band"><h2 className="section-title">A few useful details.</h2><div className="pricing-faq">
-      <details><summary>Can I subscribe now?</summary><p>Not yet. These prices and limits are draft examples. The workspace is a disconnected preview, and no plan can be purchased or activated.</p></details>
-      <details><summary>What counts as a source?</summary><p>A supported uploaded document or a saved external link. PDF, DOCX, and TXT files are intended to support up to 10 MB each. A link without pasted content is reference-only and is not automatically read by the AI.</p></details>
-      <details><summary>How does Team pricing work?</summary><p>The proposed Team price covers five members, rather than charging per person. Source and question limits would be shared across the team’s workspaces. Additional member pricing has not been defined.</p></details>
-      <details><summary>Are taxes and overages included?</summary><p>Tax treatment has not been finalized. There are no automatic overage charges in this proposed model; usage limits and any future upgrade options need to be confirmed before launch.</p></details>
-      <Link to="/security" className="site-link">Understand the data boundaries ↗</Link>
-    </div></section>
-    <PageInvitation />
-  </main></SiteLayout>
+  const [sel, setSel] = useState(1)
+  const p = plans[sel]!
+  const price = (i: number) => annual ? plans[i]!.annual : plans[i]!.monthly
+  return <MarketingPage>
+    <section className="lp-pagehero lp-price-hero">
+      <div className="lp-inner lp-price-hero-inner">
+        <div>
+          <p className="lp-mono lp-eyebrow">Footprint pricing · draft</p>
+          <SplitHeading className="lp-mega" lines={[{ t: 'Good knowledge.' }, { t: 'A considered plan.', accent: true }]} />
+        </div>
+        <Reveal dir="right" delay={400} className="lp-price-note lp-glass-light">
+          <b>Draft pricing · USD</b>
+          <p>These plans are proposals, not a live offer. Subscriptions and payments are unavailable, and the product has no checkout.</p>
+        </Reveal>
+      </div>
+    </section>
+
+    <section className="lp-price-compare" aria-labelledby="lp-plans-h">
+      <div className="lp-inner">
+        <div className="lp-price-controls">
+          <h2 id="lp-plans-h" className="lp-h2 lp-h2-sm">Compare the proposed plans</h2>
+          <div className="lp-seg" role="group" aria-label="Billing period">
+            <button type="button" aria-pressed={!annual} onClick={() => setAnnual(false)}>Monthly</button>
+            <button type="button" aria-pressed={annual} onClick={() => setAnnual(true)}>Yearly</button>
+          </div>
+        </div>
+        <Reveal dir="up" className="lp-lit lp-steel lp-table-wrap">
+          <table className="lp-table">
+            <caption className="lp-sr">Proposed plans compared. Select a plan heading for details.</caption>
+            <thead>
+              <tr><td />
+                {plans.map((pl, i) => <th key={pl.name} scope="col" data-sel={sel === i}>
+                  <button type="button" aria-pressed={sel === i} onClick={() => setSel(i)}>
+                    <span className="lp-plan-name">{pl.name}</span>
+                    <span className="lp-plan-price">${price(i)}<small> / month</small></span>
+                  </button>
+                </th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(r => <tr key={r.label}>
+                <th scope="row">{r.label}{r.note && <small>{r.note}</small>}</th>
+                {r.vals.map((val, i) => <td key={i} data-sel={sel === i}>{val === 'Included' ? <Check size={16} aria-label="Included" /> : val}</td>)}
+              </tr>)}
+            </tbody>
+          </table>
+        </Reveal>
+      </div>
+    </section>
+
+    <section className="lp-section lp-dark lp-slate lp-price-spot" aria-live="polite" aria-label="Selected plan">
+      <div className="lp-dark-bg" aria-hidden="true" />
+      <div className="lp-inner lp-spot-grid">
+        <div key={p.name} className="lp-spot-copy">
+          <p className="lp-mono lp-eyebrow">Selected plan</p>
+          <h2 className="lp-h2">{p.name}<span>{p.blurb}</span></h2>
+        </div>
+        <div className="lp-lit lp-glass lp-spot-panel" key={`${p.name}-${annual}`}>
+          <p className="lp-spot-price">${price(sel)}<small> / month</small></p>
+          <p className="lp-mono lp-spot-sub">{p.monthly === 0 ? 'Proposed free plan' : annual ? `$${p.annual * 12} billed yearly per ${p.name === 'Team' ? 'team' : 'account'}` : `Billed monthly per ${p.name === 'Team' ? 'team' : 'account'}`}</p>
+          <ul>
+            {rows.slice(0, 4).map(r => <li key={r.label}><span>{r.label}</span><b>{r.vals[sel]}</b></li>)}
+          </ul>
+          <Link to="/app" className="lp-btn lp-btn-primary">Explore the workspace <ArrowUpRight size={16} aria-hidden="true" /></Link>
+          <p className="lp-fine">Preview only · no checkout. Exploring the workspace does not start a subscription.</p>
+        </div>
+      </div>
+    </section>
+
+    <section className="lp-section lp-price-faq" aria-labelledby="lp-faq-h">
+      <div className="lp-inner lp-faq-grid">
+        <Reveal dir="left"><p className="lp-mono lp-eyebrow">Useful details</p><h2 id="lp-faq-h" className="lp-h2">Before you <span>ask.</span></h2></Reveal>
+        <div className="lp-faq">
+          {faq.map((f, i) => <Reveal key={f.q} dir="right" delay={i * 70}><details className="lp-details"><summary>{f.q}</summary><p>{f.a}</p></details></Reveal>)}
+          <Link to="/security" className="lp-textlink lp-textlink-ink">Understand the data boundaries <ArrowUpRight size={15} aria-hidden="true" /></Link>
+        </div>
+      </div>
+    </section>
+  </MarketingPage>
 }
