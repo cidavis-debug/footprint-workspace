@@ -33,3 +33,5 @@ dist-ssr
 
 # Lovable sandbox workspace directory
 .workspace/
+
+.env
