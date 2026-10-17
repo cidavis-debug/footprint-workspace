@@ -53,30 +53,30 @@ function Collections() {
           <p className="lp-mono lp-eyebrow">Collections · organized knowledge</p>
           <SplitHeading className="lp-mega" lines={[{ t: 'Related ideas.' }, { t: 'One shared home.', accent: true }]} />
         </div>
-        <Reveal dir="wipe-r" delay={400} className="lp-lit lp-glass-light"><p className="lp-lead">Workspaces keep programs apart. Sub-workspaces break them into parts. Collections group the sources inside. Try the structure below.</p></Reveal>
+        <Reveal dir="slide-r" delay={400} className="lp-lit lp-glass-light"><p className="lp-lead">Workspaces keep programs apart. Sub-workspaces break them into parts. Collections group the sources inside. Try the structure below.</p></Reveal>
       </div>
     </Stage>
 
     <section className="lp-col-bento-wrap" aria-label="How Footprint AI organizes information">
       <div className="lp-inner lp-bento">
-        <Reveal dir="wipe-l" className="lp-lit lp-steel lp-b-explorer"><Explorer /></Reveal>
-        <Reveal dir="right" delay={120} className="arc-plate arc-f-slate lp-b-boundary">
+        <Reveal dir="slide-l" className="lp-lit lp-steel lp-b-explorer"><Explorer /></Reveal>
+        <Reveal dir="slide-r" delay={120} className="arc-plate arc-f-slate lp-b-boundary">
           <p className="lp-mono lp-eyebrow">The boundary</p>
           <h2>The workspace is the boundary.</h2>
           <p>Sources, questions and answers are scoped to the workspace you are in. Collections organize what is inside it. They are not separate permission groups.</p>
           <div className="lp-glass lp-mini-glass"><b>Owner-only today</b><span>Workspaces are accessible only to the account that owns them.</span></div>
         </Reveal>
-        <Reveal dir="up" delay={60} className="lp-b-sub">
+        <Reveal dir="none" className="lp-b-sub">
           <p className="lp-mono lp-eyebrow">Sub-workspaces</p>
           <h3>Break a program into parts.</h3>
           <p>Create a sub-workspace beneath any workspace. Each has its own sources and its own scope for questions, so Gearbox answers stay about the gearbox.</p>
         </Reveal>
-        <Reveal dir="scale" delay={140} className="lp-b-kinds">
+        <Reveal dir="slide-d" delay={140} className="lp-b-kinds">
           <p className="lp-mono lp-eyebrow">What goes in</p>
           <h3>Files and links.</h3>
           <p>PDF, Markdown and text files up to 20 MB, plus saved web links. Links are references; they are not fetched or read.</p>
         </Reveal>
-        <Reveal dir="wipe-r" delay={100} className="lp-lit arc-plate arc-f-frost lp-b-status">
+        <Reveal dir="slide-u" delay={100} className="lp-lit arc-plate arc-f-frost lp-b-status">
           <div>
             <p className="lp-mono lp-eyebrow">Available today</p>
             <ul className="lp-checks">
@@ -102,7 +102,7 @@ function Collections() {
       <Rail className="arc-rail-wide" />
       <div className="lp-col-end-inner">
         <Emerge from="left"><h2 className="lp-h2">Simple structure. <span>Shared context.</span></h2></Emerge>
-        <Reveal dir="right" delay={120}><p className="lp-body">Keep source names clear and group documents around a question, a program, or a recurring topic. <Link to="/how-it-works" className="lp-textlink lp-textlink-ink">Follow the full workflow <ArrowUpRight size={15} aria-hidden="true" /></Link></p></Reveal>
+        <Reveal dir="none"><p className="lp-body">Keep source names clear and group documents around a question, a program, or a recurring topic. <Link to="/how-it-works" className="lp-textlink lp-textlink-ink">Follow the full workflow <ArrowUpRight size={15} aria-hidden="true" /></Link></p></Reveal>
       </div>
       </div>
     </section>

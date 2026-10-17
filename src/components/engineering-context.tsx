@@ -1,3 +1,4 @@
+import { ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Badge, Button, Input } from '@/design-system/footprint-0a8b1a'
 import { supabase } from '@/integrations/supabase/client'
@@ -17,6 +18,7 @@ export function SourceEngineering({ sourceId, status, summary, onReanalyze, busy
   const [open, setOpen] = useState(defaultOpen)
   const [claims, setClaims] = useState<Claim[]>([])
   const [editing, setEditing] = useState<string | null>(null)
+  const [shown, setShown] = useState<Set<string>>(new Set()) // claims whose evidence and actions are expanded
   const [draft, setDraft] = useState('')
 
   useEffect(() => {
@@ -40,17 +42,25 @@ export function SourceEngineering({ sourceId, status, summary, onReanalyze, busy
     <div className="mt-2 space-y-2">
       {summary && <p>{summary}</p>}
       {open && claims.length === 0 && <p className="text-muted-foreground">{status === 'complete' ? 'No engineering claims found.' : 'No claims yet.'}</p>}
-      {claims.map(c => <div key={c.id} className="border-t border-border pt-2">
-        <p><Badge variant="reference">{c.type}</Badge> <strong className="text-ink">{c.subject}</strong> — {c.attribute}</p>
-        {editing === c.id
-          ? <form className="mt-1 flex gap-2" onSubmit={e => { e.preventDefault(); void save(c.id) }}><Input aria-label="Claim value" value={draft} onChange={e => setDraft(e.target.value)} autoFocus /><Button type="submit" size="sm" variant="quiet">Save</Button></form>
-          : <p>{c.value}{c.unit ? ` ${c.unit}` : ''}</p>}
-        {c.evidence_excerpt && <p className="text-muted-foreground">“{c.evidence_excerpt}”</p>}
-        <div className="flex gap-2">
-          <Button size="sm" variant="ghost" onClick={() => { setEditing(c.id); setDraft(c.value) }}>Edit</Button>
-          <Button size="sm" variant="ghost" onClick={() => void remove(c.id)}>Delete</Button>
+      {claims.map(c => {
+        // One short line per claim; the evidence quote and the Edit/Delete actions sit behind a toggle.
+        const expanded = shown.has(c.id) || editing === c.id
+        return <div key={c.id} className="border-t border-border pt-2">
+          <button type="button" className="ax-claim-line" aria-expanded={expanded} onClick={() => setShown(s => { const n = new Set(s); if (n.has(c.id)) n.delete(c.id); else n.add(c.id); return n })}>
+            <Badge variant="reference">{c.type}</Badge>
+            <span className="ax-claim-text"><strong className="text-ink">{c.subject}</strong> — {c.attribute}: <b>{c.value}{c.unit ? ` ${c.unit}` : ''}</b></span>
+            <ChevronRight size={13} className="ax-claim-chev" aria-hidden="true" />
+          </button>
+          {expanded && <div className="ax-claim-detail">
+            {c.evidence_excerpt && <p className="text-muted-foreground">“{c.evidence_excerpt}”</p>}
+            {editing === c.id && <form className="mt-1 flex gap-2" onSubmit={e => { e.preventDefault(); void save(c.id) }}><Input aria-label="Claim value" value={draft} onChange={e => setDraft(e.target.value)} autoFocus /><Button type="submit" size="sm" variant="quiet">Save</Button></form>}
+            <div className="flex gap-2">
+              <Button size="sm" variant="ghost" onClick={() => { setEditing(c.id); setDraft(c.value) }}>Edit</Button>
+              <Button size="sm" variant="ghost" onClick={() => void remove(c.id)}>Delete</Button>
+            </div>
+          </div>}
         </div>
-      </div>)}
+      })}
       <Button size="sm" variant="quiet" onClick={onReanalyze} loading={busy}>{status === 'failed' ? 'Retry analysis' : 'Reanalyze'}</Button>
     </div>
   </details>

@@ -7,6 +7,7 @@ import './landing.css'
 import './pages.css'
 import '../materials.css'
 import './architecture.css'
+import './motion.css'
 
 /* ---------- helpers ---------- */
 
@@ -119,10 +120,14 @@ export function Header({ onOpen, tone = 'light' }: { onOpen: OpenHandler; tone?:
 
 /* ---------- shared reveal helpers ---------- */
 
-export type Dir = 'up' | 'left' | 'right' | 'scale' | 'clip' | 'wipe-l' | 'wipe-r'
+/** How a box enters: slides from a side, a plain fade, or "none" (the box is simply there, no animation). */
+export type Dir = 'up' | 'left' | 'right' | 'scale' | 'clip' | 'wipe-l' | 'wipe-r' | 'fade' | 'slide-l' | 'slide-r' | 'slide-u' | 'slide-d' | 'none'
+
 export function Reveal({ children, className = '', delay = 0, dir = 'up' }: { children: ReactNode; className?: string; delay?: number; dir?: Dir }) {
   const [ref, seen] = useInView<HTMLDivElement>(dir.startsWith('wipe') ? 0.01 : 0.15) // a wipe starts mostly clipped, so it needs a tiny threshold
-  return <div ref={ref} className={`lp-reveal-in ${className}`} data-in={seen} data-dir={dir} style={v({ '--delay': `${delay}ms` })}>{children}</div>
+  return <div ref={ref} className={`lp-reveal-in ${className}`} data-in={seen} data-dir={dir} style={v({ '--delay': `${delay}ms` })}>
+    {children}
+  </div>
 }
 
 /** Section wrapper that publishes scroll progress (--p) so child `Plane`s can drift at their own speed. */
@@ -175,7 +180,7 @@ export function ClosingBand({ onOpen, joined = false, lean = 'r' }: { onOpen: Op
     <div className="lp-dark-bg" aria-hidden="true" />
     <Plane className="arc-plane-closing" speed={50} />
     <div className="lp-inner">
-      <Reveal dir="wipe-l" className="lp-lit lp-glass lp-closing">
+      <Reveal dir="slide-d" className="lp-lit lp-glass lp-closing">
         <h2 className="lp-h2">Give your team <span>one place to start.</span></h2>
         <div className="lp-actions">
           <Link to="/app" className="lp-btn lp-btn-primary lp-btn-lg" onClick={onOpen}>Open Footprint AI <ArrowRight size={18} aria-hidden="true" /></Link>

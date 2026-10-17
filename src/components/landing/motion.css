@@ -1,0 +1,23 @@
+/* Entrance styles for the boxes that already animate on the marketing pages (Reveal dir="…").
+   Slides, a plain fade, or none at all. Only transform, opacity and clip-path animate (no layout). */
+
+/* ---------- fade: no travel, just appears gently ---------- */
+.lp .lp-reveal-in[data-dir="fade"] { transform: none; transition: opacity 1s ease var(--delay, 0ms); }
+
+/* ---------- slides: the whole box travels in from the side that suits where it sits ---------- */
+.lp .lp-reveal-in[data-dir="slide-l"] { transform: translateX(calc(min(170px, 16vw) * -1)); }
+.lp .lp-reveal-in[data-dir="slide-r"] { transform: translateX(min(170px, 16vw)); }
+.lp .lp-reveal-in[data-dir="slide-u"] { transform: translateY(-64px); }
+.lp .lp-reveal-in[data-dir="slide-d"] { transform: translateY(72px); }
+.lp .lp-reveal-in[data-dir^="slide"] { transition: opacity .45s ease var(--delay, 0ms), transform .95s cubic-bezier(.16, .84, .2, 1) var(--delay, 0ms); }
+
+/* The resting state wins over every entrance style above. */
+.lp .lp-reveal-in[data-dir][data-in="true"] { opacity: 1; transform: none; }
+
+/* ---------- none: the box is simply there ---------- */
+.lp .lp-reveal-in[data-dir="none"] { opacity: 1; transform: none; transition: none; }
+
+/* ---------- Reduced motion: every box is simply there ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .lp .lp-reveal-in[data-dir] { opacity: 1; transform: none; transition: none; }
+}

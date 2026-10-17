@@ -438,3 +438,11 @@ button.ax-ws-chev:hover { background: rgba(18, 21, 27, .07); color: var(--ink); 
 /* mobile workspace picker: keep the breadcrumb inside the header and the tree inside the screen */
 .ax-picker-label { display: inline-block; max-width: 34vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
 .ax-picker-panel { width: min(300px, calc(100vw - 24px)); max-height: 62vh; overflow-y: auto; }
+
+/* Source claims: a single compact line; details open on demand */
+.ax-claim-line { display: flex; align-items: flex-start; gap: 8px; width: 100%; padding: 2px 0; border: 0; background: transparent; color: inherit; text-align: left; font: inherit; cursor: pointer; }
+.ax-claim-text { flex: 1; min-width: 0; line-height: 1.4; overflow-wrap: anywhere; }
+.ax-claim-chev { flex-shrink: 0; margin-top: 3px; color: var(--soft); transition: transform .2s; }
+.ax-claim-line[aria-expanded="true"] .ax-claim-chev { transform: rotate(90deg); }
+.ax-claim-line:hover .ax-claim-chev { color: var(--ink); }
+.ax-claim-detail { margin: 4px 0 2px 2px; padding-left: 8px; border-left: 2px solid var(--hair); display: grid; gap: 4px; }

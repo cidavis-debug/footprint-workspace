@@ -47,7 +47,7 @@ function Pricing() {
           <p className="lp-mono lp-eyebrow">Footprint AI pricing · draft</p>
           <SplitHeading className="lp-mega" lines={[{ t: 'Good knowledge.' }, { t: 'A considered plan.', accent: true }]} />
         </div>
-        <Reveal dir="wipe-r" delay={400} className="lp-lit lp-price-note lp-glass-light">
+        <Reveal dir="none" delay={400} className="lp-lit lp-price-note lp-glass-light">
           <b>Draft pricing · USD</b>
           <p>These plans are proposals, not a live offer. Subscriptions and payments are unavailable, and the product has no checkout.</p>
         </Reveal>
@@ -65,7 +65,7 @@ function Pricing() {
             <button type="button" aria-pressed={annual} onClick={() => setAnnual(true)}>Yearly</button>
           </div>
         </div>
-        <Reveal dir="wipe-l" className="lp-lit lp-glass-light lp-table-wrap">
+        <Reveal dir="slide-u" className="lp-lit lp-glass-light lp-table-wrap">
           <table className="lp-table">
             <caption className="lp-sr">Proposed plans compared. Select a plan heading for details.</caption>
             <thead>
@@ -111,9 +111,9 @@ function Pricing() {
 
     <section className="lp-section lp-price-faq" aria-labelledby="lp-faq-h">
       <div className="lp-inner lp-faq-grid">
-        <Reveal dir="wipe-l" className="arc-plate arc-f-steel arc-inset arc-bleed-l"><p className="lp-mono lp-eyebrow">Useful details</p><h2 id="lp-faq-h" className="lp-h2">Before you <span>ask.</span></h2></Reveal>
+        <Reveal dir="slide-l" className="arc-plate arc-f-steel arc-inset arc-bleed-l"><p className="lp-mono lp-eyebrow">Useful details</p><h2 id="lp-faq-h" className="lp-h2">Before you <span>ask.</span></h2></Reveal>
         <div className="lp-faq">
-          {faq.map((f, i) => <Reveal key={f.q} dir="right" delay={i * 70}><details className="lp-details"><summary>{f.q}</summary><p>{f.a}</p></details></Reveal>)}
+          {faq.map((f, i) => <Reveal key={f.q} dir={i % 2 ? 'none' : 'fade'} delay={i * 70}><details className="lp-details"><summary>{f.q}</summary><p>{f.a}</p></details></Reveal>)}
           <Link to="/security" className="lp-textlink lp-textlink-ink">Understand the data boundaries <ArrowUpRight size={15} aria-hidden="true" /></Link>
         </div>
       </div>

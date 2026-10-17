@@ -12,7 +12,7 @@ export const Route = createFileRoute('/how-it-works')({
 type Step = { id: string; n: string; title: string; lead: string; dir: Dir; body: ReactNode; tone?: 'slate' }
 
 const steps: Step[] = [
-  { id: 'workspace', n: '01', title: 'Create a workspace', dir: 'wipe-l',
+  { id: 'workspace', n: '01', title: 'Create a workspace', dir: 'slide-l',
     lead: 'A workspace is the home for one program or team’s sources. Sub-workspaces nest one level beneath it, so a subsystem can have its own space without losing the parent.',
     body: <ul className="lp-tree" aria-label="Example workspace structure">
       <li><b>Actuator Program</b><span className="lp-mono">Workspace</span></li>
@@ -20,7 +20,7 @@ const steps: Step[] = [
       <li className="sub"><b>Controller</b><span className="lp-mono">Sub-workspace</span></li>
       <li><b>Test Campaign</b><span className="lp-mono">Workspace</span></li>
     </ul> },
-  { id: 'add', n: '02', title: 'Add files and links', dir: 'wipe-r',
+  { id: 'add', n: '02', title: 'Add files and links', dir: 'slide-r',
     lead: 'Upload files or save web links into the active workspace. Footprint AI accepts what it can use today and is plain about the rest.',
     body: <dl className="lp-facts">
       <div><dt>Files</dt><dd>PDF, Markdown, plain text</dd></div>
@@ -28,7 +28,7 @@ const steps: Step[] = [
       <div><dt>Links</dt><dd>Saved as references (http or https)</dd></div>
       <div><dt>Read for answers</dt><dd>Markdown and text files today</dd></div>
     </dl> },
-  { id: 'organize', n: '03', title: 'Organize into collections', dir: 'up',
+  { id: 'organize', n: '03', title: 'Organize into collections', dir: 'none',
     lead: 'Every workspace starts with a collection named General. Rename it, and everything you add is grouped there, with the file or link type visible at a glance.',
     body: <ul className="lp-rows" aria-label="Example collection">
       <li><FileText size={16} aria-hidden="true" /><b>Interface drawing.pdf</b><span className="lp-mono">stored</span></li>
@@ -36,7 +36,7 @@ const steps: Step[] = [
       <li><FileText size={16} aria-hidden="true" /><b>Test notes.txt</b><span className="lp-mono">read for answers</span></li>
       <li><Link2 size={16} aria-hidden="true" /><b>Supplier datasheet</b><span className="lp-mono">reference link</span></li>
     </ul> },
-  { id: 'ask', n: '04', title: 'Ask, with citations', dir: 'scale', tone: 'slate',
+  { id: 'ask', n: '04', title: 'Ask, with citations', dir: 'fade', tone: 'slate',
     lead: 'Ask a question in plain language. The answer draws on the active workspace and names the sources it used, so you can open them and check.',
     body: <div className="lp-qa">
       <p className="lp-mono">Illustrative example</p>
@@ -45,7 +45,7 @@ const steps: Step[] = [
       <div className="lp-cites"><span><b className="lp-mono">1</b>Interface Drawing</span><span><b className="lp-mono">2</b>Assembly Specification</span></div>
       <p className="lp-fine">No answer is guaranteed to be perfect. Check important details against the original.</p>
     </div> },
-  { id: 'analyze', n: '05', title: 'Analyze for conflicts', dir: 'wipe-l',
+  { id: 'analyze', n: '05', title: 'Analyze for conflicts', dir: 'slide-d',
     lead: 'Run analysis on supported sources. Footprint AI extracts engineering claims — interfaces, requirements, decisions, constraints and assumptions — and compares them across the workspace. Possible conflicts land in Radar for your review.',
     body: <div className="lp-conflict">
       <div><span className="lp-mono">Interface Drawing</span><strong>8<small>mm</small></strong></div>
@@ -98,7 +98,7 @@ function HowItWorks() {
       <div className="lp-inner lp-hiw-hero-inner">
         <p className="lp-mono lp-eyebrow">How it works · five steps</p>
         <SplitHeading className="lp-mega" lines={[{ t: 'From scattered files' }, { t: 'to a cited answer.', accent: true }]} />
-        <Reveal dir="wipe-r" delay={500} className="lp-lit lp-glass lp-hiw-sub"><p className="lp-lead">One workflow, from the first file to the first conflict flagged for review. Follow it down the page.</p></Reveal>
+        <Reveal dir="none" delay={500} className="lp-lit lp-glass lp-hiw-sub"><p className="lp-lead">One workflow, from the first file to the first conflict flagged for review. Follow it down the page.</p></Reveal>
       </div>
     </Stage>
     <section className="lp-journey-wrap" aria-label="The Footprint AI workflow"><div className="lp-inner"><Journey /></div></section>

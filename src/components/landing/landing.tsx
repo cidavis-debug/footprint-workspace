@@ -158,8 +158,8 @@ function Problem() {
       <h2 id="lp-problem-h" className="lp-sr">The problem</h2>
       <WordReveal className="lp-statement" text="The answer exists. It’s spread across drawings, requirements, test reports, and decisions — and teams lose time rebuilding context instead of using it." />
       <div className="lp-split-text">
-        <Reveal><p className="lp-body">Every hardware program accumulates documents that each hold part of the truth. When they drift apart, nobody notices until it is expensive.</p></Reveal>
-        <Reveal dir="wipe-r" className="arc-plate arc-f-steel arc-inset arc-bleed-r lp-rules-slab">
+        <Reveal dir="none"><p className="lp-body">Every hardware program accumulates documents that each hold part of the truth. When they drift apart, nobody notices until it is expensive.</p></Reveal>
+        <Reveal dir="slide-r" className="arc-plate arc-f-steel arc-inset arc-bleed-r lp-rules-slab">
           <ul className="lp-rules">
             {hiding.map(h => <li key={h.n}><div><span className="lp-mono">{h.n}</span><b>{h.t}</b><em>{h.d}</em></div></li>)}
           </ul>
@@ -177,11 +177,11 @@ function Ingest() {
     <i className="arc-tiband" aria-hidden="true" />
     <div className="lp-inner">
       <div className="lp-ingest-top">
-        <Reveal className="lp-ingest-title">
+        <Reveal dir="none" className="lp-ingest-title">
           <p className="lp-mono lp-eyebrow">02 — Bring it together</p>
           <h2 className="lp-h2" id="lp-ingest-h">Files and links, <span>one shared workspace.</span></h2>
         </Reveal>
-        <Reveal dir="wipe-r" className="lp-lit lp-glass lp-spec" delay={120}>
+        <Reveal dir="slide-r" className="lp-lit lp-glass lp-spec" delay={120}>
           <p className="lp-mono lp-spec-title">What you can add</p>
           <dl>
             <div><dt>Files</dt><dd>PDF, Markdown, text</dd></div>
@@ -192,9 +192,9 @@ function Ingest() {
         </Reveal>
       </div>
       <div className="lp-steel lp-steel-dark lp-columns">
-        <Reveal><b>Workspaces</b><p>One home per project or team, kept separate from every other.</p></Reveal>
-        <Reveal delay={90}><b>Sub-workspaces</b><p>Break a program into subsystems without losing the parent context.</p></Reveal>
-        <Reveal delay={180}><b>Collections</b><p>Group related sources so questions start from the right material.</p></Reveal>
+        <Reveal dir="fade"><b>Workspaces</b><p>One home per project or team, kept separate from every other.</p></Reveal>
+        <Reveal dir="fade" delay={90}><b>Sub-workspaces</b><p>Break a program into subsystems without losing the parent context.</p></Reveal>
+        <Reveal dir="fade" delay={180}><b>Collections</b><p>Group related sources so questions start from the right material.</p></Reveal>
       </div>
     </div>
   </Stage>
@@ -220,7 +220,7 @@ function Intelligence() {
   return <Stage className="lp-section lp-intel" aria-labelledby="lp-intel-h">
     <div className="lp-inner">
       <div className="lp-intel-grid">
-        <Reveal className="lp-intel-left">
+        <Reveal dir="none" className="lp-intel-left">
           <p className="lp-mono lp-eyebrow">03 — Connected intelligence</p>
           <h2 className="lp-h2" id="lp-intel-h">Ask once. <span>See where it came from.</span></h2>
           <ol className="lp-qlist" aria-label="Example questions">
@@ -229,7 +229,7 @@ function Intelligence() {
         </Reveal>
         <div className="arc-overlap">
         <i className="arc-plate arc-f-steel arc-slab" aria-hidden="true" />
-        <Reveal dir="wipe-r" className="lp-lit lp-glass-light lp-answer-panel" delay={100}>
+        <Reveal dir="slide-u" className="lp-lit lp-glass-light lp-answer-panel" delay={100}>
           <div key={i} className="lp-answer-inner" aria-live="polite">
             <p className="lp-mono lp-answer-label">Answer · illustrative example</p>
             <p className="lp-answer-text">{cur.a}</p>
@@ -259,8 +259,8 @@ function Radar() {
     <div className="arc-bg arc-bg-steel" aria-hidden="true" />
     <div className="lp-inner">
       <div className="lp-radar-head">
-        <Reveal><p className="lp-mono lp-eyebrow">04 — Engineering Change Radar</p><h2 className="lp-h2" id="lp-radar-h">Two sources. <span>One number that doesn’t match.</span></h2></Reveal>
-        <Reveal delay={100}><p className="lp-body">When sources disagree, Footprint AI surfaces the difference with the evidence behind it, so your team can review it. It does not decide which source is right.</p></Reveal>
+        <Reveal dir="none"><p className="lp-mono lp-eyebrow">04 — Engineering Change Radar</p><h2 className="lp-h2" id="lp-radar-h">Two sources. <span>One number that doesn’t match.</span></h2></Reveal>
+        <Reveal dir="none" delay={100}><p className="lp-body">When sources disagree, Footprint AI surfaces the difference with the evidence behind it, so your team can review it. It does not decide which source is right.</p></Reveal>
       </div>
       <div className="lp-steel lp-measure" ref={ref} key={run} data-shown={seen} data-hover={hover ?? ''}>
         <div className="lp-mrow lp-mrow-a" onPointerEnter={() => setHover('a')} onPointerLeave={() => setHover(null)}>
@@ -299,12 +299,12 @@ function Security({ onOpen }: { onOpen: OpenHandler }) {
     <div className="lp-dark-bg" aria-hidden="true" />
     <Plane className="arc-plane-closing" speed={0} />
     <div className="lp-inner">
-      <Reveal><p className="lp-mono lp-eyebrow">05 — Security</p><h2 className="lp-h2 lp-sec-h2" id="lp-sec-h">Your engineering information <span>stays in your workspace.</span></h2></Reveal>
+      <Reveal dir="slide-l"><p className="lp-mono lp-eyebrow">05 — Security</p><h2 className="lp-h2 lp-sec-h2" id="lp-sec-h">Your engineering information <span>stays in your workspace.</span></h2></Reveal>
       <ol className="lp-claims">
-        {claims.map((c, i) => <li key={c.n}><Reveal delay={i * 90}><span className="lp-mono">{c.n}</span><b>{c.h}</b><p>{c.t}</p></Reveal></li>)}
+        {claims.map((c, i) => <li key={c.n}><Reveal dir="slide-d" delay={i * 90}><span className="lp-mono">{c.n}</span><b>{c.h}</b><p>{c.t}</p></Reveal></li>)}
       </ol>
       <Link to="/security" className="lp-textlink">Read the security details <ArrowUpRight size={15} aria-hidden="true" /></Link>
-      <Reveal dir="wipe-l" className="lp-lit lp-glass lp-closing">
+      <Reveal dir="slide-u" className="lp-lit lp-glass lp-closing">
         <h2 className="lp-h2">Give your team <span>one place to start.</span></h2>
         <div className="lp-actions">
           <Link to="/app" className="lp-btn lp-btn-primary lp-btn-lg" onClick={onOpen}>Open Footprint AI <ArrowRight size={18} aria-hidden="true" /></Link>
