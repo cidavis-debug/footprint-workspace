@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Footprint AI Clipper</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <span class="mark" aria-hidden="true"></span>
+    <h1>Footprint AI</h1>
+    <button id="signout" class="link" type="button" hidden>Sign out</button>
+  </header>
+
+  <p id="loading" class="muted">Loading…</p>
+
+  <form id="signin" hidden>
+    <p class="muted">Sign in with your Footprint AI email and password.</p>
+    <label>Email<input id="email" type="email" autocomplete="username" required></label>
+    <label>Password<input id="password" type="password" autocomplete="current-password" required></label>
+    <button class="primary" type="submit">Sign in</button>
+  </form>
+
+  <main id="main" hidden>
+    <p id="page" class="page" title=""></p>
+    <label>Save to
+      <select id="workspace" aria-label="Workspace"></select>
+    </label>
+    <div class="buttons">
+      <button id="save-website" class="primary" type="button">Save website</button>
+      <button id="save-selection" class="secondary" type="button">Save selection</button>
+    </div>
+    <p id="selection-hint" class="muted small"></p>
+    <a id="open-app" class="link" href="#" target="_blank" rel="noreferrer" hidden>Open in Footprint AI ↗</a>
+  </main>
+
+  <p id="status" role="status" aria-live="polite"></p>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

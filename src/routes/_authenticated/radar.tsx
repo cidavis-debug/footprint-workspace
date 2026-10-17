@@ -8,9 +8,11 @@ import { pageHead } from '@/components/page-head'
 import { AppShell } from '@/components/app-shell'
 import { useAuth } from '@/hooks/use-auth'
 import { SeverityBadge } from '@/components/engineering-context'
+import { SourceChangeCard } from '@/components/source-change-card'
 import { ClaimEvidence, SourceEvidenceDrawer } from '@/components/source-evidence-drawer'
 import { filterAlerts, radarFilters, type RadarFilter } from '@/lib/engineering-data'
 import { getRadar, reviewRadarAlert } from '@/lib/radar.functions'
+import { buildRadarReport, reportFileName, reportToHtml, reportToMarkdown } from '@/lib/radar-report'
 
 const radarQuery = (userId: string, workspaceId?: string) => queryOptions({ queryKey: ['radar', userId, workspaceId], queryFn: () => getRadar({ data: { workspaceId } }) })
 export const Route = createFileRoute('/_authenticated/radar')({
@@ -40,12 +42,32 @@ function Radar() {
     catch { setError('Could not update the alert. Please try again.') }
     finally { setBusy('') }
   }
+  const makeReport = () => buildRadarReport({ workspace: data.workspaces.find(w => w.id === data.workspaceId)?.name ?? 'Workspace', filter, alerts: visible, claims: data.claims, sources: data.sources, changes: data.changes, locations: data.locations })
+  const downloadReport = () => {
+    const report = makeReport()
+    const url = URL.createObjectURL(new Blob([reportToMarkdown(report)], { type: 'text/markdown;charset=utf-8' }))
+    const a = document.createElement('a'); a.href = url; a.download = reportFileName(report, 'md'); document.body.appendChild(a); a.click(); a.remove()
+    setTimeout(() => URL.revokeObjectURL(url), 10_000)
+  }
+  const printReport = () => {
+    const url = URL.createObjectURL(new Blob([reportToHtml(makeReport())], { type: 'text/html;charset=utf-8' }))
+    if (!window.open(url, '_blank')) setError('Your browser blocked the report window. Allow pop-ups for this site and try again.')
+    setTimeout(() => URL.revokeObjectURL(url), 60_000)
+  }
   const { user, signOut } = useAuth()
   return <AppShell workspaces={data.workspaces} value={data.workspaceId} onChange={id => { setSourceId(null); void navigate({ search: { workspace: id } }) }} mode="radar" email={user?.email ?? null} onSignOut={signOut}><main className="radar-shell">
     <section className="radar-main">
       <p className="section-kicker">Engineering attention</p><h1 className="font-heading text-h1">Radar</h1>
       <div className="radar-filters" role="group" aria-label="Filter engineering alerts">{radarFilters.map(f => <Button key={f} variant={f === filter ? 'primary' : 'ghost'} size="sm" aria-pressed={f === filter} onClick={() => setFilter(f)}>{f}</Button>)}</div>
+      <div className="radar-export" role="group" aria-label="Export report">
+        <Button size="sm" variant="quiet" disabled={visible.length === 0} onClick={downloadReport}>Download report (.md)</Button>
+        <Button size="sm" variant="quiet" disabled={visible.length === 0} onClick={printReport}>Print / save as PDF</Button>
+      </div>
       {error && <p role="alert" className="text-destructive">{error}</p>}
+      {data.changes.length > 0 && <section className="radar-changes" aria-label="Recent source changes">
+        <h2 className="font-heading text-h2">Recent source changes</h2>
+        {data.changes.slice(0, 5).map(c => <SourceChangeCard key={c.id} change={c} />)}
+      </section>}
       {visible.length === 0 ? <div className="radar-empty"><Illustration name="verified" /><h2 className="font-heading text-h2">{filter === 'All' ? 'Nothing needs your attention.' : `No ${filter.toLowerCase()} alerts.`}</h2><p className="text-muted-foreground">Footprint AI analyzes new sources for possible engineering conflicts, changed constraints, interface mismatches, and unsupported assumptions.</p></div> : <div className="radar-feed">{visible.map(a => {
         const claims = [data.claims.find(c => c.id === a.new_claim_id), data.claims.find(c => c.id === a.related_claim_id)].filter(c => c !== undefined)
         const sources = data.sources.filter(s => claims.some(c => c.source_id === s.id))
@@ -53,7 +75,7 @@ function Radar() {
           <div className="flex flex-wrap items-center gap-2"><SeverityBadge severity={a.severity} /><Badge variant="reference">{a.alert_type.replaceAll('_', ' ')}</Badge><Badge variant="reference">{a.status}</Badge></div>
           <h2 className="font-heading text-h2">{a.title}</h2><p>{a.summary}</p>
           {a.affected_systems.length > 0 && <p className="text-muted-foreground">Affected systems: {a.affected_systems.join(', ')}</p>}
-          <details><summary className="engineering-summary">Claims & evidence</summary><div className="space-y-4 mt-4">{claims.map((c, i) => <div key={c.id}><p className="text-sm text-muted-foreground">{i === 0 ? 'New claim' : 'Related existing claim'}</p><ClaimEvidence claim={c} onSource={() => setSourceId(c.source_id)} /></div>)}{claims.length === 0 && <p className="text-muted-foreground">Supporting claims are no longer available.</p>}</div></details>
+          <details><summary className="engineering-summary">Claims & evidence</summary><div className="space-y-4 mt-4">{claims.map((c, i) => <div key={c.id}><p className="text-sm text-muted-foreground">{i === 0 ? 'New claim' : 'Related existing claim'}</p><ClaimEvidence claim={c} location={data.locations[c.id]} onSource={() => setSourceId(c.source_id)} /></div>)}{claims.length === 0 && <p className="text-muted-foreground">Supporting claims are no longer available.</p>}</div></details>
           <div className="flex flex-wrap gap-2">{sources.map(s => <CitationChip key={s.id} href="#evidence" kind={s.source_type === 'file' ? 'file' : 'link'} onClick={e => { e.preventDefault(); setSourceId(s.id) }}>{s.title}</CitationChip>)}</div>
           <div className="flex flex-wrap gap-2"><Button size="sm" variant="quiet" disabled={busy === a.id} onClick={() => void update(a.id, 'reviewed')}><Icon name="Check" /> Review</Button><Button size="sm" variant="quiet" disabled={busy === a.id} onClick={() => void update(a.id, 'resolved')}>Resolve</Button><Button size="sm" variant="ghost" disabled={busy === a.id} onClick={() => void update(a.id, 'dismissed')}><Icon name="X" /> Dismiss</Button></div>
         </article>

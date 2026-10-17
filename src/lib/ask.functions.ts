@@ -1,14 +1,15 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware'
-import { engineeringPrompt, type EngineeringAlert, type EngineeringClaim, type EngineeringSource } from './engineering-data'
+import { findQuote, locateQuote, type Passage } from './quote-locate'
+import { engineeringPrompt, sourceText, type EngineeringAlert, type EngineeringClaim, type EngineeringSource } from './engineering-data'
 
-export type Citation = { id: string; title: string; kind: 'file' | 'link'; url: string | null; quote: string }
-export type AskResult = { answer: string; citations: Citation[]; error: string | null }
+export type Citation = { id: string; title: string; kind: 'file' | 'link'; url: string | null; quote: string; location?: string | null; passage?: Passage | null }
+export type AskResult = { answer: string; citations: Citation[]; error: string | null; conversationId?: string | null; historyError?: string }
 
 export const askFootprint = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => z.object({ workspaceId: z.string().uuid(), question: z.string().trim().min(1).max(2000) }).parse(d))
+  .inputValidator((d) => z.object({ workspaceId: z.string().uuid(), question: z.string().trim().min(1).max(2000), conversationId: z.string().uuid().optional() }).parse(d))
   .handler(async ({ data, context }): Promise<AskResult> => {
     const key = process.env['GEMINI_API_KEY']
     if (!key) return { answer: '', citations: [], error: 'AI is not configured.' }
@@ -17,7 +18,7 @@ export const askFootprint = createServerFn({ method: 'POST' })
     const list: EngineeringSource[] = [], claims: EngineeringClaim[] = [], alerts: EngineeringAlert[] = []
     for (let offset = 0; ; offset += 1000) {
       const [s, c, a] = await Promise.all([
-        supabase.from('sources').select('id, title, source_type, url, file_path, content_snippet, status, engineering_analysis_status, engineering_summary').eq('workspace_id', data.workspaceId).order('id').range(offset, offset + 999),
+        supabase.from('sources').select('id, title, source_type, url, file_path, content_snippet, content_text, status, engineering_analysis_status, engineering_summary').eq('workspace_id', data.workspaceId).order('id').range(offset, offset + 999),
         supabase.from('engineering_claims').select('*').eq('workspace_id', data.workspaceId).order('id').range(offset, offset + 999),
         supabase.from('engineering_alerts').select('*').eq('workspace_id', data.workspaceId).eq('status', 'open').order('id').range(offset, offset + 999),
       ])
@@ -64,8 +65,10 @@ export const askFootprint = createServerFn({ method: 'POST' })
       const s = list[Number(c.tag.replace(/\D/g, '')) - 1]
       if (!s || seen.has(s.id)) continue
       seen.add(s.id)
-      const quote = s.content_snippet?.includes(c.quote) || claims.some(claim => claim.source_id === s.id && claim.evidence_excerpt.includes(c.quote)) ? c.quote : ''
-      citations.push({ id: s.id, title: s.title, kind: s.source_type === 'link' || s.source_type === 'url' ? 'link' : 'file', url: s.url, quote })
+      const text = sourceText(s)
+      const quote = (text && findQuote(text, c.quote)) || claims.some(claim => claim.source_id === s.id && claim.evidence_excerpt.includes(c.quote)) ? c.quote : ''
+      const located = quote ? locateQuote(text, quote) : null
+      citations.push({ id: s.id, title: s.title, kind: s.source_type === 'link' || s.source_type === 'url' ? 'link' : 'file', url: s.url, quote, location: located?.location ?? null, passage: located?.passage ?? null })
     }
     // Include every inline source reference even when the model omits it from its citation array.
     for (const match of parsed.answer.matchAll(/\[S(\d+)\]/g)) {
@@ -76,13 +79,24 @@ export const askFootprint = createServerFn({ method: 'POST' })
     }
     const answer = parsed.answer.replace(/\s*\[?S\d+\]?(,\s*\[?S\d+\]?)*/g, (m) => m.replace(/S(\d+)/g, (_, n) => list[Number(n) - 1]?.title ?? `S${n}`))
 
-    const { data: convo } = await supabase.from('conversations').insert({ workspace_id: data.workspaceId, title: data.question.slice(0, 80) }).select('id').single()
-    if (convo) {
-      const { error } = await supabase.from('messages').insert([
-        { conversation_id: convo.id, role: 'user', content: data.question },
-        { conversation_id: convo.id, role: 'assistant', content: answer, citations },
-      ])
-      if (error) console.error('Save messages failed', error.message)
+    // Continue an existing conversation in this workspace (RLS + workspace filter), otherwise start a new one.
+    let conversationId: string | null = null, historyError: string | undefined
+    if (data.conversationId) {
+      const { data: existing } = await supabase.from('conversations').select('id').eq('id', data.conversationId).eq('workspace_id', data.workspaceId).maybeSingle()
+      conversationId = existing?.id ?? null
     }
-    return { answer, citations, error: null }
+    if (!conversationId) {
+      const { data: convo, error: convoErr } = await supabase.from('conversations').insert({ workspace_id: data.workspaceId, title: data.question.slice(0, 80) }).select('id').single()
+      conversationId = convo?.id ?? null
+      if (convoErr) { console.error('Save conversation failed', convoErr.message); historyError = convoErr.message }
+    }
+    if (conversationId) {
+      const { error } = await supabase.from('messages').insert([
+        { conversation_id: conversationId, role: 'user', content: data.question, citations: [] },
+        { conversation_id: conversationId, role: 'assistant', content: answer, citations },
+      ])
+      if (error) { console.error('Save messages failed', error.message); historyError = error.message }
+      else await supabase.from('conversations').update({ updated_at: new Date().toISOString() }).eq('id', conversationId)
+    }
+    return { answer, citations, error: null, conversationId, ...(historyError ? { historyError } : {}) }
   })

@@ -283,10 +283,44 @@ export type Database = {
         }
         Relationships: []
       }
+      source_changes: {
+        Row: {
+          created_at: string
+          diff: Json
+          id: string
+          source_id: string | null
+          source_title: string
+          version_from: number
+          version_to: number
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          diff?: Json
+          id?: string
+          source_id?: string | null
+          source_title: string
+          version_from: number
+          version_to: number
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          diff?: Json
+          id?: string
+          source_id?: string | null
+          source_title?: string
+          version_from?: number
+          version_to?: number
+          workspace_id?: string
+        }
+        Relationships: []
+      }
       sources: {
         Row: {
           collection_id: string | null
           content_snippet: string | null
+          content_text: string | null
           created_at: string
           engineering_analysis_status: string
           engineering_summary: string | null
@@ -304,6 +338,7 @@ export type Database = {
         Insert: {
           collection_id?: string | null
           content_snippet?: string | null
+          content_text?: string | null
           created_at?: string
           engineering_analysis_status?: string
           engineering_summary?: string | null
@@ -321,6 +356,7 @@ export type Database = {
         Update: {
           collection_id?: string | null
           content_snippet?: string | null
+          content_text?: string | null
           created_at?: string
           engineering_analysis_status?: string
           engineering_summary?: string | null

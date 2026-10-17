@@ -6,8 +6,8 @@ import { pageHead } from '@/components/page-head'
 import { supabase } from '@/integrations/supabase/client'
 import { safeRedirect, useAuth } from '@/hooks/use-auth'
 
-/** Google sign-in is hidden until the provider is configured in Supabase. */
-const GOOGLE_ENABLED = false
+/** Requires the Google provider to be enabled in Supabase (Authentication > Sign In / Providers). */
+const GOOGLE_ENABLED = true
 
 export const Route = createFileRoute('/login')({
   validateSearch: (s: Record<string, unknown>): { redirect?: string } => (typeof s['redirect'] === 'string' ? { redirect: s['redirect'] } : {}),

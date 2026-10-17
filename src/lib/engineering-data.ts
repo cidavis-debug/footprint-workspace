@@ -8,8 +8,13 @@ export type EngineeringAlert = {
 }
 export type EngineeringSource = {
   id: string; title: string; source_type: string; url: string | null; file_path: string | null;
-  content_snippet: string | null; status: string; engineering_analysis_status: string; engineering_summary: string | null
+  content_snippet: string | null; content_text?: string | null; status: string; engineering_analysis_status: string; engineering_summary: string | null
 }
+/** Prompt budget: full text per source, capped so a large workspace still fits in one request. */
+export const MAX_SOURCE_PROMPT_CHARS = 60_000
+export const MAX_TOTAL_PROMPT_CHARS = 400_000
+export const sourceText = (s: EngineeringSource) => s.content_text || s.content_snippet
+
 export const radarFilters = ['All', 'Interfaces', 'Constraints', 'Assumptions', 'Resolved'] as const
 export type RadarFilter = typeof radarFilters[number]
 export const suggestedQuestions = [
@@ -32,10 +37,12 @@ export function filterAlerts(alerts: EngineeringAlert[], claims: EngineeringClai
 }
 export function engineeringPrompt(sources: EngineeringSource[], claims: EngineeringClaim[], alerts: EngineeringAlert[], question: string) {
   const tags = new Map(sources.map((s, i) => [s.id, `S${i + 1}`]))
+  const perSource = Math.max(2000, Math.min(MAX_SOURCE_PROMPT_CHARS, Math.floor(MAX_TOTAL_PROMPT_CHARS / Math.max(sources.length, 1))))
+  const clip = (t: string | null) => t && t.length > perSource ? t.slice(0, perSource) + '\n[text truncated]' : t
   const supportedClaims = claims.filter(c => tags.has(c.source_id))
   const byId = new Map(supportedClaims.map(c => [c.id, c]))
   const context = {
-    sources: sources.map(s => ({ tag: tags.get(s.id), title: s.title, text: s.status === 'ready' || s.status === 'indexed' ? s.content_snippet : null })),
+    sources: sources.map(s => ({ tag: tags.get(s.id), title: s.title, text: s.status === 'ready' || s.status === 'indexed' ? clip(sourceText(s)) : null })),
     claims: supportedClaims.map(c => ({ ...c, source_tag: tags.get(c.source_id) })),
     open_alerts: alerts.filter(a => a.status === 'open' && byId.has(a.new_claim_id) && (!a.related_claim_id || byId.has(a.related_claim_id))).map(a => ({ ...a, new_source: tags.get(byId.get(a.new_claim_id)?.source_id ?? ''), related_source: tags.get(byId.get(a.related_claim_id ?? '')?.source_id ?? '') })),
   }
