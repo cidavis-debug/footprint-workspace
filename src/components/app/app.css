@@ -393,3 +393,48 @@
 .ax-history-open b { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ax-menu .ax-history-del { width: 32px; height: 32px; padding: 0; justify-content: center; flex-shrink: 0; color: #8f99a7; }
 .ax-menu .ax-history-del svg { color: inherit; } .ax-menu .ax-history-del:hover:not(:disabled) { color: #ff9a8a; }
+
+/* ===== Workspace tree: three levels, each branch expands on its own ===== */
+.ax-ws-node + .ax-ws-node { margin-top: 2px; }
+.ax-ws-row { position: relative; }
+.ax-subs { margin: 2px 0 0 13px; padding-left: 6px; }
+.ax-subs .ax-subs { margin-left: 11px; border-left-style: dashed; }
+.ax-ws-chev { flex: 0 0 22px; display: grid; place-items: center; width: 22px; height: 28px; padding: 0; border: 0; border-radius: 8px; background: transparent; color: var(--soft); cursor: pointer; }
+button.ax-ws-chev:hover { background: rgba(18, 21, 27, .07); color: var(--ink); }
+.ax-ws-chev svg { transition: transform .28s cubic-bezier(.3, .8, .2, 1); }
+.ax-ws-chev[data-open="true"] svg { transform: rotate(90deg); }
+.ax-ws-row[data-depth="2"] .ax-ws-item { font-size: 14px; padding: 8px 12px; color: #2f3640; }
+.ax-ws-row[data-depth="3"] .ax-ws-item { font-size: 13.5px; padding: 7px 11px; color: #4a525e; }
+.ax-ws-row[data-depth="3"] .ax-ws-item::before { content: ""; display: inline-block; width: 5px; height: 5px; margin-right: 8px; border-radius: 50%; background: currentColor; opacity: .45; vertical-align: middle; }
+.ax-ws-row[data-depth="3"] .ax-ws-item[data-active="true"]::before { background: var(--orange); opacity: 1; }
+.ax-collapse { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .32s cubic-bezier(.3, .8, .2, 1), opacity .25s ease; }
+.ax-collapse[data-open="true"] { grid-template-rows: 1fr; opacity: 1; }
+.ax-collapse > .ax-subs { min-height: 0; overflow: hidden; }
+.ax-newform-nested { margin-left: 22px; }
+
+/* ===== Empty chat: centred in the available workspace; the composer stays docked below ===== */
+.ax-scroll[data-empty="true"] { display: grid; place-items: center; }
+.ax-scroll[data-empty="true"] > .ax-column { padding-block: 16px; }
+.ax-empty-chat { padding: 0; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.ax-empty-chat > p:not(.ax-kicker) { margin-inline: auto; }
+
+/* ===== Edge tabs: collapse/expand the side panels from the screen edges ===== */
+.ax-edge-tab { position: fixed; top: 50%; z-index: 62; display: grid; place-items: center; width: 20px; height: 84px; padding: 0; margin-top: -42px; border: 1px solid rgba(255, 255, 255, .16); color: #cfd5dd; cursor: pointer;
+  background: linear-gradient(rgba(20, 23, 28, .96), rgba(20, 23, 28, .96)), url('/textures/slate.jpg') top left / 240px auto;
+  box-shadow: 0 14px 30px -14px rgba(18, 21, 27, .75), inset 0 1px 0 rgba(255, 255, 255, .1);
+  transition: width .25s cubic-bezier(.3, .8, .2, 1), color .2s, box-shadow .25s; }
+.ax-edge-tab[data-side="left"] { left: 0; border-left: 0; border-radius: 0 14px 14px 0; }
+.ax-edge-tab[data-side="right"] { right: 0; border-right: 0; border-radius: 14px 0 0 14px; }
+.ax-edge-tab svg { transition: transform .35s cubic-bezier(.3, .8, .2, 1); }
+.ax-edge-tab[data-open="false"] svg { transform: rotate(180deg); }
+.ax-edge-tab:hover { width: 26px; color: #ff8a3d; box-shadow: 0 16px 34px -12px rgba(18, 21, 27, .85), 0 0 0 1px rgba(255, 138, 61, .35), inset 0 1px 0 rgba(255, 255, 255, .14); }
+@media (max-width: 880px) {
+  .ax-edge-tab[data-side="left"] { display: none; }
+  .ax-edge-tab { width: 16px; height: 64px; margin-top: -32px; }
+  .ax-edge-tab:hover { width: 18px; }
+}
+@media (prefers-reduced-motion: reduce) { .ax-edge-tab, .ax-edge-tab svg, .ax-ws-chev svg, .ax-collapse { transition: none; } }
+
+/* mobile workspace picker: keep the breadcrumb inside the header and the tree inside the screen */
+.ax-picker-label { display: inline-block; max-width: 34vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
+.ax-picker-panel { width: min(300px, calc(100vw - 24px)); max-height: 62vh; overflow-y: auto; }

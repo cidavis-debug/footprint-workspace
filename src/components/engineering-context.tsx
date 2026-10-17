@@ -59,6 +59,9 @@ export function SourceEngineering({ sourceId, status, summary, onReanalyze, busy
 export function EngineeringAlerts({ workspaceId, refreshKey }: { workspaceId: string; refreshKey: number }) {
   const [alerts, setAlerts] = useState<Alert[]>([])
   const [error, setError] = useState('')
+  // Engineering Review stays collapsed until the user opens it, including after switching workspaces.
+  const [open, setOpen] = useState(false)
+  useEffect(() => { setOpen(false) }, [workspaceId])
   useEffect(() => {
     setAlerts([]); setError('')
     if (!workspaceId) return
@@ -72,7 +75,7 @@ export function EngineeringAlerts({ workspaceId, refreshKey }: { workspaceId: st
     else setError('Could not update the review suggestion. Please try again.')
   }
   if (!alerts.length) return error ? <p role="alert" className="text-destructive">{error}</p> : null
-  return <details className="mb-4" open>
+  return <details className="mb-4" open={open} onToggle={e => setOpen(e.currentTarget.open)}>
     <summary className="engineering-review-heading">Engineering review suggestions ({alerts.length})</summary>
     {error && <p role="alert" className="text-destructive">{error}</p>}
     <div className="mt-2 space-y-3 text-xs">

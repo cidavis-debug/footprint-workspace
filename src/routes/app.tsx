@@ -22,7 +22,8 @@ import { SourceEvidenceDrawer } from '@/components/source-evidence-drawer'
 import { SourcePreview } from '@/components/source-preview'
 import { getRadar } from '@/lib/radar.functions'
 import type { Passage } from '@/lib/quote-locate'
-import { suggestedQuestions, type EngineeringClaim, type EngineeringSource } from '@/lib/engineering-data'
+import { type EngineeringClaim, type EngineeringSource } from '@/lib/engineering-data'
+import { canNest, MAX_WORKSPACE_DEPTH } from '@/lib/workspace-tree'
 
 type Workspace = WorkspaceNode
 type Collection = { id: string; name: string; description: string | null }
@@ -351,6 +352,7 @@ function Workspace() {
 
   const createWorkspace = async (name: string, parentId: string | null) => {
     if (!user) return
+    if (!canNest(workspaces, parentId)) { setNotice(`Workspaces can be nested up to ${MAX_WORKSPACE_DEPTH} levels.`); return }
     setBusy(true)
     const { data, error } = await supabase.from('workspaces').insert({ owner_id: user.id, name, parent_id: parentId }).select('id, name, parent_id').single()
     setBusy(false)
@@ -460,13 +462,12 @@ function Workspace() {
           </div>
         </div>
       </div>
-      <div className="ax-scroll">
+      <div className="ax-scroll" data-empty={thread.length === 0}>
         <div className="ax-column">
           {thread.length === 0 && <div className="ax-empty-chat">
             <p className="lp-mono ax-kicker">Ask mode</p>
             <h1>What’s on your mind?</h1>
             <p>Ask about the sources in this workspace. Answers cite what they used.</p>
-            <ul className="ax-starters">{suggestedQuestions.map(q => <li key={q}><button type="button" onClick={() => void ask(q)} disabled={asking || !activeWorkspace}><span>{q}</span><ArrowUp size={16} aria-hidden="true" /></button></li>)}</ul>
           </div>}
           {thread.map((m, i) => <article key={i} className="ax-turn" ref={i === thread.length - 1 ? lastTurn : undefined} aria-label={`Question ${i + 1}`}>
             <header className="ax-q"><span className="ax-who lp-mono"><i aria-hidden="true" />You</span><h2>{m.question}</h2></header>

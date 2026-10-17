@@ -320,7 +320,15 @@
 .engineering-severity[data-severity="high"] { background: var(--destructive); color: var(--card); }
 .engineering-severity[data-severity="medium"] { background: var(--engineering-medium); color: var(--card); }
 .engineering-severity[data-severity="low"] { background: var(--engineering-low); color: var(--ink); }
-.engineering-review-heading { cursor: pointer; background: var(--engineering-review-background); color: var(--engineering-review-foreground); padding-block: var(--space-3); padding-inline: var(--space-4); border-radius: var(--radius-button); font-family: var(--font-heading); font-size: var(--text-body); }
+/* Engineering Review heading: the same slate + stainless-edge material as the Ask/Radar switcher. */
+.engineering-review-heading { position: relative; isolation: isolate; overflow: hidden; display: flex; align-items: center; gap: 10px; cursor: pointer; list-style: none; padding: 11px 14px; border: 1px solid transparent; border-radius: 14px; color: #f1f3f5; font-family: var(--font-heading); font-size: var(--text-body);
+  background: linear-gradient(#14171c, #14171c) padding-box, linear-gradient(135deg, #f1f3f5, #7a828a 22%, #dde1e5 45%, #5d646c 65%, #cfd4d9 85%, #8b929a) border-box;
+  box-shadow: 0 14px 30px -18px rgba(18, 21, 27, .7), inset 0 1px 0 rgba(255, 255, 255, .08); transition: box-shadow .25s; }
+.engineering-review-heading::-webkit-details-marker { display: none; }
+.engineering-review-heading::before { content: ""; position: absolute; inset: 0; z-index: -1; background: url('/textures/slate.jpg') top left / 360px auto; opacity: .35; mix-blend-mode: soft-light; }
+.engineering-review-heading::after { content: ""; width: 8px; height: 8px; margin: 0 4px 0 auto; border-right: 2px solid #ff8a3d; border-bottom: 2px solid #ff8a3d; transform: rotate(-45deg); transition: transform .25s; flex-shrink: 0; }
+details[open] > .engineering-review-heading::after { transform: rotate(45deg); }
+.engineering-review-heading:hover { box-shadow: 0 16px 34px -16px rgba(18, 21, 27, .8), 0 0 0 1px rgba(255, 138, 61, .35), inset 0 1px 0 rgba(255, 255, 255, .1); }
 .engineering-review-heading:focus-visible, .engineering-summary:focus-visible { outline-width: var(--border-width); outline-style: solid; outline-color: var(--primary); outline-offset: var(--space-1); }
 .engineering-summary { cursor: pointer; color: var(--primary); font-weight: var(--weight-medium); }
 .radar-main { max-width: var(--width-chat); margin-inline: auto; padding-block: var(--space-7); }
