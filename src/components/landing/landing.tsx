@@ -26,20 +26,26 @@ function Hero({ onOpen }: { onOpen: OpenHandler }) {
     // Keep these in sync with the .lp-hero height in landing.css (100vh + both = 222vh).
     const REVEAL_VH = 0.26, ZOOM_VH = 0.96
 
-    let vh = window.innerHeight, vw = window.innerWidth, reveal = REVEAL_VH * vh, shiftPx = 0, offX = 0, size = 0, zoomMax = 1, dotR = 0
+    let vh = window.innerHeight, vw = window.innerWidth, reveal = REVEAL_VH * vh, shiftPx = 0, offX = 0, size = 0, zoomMax = 1, panX = 0, panY = 0
     const measure = () => {
       vh = window.innerHeight; vw = window.innerWidth; reveal = REVEAL_VH * vh
       const mobile = vw <= 640
       size = mobile ? Math.min(vw * 0.94, vh * 0.52) : Math.min(vh * 0.8, vw * 0.9)
-      // Start: puzzle to the right of the copy (desktop) or under it (mobile), ~55% of it above the bottom edge. End: centred.
+      // The puzzle only ever moves vertically: it starts to the right of the copy (desktop) or under it (mobile), ~55% of it
+      // above the bottom edge, and rises into view. It never moves sideways. The zoom then does all the travel: it scales
+      // around the foot while panning the foot to the middle of the screen, so the grey dot can grow from the true centre.
       offX = mobile ? 0 : vw * 0.2
       shiftPx = mobile ? vh * 0.3 : Math.max(0, vh - (vh - size) / 2 - 0.55 * size)
+      // Where the ball sits on screen once the puzzle has finished rising.
+      const cx = vw / 2 + offX + (BALL_X - 0.5) * size, cy = vh / 2 + (BALL_Y - 0.5) * size
+      panX = vw / 2 - cx; panY = vh / 2 - cy
+      // Zoom until the ball, now centred, covers the whole viewport.
       zoomMax = Math.max(vw / (BALL_W * size), vh / (BALL_H * size)) * 1.08
-      dotR = Math.hypot(vw, vh) / 2 + 4
+      set('--dot', `${(Math.hypot(vw, vh) + 8).toFixed(1)}px`)
       set('--size', `${size.toFixed(1)}px`)
+      set('--px', `${offX.toFixed(1)}px`)
       set('--ball-x', `${(BALL_X * 100).toFixed(2)}%`)
       set('--ball-y', `${(BALL_Y * 100).toFixed(2)}%`)
-      set('--dot', `${(dotR * 2).toFixed(1)}px`)
     }
     measure()
 
@@ -47,21 +53,22 @@ function Hero({ onOpen }: { onOpen: OpenHandler }) {
       const r = clamp(y / reveal)
       const t = clamp((y - reveal) / (ZOOM_VH * vh))
       const re = smooth(r)
-      // 0..0.62 of the travel zooms into the ball (exponential, so it feels even), then orange holds, then the dot grows.
+      // 0..0.62 of the travel zooms into the foot (exponential, so it feels even), then orange holds, then the dot grows.
       const z = smooth(t / 0.62)
       set('--shift', `${(shiftPx * (1 - re)).toFixed(1)}px`)
-      set('--px', `${(offX * (1 - re)).toFixed(1)}px`)
-      set('--scale', (1 + 0.05 * (1 - re)).toFixed(4))
       set('--edge', (1 - re).toFixed(4))
       set('--text', (1 - smooth((r - 0.3) / 0.6)).toFixed(4))
       set('--zoom', Math.exp(Math.log(zoomMax) * z).toFixed(3))
-      set('--ty', `${((0.5 - BALL_Y) * size * z).toFixed(1)}px`)
+      set('--tx', `${(panX * z).toFixed(1)}px`)
+      set('--ty', `${(panY * z).toFixed(1)}px`)
       set('--fill', smooth((t - 0.36) / 0.24).toFixed(4))
       set('--grow', smooth((t - 0.64) / 0.36).toFixed(4))
       el.dataset['phase'] = r < 1 ? 'reveal' : 'zoom'
     }
 
+    // Paint the correct starting layout immediately, before the first scroll frame.
     if (prefersReducedMotion()) { apply(reveal); return }
+    apply(Math.max(0, -el.getBoundingClientRect().top))
 
     let target = 0, shown = 0, raf = 0, running = true, last = performance.now()
     const frame = (now: number) => {
