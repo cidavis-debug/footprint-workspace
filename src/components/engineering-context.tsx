@@ -2,6 +2,8 @@ import { ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Badge, Button, Input } from '@/design-system/footprint-0a8b1a'
 import { supabase } from '@/integrations/supabase/client'
+import { confidenceLabel } from '@/lib/claim-confidence'
+import { truncationNotices } from '@/lib/truncation'
 
 export type Claim = { id: string; type: string; subject: string; attribute: string; value: string; unit: string | null; evidence_excerpt: string; confidence: number }
 export type Alert = { id: string; alert_type: string; severity: string; title: string; summary: string; status: string; new_claim_id: string; related_claim_id: string | null }
@@ -20,10 +22,18 @@ export function SourceEngineering({ sourceId, status, summary, onReanalyze, busy
   const [editing, setEditing] = useState<string | null>(null)
   const [shown, setShown] = useState<Set<string>>(new Set()) // claims whose evidence and actions are expanded
   const [draft, setDraft] = useState('')
+  const [notices, setNotices] = useState<string[]>([])
 
   useEffect(() => {
     if (!open) return
     void supabase.from('engineering_claims').select('id, type, subject, attribute, value, unit, evidence_excerpt, confidence').eq('source_id', sourceId).order('created_at').then(({ data }) => setClaims(data ?? []))
+  }, [open, sourceId, status])
+
+  useEffect(() => {
+    if (!open) return
+    let cancelled = false
+    void supabase.from('sources').select('metadata').eq('id', sourceId).maybeSingle().then(({ data }) => { if (!cancelled) setNotices(truncationNotices(data?.metadata)) })
+    return () => { cancelled = true }
   }, [open, sourceId, status])
 
   const save = async (id: string) => {
@@ -41,6 +51,7 @@ export function SourceEngineering({ sourceId, status, summary, onReanalyze, busy
     <summary className="cursor-pointer text-muted-foreground">Engineering context · {analysisLabel(status)}</summary>
     <div className="mt-2 space-y-2">
       {summary && <p>{summary}</p>}
+      {notices.map(n => <p key={n} role="note" className="text-destructive">{n}</p>)}
       {open && claims.length === 0 && <p className="text-muted-foreground">{status === 'complete' ? 'No engineering claims found.' : 'No claims yet.'}</p>}
       {claims.map(c => {
         // One short line per claim; the evidence quote and the Edit/Delete actions sit behind a toggle.
@@ -52,6 +63,7 @@ export function SourceEngineering({ sourceId, status, summary, onReanalyze, busy
             <ChevronRight size={13} className="ax-claim-chev" aria-hidden="true" />
           </button>
           {expanded && <div className="ax-claim-detail">
+            <p className="text-muted-foreground">Confidence: {confidenceLabel(c.confidence)} ({Math.round(c.confidence * 100)}%)</p>
             {c.evidence_excerpt && <p className="text-muted-foreground">“{c.evidence_excerpt}”</p>}
             {editing === c.id && <form className="mt-1 flex gap-2" onSubmit={e => { e.preventDefault(); void save(c.id) }}><Input aria-label="Claim value" value={draft} onChange={e => setDraft(e.target.value)} autoFocus /><Button type="submit" size="sm" variant="quiet">Save</Button></form>}
             <div className="flex gap-2">

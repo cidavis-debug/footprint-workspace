@@ -4,10 +4,12 @@ import { supabase } from '@/integrations/supabase/client'
 import type { EngineeringClaim, EngineeringSource } from '@/lib/engineering-data'
 import { useNavigate } from '@tanstack/react-router'
 import type { Passage } from '@/lib/quote-locate'
+import { confidenceLabel } from '@/lib/claim-confidence'
+import { truncationNotices } from '@/lib/truncation'
 
 export function ClaimEvidence({ claim, onSource, location }: { claim: EngineeringClaim; onSource?: () => void; location?: string | null }) {
   return <div className="engineering-evidence">
-    <div className="flex flex-wrap items-center gap-2"><Badge variant="reference">{claim.type}</Badge><Badge variant="reference">{claim.status}</Badge>{location && <Badge variant="reference">{location}</Badge>}</div>
+    <div className="flex flex-wrap items-center gap-2"><Badge variant="reference">{claim.type}</Badge><Badge variant="reference">{claim.status}</Badge><Badge variant="reference">Confidence: {confidenceLabel(claim.confidence)} ({Math.round(claim.confidence * 100)}%)</Badge>{location && <Badge variant="reference">{location}</Badge>}</div>
     <p><strong>{claim.subject}</strong> · {claim.attribute}</p>
     <p>{claim.value}{claim.unit ? ` ${claim.unit}` : ''}</p>
     {claim.evidence_excerpt && <blockquote className="text-muted-foreground">“{claim.evidence_excerpt}”</blockquote>}
@@ -30,6 +32,7 @@ export function SourceEvidenceDrawer({ source, claims, quote, location, passage,
     {source && <div className="space-y-4">
       <h2 className="font-heading text-h2">{source.title}</h2>
       <Badge variant={source.status === 'ready' || source.status === 'indexed' ? 'indexed' : 'reference'}>{source.status}</Badge>
+      {truncationNotices(source.metadata).map(n => <p key={n} role="note" className="text-sm text-destructive">{n}</p>)}
       {location && <p className="text-sm text-muted-foreground">Found on <strong>{location}</strong></p>}
       {passage
         ? <p className="whitespace-pre-wrap engineering-passage">{passage.before}<mark>{passage.match}</mark>{passage.after}</p>

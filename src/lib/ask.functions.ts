@@ -2,6 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware'
 import { findQuote, locateQuote, type Passage } from './quote-locate'
+import { geminiEndpoint, geminiModel } from './gemini-model'
 import { engineeringPrompt, sourceText, type EngineeringAlert, type EngineeringClaim, type EngineeringSource } from './engineering-data'
 
 export type Citation = { id: string; title: string; kind: 'file' | 'link'; url: string | null; quote: string; location?: string | null; passage?: Passage | null }
@@ -30,7 +31,7 @@ export const askFootprint = createServerFn({ method: 'POST' })
 
     const prompt = engineeringPrompt(list, claims, alerts, data.question)
 
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent`, {
+    const res = await fetch(geminiEndpoint(geminiModel()), {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
       body: JSON.stringify({

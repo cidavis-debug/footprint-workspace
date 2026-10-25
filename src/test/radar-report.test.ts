@@ -34,6 +34,21 @@ describe('radar report', () => {
     expect(md).toContain('not approvals')
   })
 
+  it('includes confidence and the out-of-date hint in the report', () => {
+    const r = buildRadarReport({ workspace: 'W', filter: 'All', alerts: [alert('a', 'high')], claims: [claim('c1', 's1', '24', { confidence: 0.9 }), claim('c2', 's2', '12', { status: 'proposed', confidence: 0.4 })], sources, generatedAt: new Date('2026-10-16T15:00:00Z') })
+    expect(r.alerts[0].confidence).toBe('Low')
+    expect(r.alerts[0].currentHint).toBe('Likely out of date: Deck.pptx')
+    expect(reportToMarkdown(r)).toContain('**Confidence:** Low')
+    expect(reportToMarkdown(r)).toContain('Likely out of date: Deck.pptx')
+    expect(reportToHtml(r)).toContain('confidence Low')
+  })
+
+  it('lists sources whose analysis was limited', () => {
+    const limited = [{ ...source('s1', 'Big.pdf'), metadata: { analysis_truncation: { text_chars: 90000, analyzed_chars: 60000, claims_found: 10, claims_kept: 10 } } }, source('s2', 'Deck.pptx')]
+    const r = buildRadarReport({ workspace: 'W', filter: 'All', alerts: [], claims, sources: limited, generatedAt: new Date('2026-10-16T15:00:00Z') })
+    expect(reportToMarkdown(r)).toContain('Only the first 60,000 characters of this source were analyzed')
+  })
+
   it('handles an empty report', () => {
     expect(reportToMarkdown(build([]))).toContain('No alerts need attention.')
     expect(reportToHtml(build([]))).toContain('No alerts need attention.')

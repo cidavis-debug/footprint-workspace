@@ -1,8 +1,10 @@
 import type { EngineeringAlert, EngineeringClaim, EngineeringSource } from './engineering-data'
+import { alertConfidence, staleHintText, staleSourceHint } from './claim-confidence'
+import { truncationNotices } from './truncation'
 import { claimLabel, claimValue, diffIsEmpty, diffSummary, type SourceChangeRow } from './claim-diff'
 
 export type ReportClaim = { source: string; type: string; subject: string; attribute: string; value: string; status: string; confidence: number; excerpt: string }
-export type ReportAlert = { title: string; summary: string; severity: string; type: string; status: string; systems: string[]; created: string; claims: { label: string; claim: ReportClaim }[] }
+export type ReportAlert = { title: string; summary: string; severity: string; type: string; status: string; systems: string[]; created: string; confidence: string | null; currentHint: string; claims: { label: string; claim: ReportClaim }[] }
 export type ReportChange = { source: string; versions: string; date: string; summary: string; lines: string[] }
 export type RadarReport = {
   workspace: string
@@ -12,6 +14,7 @@ export type RadarReport = {
   counts: { total: number; high: number; medium: number; low: number }
   alerts: ReportAlert[]
   changes: ReportChange[]
+  limited: { source: string; notices: string[] }[]
 }
 
 const day = (iso: string) => iso.slice(0, 10)
@@ -34,7 +37,8 @@ export function buildRadarReport(input: { workspace: string; filter: string; ale
       const fresh = claimById.get(a.new_claim_id), related = a.related_claim_id ? claimById.get(a.related_claim_id) : undefined
       if (fresh) claims.push({ label: 'New claim', claim: toClaim(fresh) })
       if (related) claims.push({ label: 'Related existing claim', claim: toClaim(related) })
-      return { title: a.title, summary: a.summary, severity: a.severity, type: words(a.alert_type), status: a.status, systems: a.affected_systems, created: a.created_at, claims }
+      const both = fresh && related ? staleSourceHint(fresh, related, input.sources) : null
+      return { title: a.title, summary: a.summary, severity: a.severity, type: words(a.alert_type), status: a.status, systems: a.affected_systems, created: a.created_at, confidence: alertConfidence([fresh, related].filter(c => c !== undefined)), currentHint: both ? staleHintText(both) : 'Cannot tell which is current', claims }
     })
   const count = (sev: string) => alerts.filter(a => a.severity === sev).length
   return {
@@ -50,6 +54,7 @@ export function buildRadarReport(input: { workspace: string; filter: string; ale
         ...c.diff.alerts_cleared.map(a => `No longer applies (${a.severity}): ${a.title}`),
       ],
     })),
+    limited: input.sources.flatMap(s => { const notices = truncationNotices(s.metadata); return notices.length ? [{ source: s.title, notices }] : [] }),
     sourceCount: input.sources.length, counts: { total: alerts.length, high: count('high'), medium: count('medium'), low: count('low') }, alerts,
   }
 }
@@ -65,7 +70,7 @@ export function reportToMarkdown(r: RadarReport): string {
     r.counts.total === 0 ? 'No alerts need attention.' : `${r.counts.total} alert${r.counts.total === 1 ? '' : 's'}: ${r.counts.high} high, ${r.counts.medium} medium, ${r.counts.low} low severity.`, '',
   ]
   r.alerts.forEach((a, i) => {
-    out.push(`## ${i + 1}. ${oneLine(a.title)}`, '', `**Severity:** ${a.severity} · **Type:** ${a.type} · **Status:** ${a.status}`, '', oneLine(a.summary), '')
+    out.push(`## ${i + 1}. ${oneLine(a.title)}`, '', `**Severity:** ${a.severity} · **Type:** ${a.type} · **Status:** ${a.status}${a.confidence ? ` · **Confidence:** ${a.confidence}` : ''}`, '', oneLine(a.summary), '', `_${a.currentHint}. This is a rough hint from claim status and source dates, not a decision._`, '')
     if (a.systems.length) out.push(`**Affected systems:** ${a.systems.join(', ')}`, '')
     for (const { label, claim: c } of a.claims) {
       out.push(`- **${label}** (${c.source}): ${oneLine(c.subject)} — ${oneLine(c.attribute)} = **${oneLine(c.value)}** · ${c.type}, ${c.status}, confidence ${Math.round(c.confidence * 100)}%`)
@@ -77,6 +82,11 @@ export function reportToMarkdown(r: RadarReport): string {
     out.push('## Recent source changes', '')
     for (const c of r.changes) { out.push(`### ${oneLine(c.source)} (${c.versions}, ${c.date})`, '', c.summary, ''); for (const l of c.lines) out.push(`- ${oneLine(l)}`); out.push('') }
   }
+  if (r.limited.length) {
+    out.push('## Sources with limited analysis', '')
+    for (const l of r.limited) for (const n of l.notices) out.push(`- **${oneLine(l.source)}:** ${n}`)
+    out.push('')
+  }
   out.push('---', '', `_${NOTE}_`, '')
   return out.join('\n')
 }
@@ -87,7 +97,8 @@ const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 export function reportToHtml(r: RadarReport): string {
   const alerts = r.alerts.map((a, i) => `<section class="alert" data-severity="${esc(a.severity)}">
   <h2>${i + 1}. ${esc(oneLine(a.title))}</h2>
-  <p class="meta"><span class="sev">${esc(a.severity)}</span> · ${esc(a.type)} · ${esc(a.status)}</p>
+  <p class="meta"><span class="sev">${esc(a.severity)}</span> · ${esc(a.type)} · ${esc(a.status)}${a.confidence ? ` · confidence ${esc(a.confidence)}` : ''}</p>
+  <p class="meta">${esc(a.currentHint)} (a rough hint, not a decision)</p>
   <p>${esc(oneLine(a.summary))}</p>
   ${a.systems.length ? `<p class="meta">Affected systems: ${esc(a.systems.join(', '))}</p>` : ''}
   ${a.claims.map(({ label, claim: c }) => `<div class="claim"><p><b>${esc(label)}</b> · ${esc(c.source)}</p><p>${esc(oneLine(c.subject))} — ${esc(oneLine(c.attribute))} = <b>${esc(oneLine(c.value))}</b> <span class="meta">(${esc(c.type)}, ${esc(c.status)}, confidence ${Math.round(c.confidence * 100)}%)</span></p>${c.excerpt ? `<blockquote>${esc(oneLine(c.excerpt))}</blockquote>` : ''}</div>`).join('\n  ')}
@@ -117,6 +128,7 @@ export function reportToHtml(r: RadarReport): string {
 ${r.alerts.length ? alerts : '<p>No alerts need attention.</p>'}
 ${r.changes.length ? `<h2 class="changes-h">Recent source changes</h2>
 ${r.changes.map(c => `<section class="alert change"><h2>${esc(oneLine(c.source))} <span class="meta">${esc(c.versions)} · ${esc(c.date)}</span></h2><p>${esc(c.summary)}</p>${c.lines.length ? `<ul>${c.lines.map(l => `<li>${esc(oneLine(l))}</li>`).join('')}</ul>` : ''}</section>`).join('\n')}` : ''}
+${r.limited.length ? `<h2 class="changes-h">Sources with limited analysis</h2><ul>${r.limited.flatMap(l => l.notices.map(n => `<li><b>${esc(oneLine(l.source))}:</b> ${esc(n)}</li>`)).join('')}</ul>` : ''}
 <p class="note">${esc(NOTE)}</p>
 </body></html>`
 }

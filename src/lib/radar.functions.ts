@@ -18,7 +18,7 @@ export const getRadar = createServerFn({ method: 'POST' }).middleware([requireSu
       const [a, c, s] = await Promise.all([
         context.supabase.from('engineering_alerts').select('*').eq('workspace_id', workspaceId).order('id').range(offset, offset + 999),
         context.supabase.from('engineering_claims').select('*').eq('workspace_id', workspaceId).order('id').range(offset, offset + 999),
-        context.supabase.from('sources').select('id, title, source_type, url, file_path, content_snippet, status, engineering_analysis_status, engineering_summary').eq('workspace_id', workspaceId).order('id').range(offset, offset + 999),
+        context.supabase.from('sources').select('id, title, source_type, url, file_path, content_snippet, status, engineering_analysis_status, engineering_summary, updated_at, metadata').eq('workspace_id', workspaceId).order('id').range(offset, offset + 999),
       ])
       if (a.error || c.error || s.error) throw new Error('Could not load engineering context.')
       alerts.push(...a.data); claims.push(...c.data); sources.push(...s.data)

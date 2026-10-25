@@ -4,7 +4,7 @@ export const MAX_TEXT_CHARS = 200_000
 export const SUPPORTED_EXTENSIONS = ['pdf', 'docx', 'pptx', 'xlsx', 'md', 'markdown', 'txt'] as const
 export const ACCEPT_ATTR = '.pdf,.docx,.pptx,.xlsx,.md,.markdown,.txt'
 
-export type ExtractResult = { text: string; truncated: boolean }
+export type ExtractResult = { text: string; truncated: boolean; originalChars?: number }
 
 export class ExtractError extends Error {}
 
@@ -18,7 +18,7 @@ export function isSupported(name: string): boolean {
 
 export function finalize(raw: string): ExtractResult {
   const text = raw.replace(/\r\n?/g, '\n').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim()
-  return text.length > MAX_TEXT_CHARS ? { text: text.slice(0, MAX_TEXT_CHARS), truncated: true } : { text, truncated: false }
+  return text.length > MAX_TEXT_CHARS ? { text: text.slice(0, MAX_TEXT_CHARS), truncated: true, originalChars: text.length } : { text, truncated: false }
 }
 
 async function extractPdf(file: File): Promise<string> {

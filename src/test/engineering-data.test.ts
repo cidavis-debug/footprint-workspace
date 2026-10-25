@@ -9,6 +9,11 @@ describe('Engineering attention feed', () => {
   const claims = [claim('new', 'a', 'constraint'), claim('old', 'b', 'interface')]
   const alerts = [alert('reviewed'), alert('resolved'), alert('dismissed'), alert('open')]
   it('shows open before reviewed and excludes resolved/dismissed from All', () => expect(filterAlerts(alerts, claims, 'All').map(a => a.status)).toEqual(['open', 'reviewed']))
+  it('sorts by severity, keeping open before closed, then newest first', () => {
+    const mk = (id: string, severity: string, status: string, created_at: string) => ({ ...alert(status), id, severity, created_at })
+    const list = [mk('low-new', 'low', 'open', '2026-10-14T00:00:00Z'), mk('high-rev', 'high', 'reviewed', '2026-10-15T00:00:00Z'), mk('med-open', 'medium', 'open', '2026-10-13T00:00:00Z'), mk('high-old', 'high', 'open', '2026-10-11T00:00:00Z'), mk('high-new', 'high', 'open', '2026-10-12T00:00:00Z')]
+    expect(filterAlerts(list, claims, 'All').map(a => a.id)).toEqual(['high-new', 'high-old', 'med-open', 'low-new', 'high-rev'])
+  })
   it('filters interfaces, constraints, assumptions, and resolved', () => {
     expect(filterAlerts(alerts, claims, 'Interfaces')).toHaveLength(2)
     expect(filterAlerts(alerts, claims, 'Constraints')).toHaveLength(2)

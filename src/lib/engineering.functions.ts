@@ -4,6 +4,8 @@ import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware'
 import type { Json } from '@/integrations/supabase/types'
 import { diffClaims, type AlertRef } from './claim-diff'
 import { conflictHints, rankCandidates } from './claim-match'
+import { geminiEndpoint, geminiModel } from './gemini-model'
+import { analysisTruncation, MAX_ANALYSIS_CHARS, MAX_ANALYSIS_CLAIMS, type AnalysisTruncation } from './truncation'
 
 const CLAIM_TYPES = ['interface', 'requirement', 'decision', 'constraint', 'assumption'] as const
 const CLAIM_STATUS = ['proposed', 'preferred', 'approved', 'superseded', 'unknown'] as const
@@ -20,7 +22,7 @@ const claimSchema = z.object({
   evidence_excerpt: z.string().trim().max(1000).default(''),
   confidence: z.number().min(0).max(1).catch(0.5),
 })
-const extractSchema = z.object({ summary: z.string().max(2000), claims: z.array(z.unknown()).max(40) })
+const extractSchema = z.object({ summary: z.string().max(2000), claims: z.array(z.unknown()) })
 const alertSchema = z.object({
   new_index: z.number().int(),
   related_claim_id: z.string().nullable().optional(),
@@ -40,8 +42,7 @@ const STR = { type: 'STRING' }
 const STRS = { type: 'ARRAY', items: STR }
 
 async function gemini(key: string, prompt: string, schema: unknown): Promise<unknown> {
-  const model = process.env['GEMINI_MODEL'] || 'gemini-3.8-flash'
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+  const res = await fetch(geminiEndpoint(geminiModel()), {
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
     body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { temperature: 0, responseMimeType: 'application/json', responseSchema: schema } }),
@@ -52,7 +53,7 @@ async function gemini(key: string, prompt: string, schema: unknown): Promise<unk
 }
 
 export type SourceChangeSummary = { changed: number; added: number; removed: number; raised: number; cleared: number; from: number; to: number }
-export type AnalyzeResult = { status: 'complete' | 'failed' | 'skipped'; claims: number; alerts: number; error: string | null; compared?: number; proposed?: number; change?: SourceChangeSummary }
+export type AnalyzeResult = { status: 'complete' | 'failed' | 'skipped'; claims: number; alerts: number; error: string | null; compared?: number; proposed?: number; change?: SourceChangeSummary; truncation?: AnalysisTruncation }
 
 async function sha256Hex(text: string): Promise<string> {
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))
@@ -87,9 +88,11 @@ export const analyzeEngineeringSource = createServerFn({ method: 'POST' })
     await supabase.from('sources').update({ engineering_analysis_status: 'processing' }).eq('id', src.id)
     try {
       const extracted = extractSchema.parse(await gemini(key,
-        `You extract engineering context from one document so it can later be compared with other documents.\nReturn a concise summary (max 3 sentences) and only material engineering claims: interfaces, requirements, decisions, constraints, assumptions. Skip vague, promotional, or non-engineering statements. Return an empty claims list if there are none.\nFor each claim:\n- subject: the specific component, system, or interface, named the way an engineer would name it in any document (e.g. "Main power bus", "CAN bus", "Operating temperature"). Use the same wording for the same thing throughout. Put requirement ids (e.g. R-101) in the evidence, not the subject.\n- attribute: the single property being specified (e.g. "nominal voltage", "bit rate", "ambient range"). Split compound statements into separate claims.\n- value and unit: the number and its unit separately (value "24", unit "V"; value "500", unit "kbit/s"). For ranges use value "-20 to 60" with unit "°C". For non-numeric values (e.g. "IP54") leave unit empty.\n- status: "approved" only when the text says approved, baselined, or released, or states a binding "shall" requirement in an approved document; "proposed" for proposals and open decisions; "preferred" when one option is preferred; "superseded" when the text says it is replaced; otherwise "unknown". Things stated as assumed are type "assumption".\n- evidence_excerpt: one exact, contiguous quote copied from the text (no paraphrase, no location markers), long enough to show the value.\n- confidence: 0-1.\nThe text contains location markers such as [Page 2], [Slide 3] and [Sheet: BOM]; they are not content.\n\nTITLE: ${src.title}\n\nTEXT:\n${text.slice(0, 60000)}`,
+        `You extract engineering context from one document so it can later be compared with other documents.\nReturn a concise summary (max 3 sentences) and only material engineering claims: interfaces, requirements, decisions, constraints, assumptions. Skip vague, promotional, or non-engineering statements. Return an empty claims list if there are none. Return at most ${MAX_ANALYSIS_CLAIMS} claims, keeping the most material.\nAlso capture hardware/configuration data as claims: part numbers, revisions, BOM quantities, tolerances, and ECO/ECN references (type "requirement", "decision" or "constraint" as fits). Use the part or assembly as the subject, named the same way everywhere (e.g. "Motor driver", not a row number), and one property per claim as the attribute: "part number", "revision", "quantity per assembly", "tolerance", or "change order" (value is the ECO/ECN id, e.g. "ECN-0042"). Keep part numbers and revisions exactly as written (value "B" for revision B), and put units such as "mm" in unit.\nFor each claim:\n- subject: the specific component, system, or interface, named the way an engineer would name it in any document (e.g. "Main power bus", "CAN bus", "Operating temperature"). Use the same wording for the same thing throughout. Put requirement ids (e.g. R-101) in the evidence, not the subject.\n- attribute: the single property being specified (e.g. "nominal voltage", "bit rate", "ambient range"). Split compound statements into separate claims.\n- value and unit: the number and its unit separately (value "24", unit "V"; value "500", unit "kbit/s"). For ranges use value "-20 to 60" with unit "°C". For non-numeric values (e.g. "IP54") leave unit empty.\n- status: "approved" only when the text says approved, baselined, or released, or states a binding "shall" requirement in an approved document; "proposed" for proposals and open decisions; "preferred" when one option is preferred; "superseded" when the text says it is replaced; otherwise "unknown". Things stated as assumed are type "assumption".\n- evidence_excerpt: one exact, contiguous quote copied from the text (no paraphrase, no location markers), long enough to show the value.\n- confidence: 0-1.\nThe text contains location markers such as [Page 2], [Slide 3] and [Sheet: BOM]; they are not content.\n\nTITLE: ${src.title}\n\nTEXT:\n${text.slice(0, MAX_ANALYSIS_CHARS)}`,
         S({ summary: STR, claims: { type: 'ARRAY', items: S({ type: { type: 'STRING', enum: [...CLAIM_TYPES] }, subject: STR, attribute: STR, value: STR, unit: { type: 'STRING', nullable: true }, affected_systems: STRS, status: { type: 'STRING', enum: [...CLAIM_STATUS] }, evidence_excerpt: STR, confidence: { type: 'NUMBER' } }, ['type', 'subject', 'attribute', 'value', 'affected_systems', 'status', 'evidence_excerpt', 'confidence']) } }, ['summary', 'claims'])))
-      const claims = extracted.claims.flatMap(c => { const r = claimSchema.safeParse(c); return r.success ? [r.data] : [] })
+      const parsedClaims = extracted.claims.flatMap(c => { const r = claimSchema.safeParse(c); return r.success ? [r.data] : [] })
+      const truncation = analysisTruncation(text.length, parsedClaims.length)
+      const claims = parsedClaims.slice(0, MAX_ANALYSIS_CLAIMS)
 
       // Snapshot the previous claims (and the open alerts that depend on them) so a changed source can be diffed.
       const { data: oldClaims } = await supabase.from('engineering_claims').select('id, type, subject, attribute, value, unit, status').eq('source_id', src.id)
@@ -152,8 +155,8 @@ export const analyzeEngineeringSource = createServerFn({ method: 'POST' })
         if (changeErr) console.error('Saving source change failed (is the source_changes migration applied?)', changeErr.message)
         change = { changed: diff.changed.length, added: diff.added.length, removed: diff.removed.length, raised: raised.length, cleared: clearedAlerts.length, from: prevVersion, to: analysisVersion }
       }
-      await supabase.from('sources').update({ engineering_analysis_status: 'complete', engineering_summary: extracted.summary, metadata: { ...meta, analyzed_hash: newHash, analysis_version: analysisVersion } as Json }).eq('id', src.id)
-      return { status: 'complete', claims: newClaims.length, alerts: alertCount, error: null, compared, proposed, ...(change ? { change } : {}) }
+      await supabase.from('sources').update({ engineering_analysis_status: 'complete', engineering_summary: extracted.summary, metadata: { ...Object.fromEntries(Object.entries(meta).filter(([k]) => k !== 'analysis_truncation')), analyzed_hash: newHash, analysis_version: analysisVersion, ...(truncation ? { analysis_truncation: truncation } : {}) } as Json }).eq('id', src.id)
+      return { status: 'complete', claims: newClaims.length, alerts: alertCount, error: null, compared, proposed, ...(change ? { change } : {}), ...(truncation ? { truncation } : {}) }
     } catch (e) {
       console.error('Engineering analysis failed', e)
       await supabase.from('sources').update({ engineering_analysis_status: 'failed' }).eq('id', src.id)

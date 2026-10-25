@@ -1,3 +1,4 @@
+import type { Json } from '@/integrations/supabase/types'
 export type EngineeringClaim = {
   id: string; source_id: string; type: string; subject: string; attribute: string; value: string;
   unit: string | null; affected_systems: string[]; status: string; evidence_excerpt: string; confidence: number
@@ -8,7 +9,7 @@ export type EngineeringAlert = {
 }
 export type EngineeringSource = {
   id: string; title: string; source_type: string; url: string | null; file_path: string | null;
-  content_snippet: string | null; content_text?: string | null; status: string; engineering_analysis_status: string; engineering_summary: string | null
+  content_snippet: string | null; content_text?: string | null; status: string; engineering_analysis_status: string; engineering_summary: string | null; updated_at?: string | null; metadata?: Json
 }
 /** Prompt budget: full text per source, capped so a large workspace still fits in one request. */
 export const MAX_SOURCE_PROMPT_CHARS = 60_000
@@ -23,6 +24,7 @@ export const suggestedQuestions = [
   'What assumptions in this plan still need validation?',
   'Which systems could be affected by this change?',
 ]
+const severityOrder = (s: string) => s === 'high' ? 0 : s === 'medium' ? 1 : 2
 export function filterAlerts(alerts: EngineeringAlert[], claims: EngineeringClaim[], filter: RadarFilter) {
   const byId = new Map(claims.map(c => [c.id, c]))
   return alerts.filter(a => {
@@ -33,7 +35,7 @@ export function filterAlerts(alerts: EngineeringAlert[], claims: EngineeringClai
     if (filter === 'Constraints') return a.alert_type === 'changed_constraint' || types.includes('constraint') || types.includes('requirement')
     if (filter === 'Assumptions') return a.alert_type === 'unsupported_assumption' || types.includes('assumption')
     return true
-  }).sort((a, b) => Number(b.status === 'open') - Number(a.status === 'open') || b.created_at.localeCompare(a.created_at))
+  }).sort((a, b) => Number(b.status === 'open') - Number(a.status === 'open') || severityOrder(a.severity) - severityOrder(b.severity) || b.created_at.localeCompare(a.created_at))
 }
 export function engineeringPrompt(sources: EngineeringSource[], claims: EngineeringClaim[], alerts: EngineeringAlert[], question: string) {
   const tags = new Map(sources.map((s, i) => [s.id, `S${i + 1}`]))

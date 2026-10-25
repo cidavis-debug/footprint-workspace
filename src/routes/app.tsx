@@ -270,14 +270,14 @@ function Workspace() {
     if (decision.kind === 'duplicate') { setBusy(false); setNotice(`“${file.name}” is already in this workspace (as “${decision.existing.title}”). Nothing was added.`); return }
     if (decision.kind === 'same-name' && !window.confirm(`“${decision.existing.title}” is already in this workspace, and this file is different.\n\nOK: replace it with this new version (its analysis will be re-run).\nCancel: don’t upload.`)) { setBusy(false); setNotice('Upload cancelled.'); return }
     setNotice(`Reading “${file.name}”…`)
-    let extracted: { text: string; truncated: boolean }
+    let extracted: { text: string; truncated: boolean; originalChars?: number }
     try { extracted = await extractText(file) } catch (e) { setBusy(false); setNotice(e instanceof ExtractError ? `“${file.name}”: ${e.message}` : 'Could not read this file.'); return }
     setNotice(`Uploading “${file.name}”…`)
     const path = `${workspaceId}/${crypto.randomUUID()}-${file.name.replace(/[^\w.-]+/g, '_')}`
     const { error: upErr } = await supabase.storage.from('sources').upload(path, file, { contentType: file.type || undefined })
     if (upErr) { setBusy(false); setNotice(`Upload failed: ${upErr.message}`); return }
     const columns = 'id, title, source_type, status, collection_id, engineering_analysis_status, engineering_summary'
-    const baseMeta = { size: file.size, mime: file.type, ...(hash ? { content_hash: hash } : {}), ...(extracted.truncated ? { truncated: true } : {}) }
+    const baseMeta = { size: file.size, mime: file.type, ...(hash ? { content_hash: hash } : {}), ...(extracted.truncated ? { truncated: true, ...(extracted.originalChars ? { original_chars: extracted.originalChars } : {}) } : {}) }
     const longNote = extracted.truncated ? ' (very long; only the first part is searchable)' : ''
 
     if (decision.kind === 'same-name') {
