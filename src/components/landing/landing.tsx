@@ -102,7 +102,7 @@ function Hero({ onOpen }: { onOpen: OpenHandler }) {
         <div className="lp-hero-copy">
           <p className="lp-mono lp-eyebrow">For hardware engineering teams</p>
           <h1 className="lp-h1">Complex Engineering. <span>Connected Intelligence.</span></h1>
-          <p className="lp-lead">Footprint AI helps hardware engineering teams organize information, ask questions across their sources, and identify potential inconsistencies before they become expensive.</p>
+          <p className="lp-lead">Footprint AI helps hardware engineering teams ask questions across their sources and catch conflicting information before it becomes expensive.</p>
           <div className="lp-actions">
             <Link to="/app" className="lp-btn lp-btn-primary lp-btn-lg" onClick={onOpen}>Open Footprint AI <ArrowRight size={18} aria-hidden="true" /></Link>
             <Link to="/how-it-works" className="lp-btn lp-btn-ghost lp-btn-lg">See how it works</Link>
@@ -161,10 +161,10 @@ function Ingest() {
         <Reveal dir="slide-r" className="lp-lit lp-glass lp-spec" delay={120}>
           <p className="lp-mono lp-spec-title">What you can add</p>
           <dl>
-            <div><dt>Files</dt><dd>PDF, Markdown, text</dd></div>
+            <div><dt>Files</dt><dd>PDF, Word, Excel, PPT, MD, TXT</dd></div>
             <div><dt>Size</dt><dd>Up to 20 MB each</dd></div>
-            <div><dt>Links</dt><dd>Any http or https address</dd></div>
-            <div><dt>Read for answers</dt><dd>Markdown and text files today</dd></div>
+            <div><dt>Links</dt><dd>Public http or https pages</dd></div>
+            <div><dt>Read for answers</dt><dd>Text from every format above</dd></div>
           </dl>
         </Reveal>
       </div>
@@ -254,7 +254,7 @@ function Radar() {
       </div>
       <div className="lp-radar-foot">
         <div className="lp-expand">
-          <details className="lp-details"><summary>What Footprint AI compares</summary><p>Claims extracted from each source — a subject, an attribute, a value and a unit, with the excerpt they came from — are compared across the workspace. Possible conflicts, changed constraints, interface mismatches and unsupported assumptions are raised for review.</p></details>
+          <details className="lp-details"><summary>What Footprint AI compares</summary><p>Claims extracted from each source — a subject, an attribute, a value and a unit, with the excerpt they came from — are compared across the workspace. Possible conflicts, interface mismatches and unsupported assumptions are raised for review, each with a confidence level and, where possible, a likely out-of-date source.</p></details>
           <details className="lp-details"><summary>What your team can do</summary><p>Open both sources and their evidence side by side, then mark the alert reviewed, resolved, or dismissed. Nothing is changed in your documents.</p></details>
         </div>
         <button type="button" className="lp-btn lp-btn-ghost" onClick={() => setRun(r => r + 1)}><RotateCcw size={15} aria-hidden="true" /> Replay</button>

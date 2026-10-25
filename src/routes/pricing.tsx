@@ -11,9 +11,9 @@ export const Route = createFileRoute('/pricing')({
 
 /** Draft plan data carried over from the previous page. Proposed only — not a live offer. */
 const plans = [
-  { name: 'Free', blurb: 'A small home for a fresh idea.', monthly: 0, annual: 0 },
-  { name: 'Pro', blurb: 'More room for your everyday thinking.', monthly: 12, annual: 9 },
-  { name: 'Team', blurb: 'A common home for collective knowledge.', monthly: 29, annual: 24 },
+  { name: 'Free', blurb: 'Try it on a single program.', monthly: 0, annual: 0 },
+  { name: 'Pro', blurb: 'For an engineer’s everyday sources.', monthly: 12, annual: 9 },
+  { name: 'Team', blurb: 'For teams; shared workspaces planned.', monthly: 29, annual: 24 },
 ] as const
 
 const rows: { label: string; vals: [string, string, string]; note?: string }[] = [
@@ -26,8 +26,8 @@ const rows: { label: string; vals: [string, string, string]; note?: string }[] =
 ]
 
 const faq = [
-  { q: 'Can I subscribe now?', a: 'No. These prices and limits are draft proposals. No plan can be purchased or activated, and there is no checkout.' },
-  { q: 'What counts as a source?', a: 'An uploaded file (PDF, Markdown or text, up to 20 MB each) or a saved web link. A link is a reference only; Footprint AI does not fetch or read its contents.' },
+  { q: 'Can I subscribe now?', a: 'No. These prices and limits are draft proposals. No plan can be purchased or activated.' },
+  { q: 'What counts as a source?', a: 'An uploaded file (PDF, Word, Excel, PowerPoint, Markdown or text, up to 20 MB each) or a saved public web link whose page text Footprint AI reads.' },
   { q: 'How would Team pricing work?', a: 'The proposed Team price would include five members rather than charging per person, with source and question limits shared across the team’s workspaces. Extra-member pricing has not been defined, and multi-member workspaces do not exist yet.' },
   { q: 'Are taxes and overages included?', a: 'Tax treatment has not been decided. The proposal has no automatic overage charges; limits and any upgrade options would be confirmed before launch.' },
 ]
@@ -49,7 +49,7 @@ function Pricing() {
         </div>
         <Reveal dir="none" delay={400} className="lp-lit lp-price-note lp-glass-light">
           <b>Draft pricing · USD</b>
-          <p>These plans are proposals, not a live offer. Subscriptions and payments are unavailable, and the product has no checkout.</p>
+          <p>These plans are proposals, not a live offer. Subscriptions and payments are unavailable.</p>
         </Reveal>
       </div>
       </div>
@@ -104,7 +104,7 @@ function Pricing() {
             {rows.slice(0, 4).map(r => <li key={r.label}><span>{r.label}</span><b>{r.vals[sel]}</b></li>)}
           </ul>
           <Link to="/app" className="lp-btn lp-btn-primary">Explore the workspace <ArrowUpRight size={16} aria-hidden="true" /></Link>
-          <p className="lp-fine">Preview only · no checkout. Exploring the workspace does not start a subscription.</p>
+          <p className="lp-fine">Draft proposal only. Exploring the workspace does not start a subscription.</p>
         </div>
       </div>
     </Stage>

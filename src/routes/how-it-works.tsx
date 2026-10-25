@@ -21,20 +21,20 @@ const steps: Step[] = [
       <li><b>Test Campaign</b><span className="lp-mono">Workspace</span></li>
     </ul> },
   { id: 'add', n: '02', title: 'Add files and links', dir: 'slide-r',
-    lead: 'Upload files or save web links into the active workspace. Footprint AI accepts what it can use today and is plain about the rest.',
+    lead: 'Upload files or save web links into the active workspace. Footprint AI reads the text of every supported format so answers can cite it.',
     body: <dl className="lp-facts">
-      <div><dt>Files</dt><dd>PDF, Markdown, plain text</dd></div>
+      <div><dt>Files</dt><dd>PDF, Word, Excel, PowerPoint, Markdown, text</dd></div>
       <div><dt>Size</dt><dd>Up to 20 MB each</dd></div>
-      <div><dt>Links</dt><dd>Saved as references (http or https)</dd></div>
-      <div><dt>Read for answers</dt><dd>Markdown and text files today</dd></div>
+      <div><dt>Links</dt><dd>Public web pages (http or https)</dd></div>
+      <div><dt>Read for answers</dt><dd>Text from every supported format</dd></div>
     </dl> },
   { id: 'organize', n: '03', title: 'Organize into collections', dir: 'none',
     lead: 'Every workspace starts with a collection named General. Rename it, and everything you add is grouped there, with the file or link type visible at a glance.',
     body: <ul className="lp-rows" aria-label="Example collection">
-      <li><FileText size={16} aria-hidden="true" /><b>Interface drawing.pdf</b><span className="lp-mono">stored</span></li>
+      <li><FileText size={16} aria-hidden="true" /><b>Interface drawing.pdf</b><span className="lp-mono">read for answers</span></li>
       <li><FileText size={16} aria-hidden="true" /><b>Requirements.md</b><span className="lp-mono">read for answers</span></li>
       <li><FileText size={16} aria-hidden="true" /><b>Test notes.txt</b><span className="lp-mono">read for answers</span></li>
-      <li><Link2 size={16} aria-hidden="true" /><b>Supplier datasheet</b><span className="lp-mono">reference link</span></li>
+      <li><Link2 size={16} aria-hidden="true" /><b>Supplier datasheet</b><span className="lp-mono">page text read</span></li>
     </ul> },
   { id: 'ask', n: '04', title: 'Ask, with citations', dir: 'fade', tone: 'slate',
     lead: 'Ask a question in plain language. The answer draws on the active workspace and names the sources it used, so you can open them and check.',
@@ -46,7 +46,7 @@ const steps: Step[] = [
       <p className="lp-fine">No answer is guaranteed to be perfect. Check important details against the original.</p>
     </div> },
   { id: 'analyze', n: '05', title: 'Analyze for conflicts', dir: 'slide-d',
-    lead: 'Run analysis on supported sources. Footprint AI extracts engineering claims — interfaces, requirements, decisions, constraints and assumptions — and compares them across the workspace. Possible conflicts land in Radar for your review.',
+    lead: 'Run analysis on supported sources. Footprint AI extracts engineering claims — interfaces, requirements, decisions, constraints and assumptions — and compares them across the workspace. Possible conflicts land in Radar for your review, with a confidence level and a likely-stale-source hint.',
     body: <div className="lp-conflict">
       <div><span className="lp-mono">Interface Drawing</span><strong>8<small>mm</small></strong></div>
       <div className="vs lp-mono">vs</div>
@@ -107,8 +107,8 @@ function HowItWorks() {
       <div className="lp-inner">
         <p className="lp-mono lp-eyebrow">A note on links</p>
         <h2 id="lp-honest-h" className="lp-sr">Links stay honest</h2>
-        <WordReveal className="lp-statement lp-statement-dark" text="Links stay honest. A saved URL is a reference, not an imported document — Footprint AI does not silently read private Google Drive or OneDrive content." />
-        <Emerge from="left" delay={150}><p className="lp-body">To use a document’s text, upload a supported file. <Link to="/security" className="lp-textlink">Read the data boundaries <ArrowUpRight size={15} aria-hidden="true" /></Link></p></Emerge>
+        <WordReveal className="lp-statement lp-statement-dark" text="Links stay honest. Footprint AI reads public web pages you save, but it cannot open private Google Drive or OneDrive content." />
+        <Emerge from="left" delay={150}><p className="lp-body">For private documents, upload a supported file. <Link to="/security" className="lp-textlink">Read the data boundaries <ArrowUpRight size={15} aria-hidden="true" /></Link></p></Emerge>
       </div>
     </Stage>
   </MarketingPage>

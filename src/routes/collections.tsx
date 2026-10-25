@@ -74,7 +74,7 @@ function Collections() {
         <Reveal dir="slide-d" delay={140} className="lp-b-kinds">
           <p className="lp-mono lp-eyebrow">What goes in</p>
           <h3>Files and links.</h3>
-          <p>PDF, Markdown and text files up to 20 MB, plus saved web links. Links are references; they are not fetched or read.</p>
+          <p>PDF, Word, Excel, PowerPoint, Markdown and text files up to 20 MB, plus public web links whose page text is read.</p>
         </Reveal>
         <Reveal dir="slide-u" delay={100} className="lp-lit arc-plate arc-f-frost lp-b-status">
           <div>
@@ -90,7 +90,7 @@ function Collections() {
             <ul className="lp-checks lp-checks-muted">
               <li>Creating several collections in one workspace from the app</li>
               <li>Sharing a workspace with teammates</li>
-              <li>Importing from other tools</li>
+              <li>Auto-sync and Slack or Teams integrations (planned)</li>
             </ul>
           </div>
         </Reveal>
