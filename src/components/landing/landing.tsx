@@ -102,15 +102,15 @@ function Hero({ onOpen }: { onOpen: OpenHandler }) {
         <div className="lp-hero-copy">
           <p className="lp-mono lp-eyebrow">For hardware engineering teams</p>
           <h1 className="lp-h1">Complex Engineering. <span>Connected Intelligence.</span></h1>
-          <p className="lp-lead">Footprint AI helps hardware engineering teams ask questions across their sources and catch conflicting information before it becomes expensive.</p>
+          <p className="lp-lead">Footprint AI is the source of truth for hardware engineering knowledge. It connects your teams’ sources, answers with citations, and catches conflicts before they become redesigns.</p>
           <div className="lp-actions">
             <Link to="/app" className="lp-btn lp-btn-primary lp-btn-lg" onClick={onOpen}>Open Footprint AI <ArrowRight size={18} aria-hidden="true" /></Link>
             <Link to="/how-it-works" className="lp-btn lp-btn-ghost lp-btn-lg">See how it works</Link>
           </div>
           <ul className="lp-trio">
-            <li><FolderOpen size={18} aria-hidden="true" /> Organize sources</li>
+            <li><FolderOpen size={18} aria-hidden="true" /> Connect sources</li>
             <li><FileText size={18} aria-hidden="true" /> Ask with citations</li>
-            <li><AlertTriangle size={18} aria-hidden="true" /> Spot inconsistencies</li>
+            <li><AlertTriangle size={18} aria-hidden="true" /> Catch conflicts</li>
           </ul>
         </div>
       </div>
@@ -156,22 +156,22 @@ function Ingest() {
       <div className="lp-ingest-top">
         <Reveal dir="none" className="lp-ingest-title">
           <p className="lp-mono lp-eyebrow">02 — Bring it together</p>
-          <h2 className="lp-h2" id="lp-ingest-h">Files and links, <span>one shared workspace.</span></h2>
+          <h2 className="lp-h2" id="lp-ingest-h">Every source, <span>one shared workspace.</span></h2>
         </Reveal>
         <Reveal dir="slide-r" className="lp-lit lp-glass lp-spec" delay={120}>
-          <p className="lp-mono lp-spec-title">What you can add</p>
+          <p className="lp-mono lp-spec-title">What Footprint connects</p>
           <dl>
             <div><dt>Files</dt><dd>PDF, Word, Excel, PPT, MD, TXT</dd></div>
-            <div><dt>Size</dt><dd>Up to 20 MB each</dd></div>
+            <div><dt>Sync</dt><dd>Superfolders stay current</dd></div>
             <div><dt>Links</dt><dd>Public http or https pages</dd></div>
-            <div><dt>Read for answers</dt><dd>Text from every format above</dd></div>
+            <div><dt>Routing</dt><dd>Slack and Teams</dd></div>
           </dl>
         </Reveal>
       </div>
       <div className="lp-steel lp-steel-dark lp-columns">
-        <Reveal dir="fade"><b>Workspaces</b><p>One home per project or team, kept separate from every other.</p></Reveal>
+        <Reveal dir="fade"><b>Workspaces</b><p>Shared team workspaces: one home per program, every engineer on the same page.</p></Reveal>
         <Reveal dir="fade" delay={90}><b>Sub-workspaces</b><p>Break a program into subsystems without losing the parent context.</p></Reveal>
-        <Reveal dir="fade" delay={180}><b>Collections</b><p>Group related sources so questions start from the right material.</p></Reveal>
+        <Reveal dir="fade" delay={180}><b>Superfolders</b><p>Pull in files, folders and notes from your tools and keep them in sync.</p></Reveal>
       </div>
     </div>
   </Stage>
@@ -254,8 +254,8 @@ function Radar() {
       </div>
       <div className="lp-radar-foot">
         <div className="lp-expand">
-          <details className="lp-details"><summary>What Footprint AI compares</summary><p>Claims extracted from each source — a subject, an attribute, a value and a unit, with the excerpt they came from — are compared across the workspace. Possible conflicts, interface mismatches and unsupported assumptions are raised for review, each with a confidence level and, where possible, a likely out-of-date source.</p></details>
-          <details className="lp-details"><summary>What your team can do</summary><p>Open both sources and their evidence side by side, then mark the alert reviewed, resolved, or dismissed. Nothing is changed in your documents.</p></details>
+          <details className="lp-details"><summary>What Footprint AI compares</summary><p>Claims extracted from each source — a subject, an attribute, a value and a unit, with the excerpt they came from — are compared across the workspace. Possible conflicts, interface mismatches, EBOM-to-MBOM differences and unsupported assumptions are raised for review, each with a confidence level and, where possible, a likely out-of-date source.</p></details>
+          <details className="lp-details"><summary>What your team can do</summary><p>Open both sources and their evidence side by side, route the issue to the right engineers in Slack or Teams, and draft the change order. Nothing is changed in your documents.</p></details>
         </div>
         <button type="button" className="lp-btn lp-btn-ghost" onClick={() => setRun(r => r + 1)}><RotateCcw size={15} aria-hidden="true" /> Replay</button>
       </div>
@@ -267,7 +267,7 @@ function Radar() {
 
 const claims = [
   { n: '01', h: 'Your account.', t: 'Sign-in is required to reach your workspaces, and every request is made as you.' },
-  { n: '02', h: 'Your workspace.', t: 'Sources and what is derived from them are accessible only to the workspace owner.' },
+  { n: '02', h: 'Your workspace.', t: 'Sources and what is derived from them stay inside your workspace, shared only with the teammates you add.' },
   { n: '03', h: 'Your sources.', t: 'Answers draw on the active workspace and cite what they used. Remove a source, and its uploaded file, whenever you choose.' },
 ] as const
 

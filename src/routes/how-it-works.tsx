@@ -5,7 +5,7 @@ import { pageHead } from '@/components/page-head'
 import { Emerge, MarketingPage, Plane, Reveal, SplitHeading, Stage, WordReveal, clamp, prefersReducedMotion, useScrollProgress, type Dir } from '@/components/landing/shared'
 
 export const Route = createFileRoute('/how-it-works')({
-  head: () => pageHead('How it works — Footprint AI', 'The Footprint AI workflow: create a workspace, add files and links, organize collections, ask cited questions, and analyze sources for potential conflicts.'),
+  head: () => pageHead('How it works — Footprint AI', 'The Footprint AI workflow: set up team workspaces, connect your sources, ask cited questions, and catch conflicts before they cause redesigns.'),
   component: HowItWorks,
 })
 
@@ -13,7 +13,7 @@ type Step = { id: string; n: string; title: string; lead: string; dir: Dir; body
 
 const steps: Step[] = [
   { id: 'workspace', n: '01', title: 'Create a workspace', dir: 'slide-l',
-    lead: 'A workspace is the home for one program or team’s sources. Sub-workspaces nest one level beneath it, so a subsystem can have its own space without losing the parent.',
+    lead: 'A workspace is the shared home for one program or team’s sources. Sub-workspaces nest beneath it, so a subsystem can have its own space without losing the parent.',
     body: <ul className="lp-tree" aria-label="Example workspace structure">
       <li><b>Actuator Program</b><span className="lp-mono">Workspace</span></li>
       <li className="sub"><b>Gearbox</b><span className="lp-mono">Sub-workspace</span></li>
@@ -21,15 +21,15 @@ const steps: Step[] = [
       <li><b>Test Campaign</b><span className="lp-mono">Workspace</span></li>
     </ul> },
   { id: 'add', n: '02', title: 'Add files and links', dir: 'slide-r',
-    lead: 'Upload files or save web links into the active workspace. Footprint AI reads the text of every supported format so answers can cite it.',
+    lead: 'Connect files and links, or let superfolders pull your sources in and keep them in sync. Footprint AI reads every supported format so answers can cite it.',
     body: <dl className="lp-facts">
       <div><dt>Files</dt><dd>PDF, Word, Excel, PowerPoint, Markdown, text</dd></div>
       <div><dt>Size</dt><dd>Up to 20 MB each</dd></div>
       <div><dt>Links</dt><dd>Public web pages (http or https)</dd></div>
-      <div><dt>Read for answers</dt><dd>Text from every supported format</dd></div>
+      <div><dt>Kept current</dt><dd>Auto-sync from your tools</dd></div>
     </dl> },
   { id: 'organize', n: '03', title: 'Organize into collections', dir: 'none',
-    lead: 'Every workspace starts with a collection named General. Rename it, and everything you add is grouped there, with the file or link type visible at a glance.',
+    lead: 'Every workspace groups its sources into collections, with the file or link type visible at a glance, so questions start from the right material.',
     body: <ul className="lp-rows" aria-label="Example collection">
       <li><FileText size={16} aria-hidden="true" /><b>Interface drawing.pdf</b><span className="lp-mono">read for answers</span></li>
       <li><FileText size={16} aria-hidden="true" /><b>Requirements.md</b><span className="lp-mono">read for answers</span></li>
@@ -46,7 +46,7 @@ const steps: Step[] = [
       <p className="lp-fine">No answer is guaranteed to be perfect. Check important details against the original.</p>
     </div> },
   { id: 'analyze', n: '05', title: 'Analyze for conflicts', dir: 'slide-d',
-    lead: 'Run analysis on supported sources. Footprint AI extracts engineering claims — interfaces, requirements, decisions, constraints and assumptions — and compares them across the workspace. Possible conflicts land in Radar for your review, with a confidence level and a likely-stale-source hint.',
+    lead: 'Footprint AI extracts engineering claims — interfaces, requirements, decisions, constraints and assumptions — and compares them across the workspace, including EBOM to MBOM. Conflicts land in Radar with a confidence level and a likely-stale-source hint, then reach the right people in Slack or Teams.',
     body: <div className="lp-conflict">
       <div><span className="lp-mono">Interface Drawing</span><strong>8<small>mm</small></strong></div>
       <div className="vs lp-mono">vs</div>
@@ -98,7 +98,7 @@ function HowItWorks() {
       <div className="lp-inner lp-hiw-hero-inner">
         <p className="lp-mono lp-eyebrow">How it works · five steps</p>
         <SplitHeading className="lp-mega" lines={[{ t: 'From scattered files' }, { t: 'to a cited answer.', accent: true }]} />
-        <Reveal dir="none" delay={500} className="lp-lit lp-glass lp-hiw-sub"><p className="lp-lead">One workflow, from the first file to the first conflict flagged for review. Follow it down the page.</p></Reveal>
+        <Reveal dir="none" delay={500} className="lp-lit lp-glass lp-hiw-sub"><p className="lp-lead">One workflow, from the first file to a conflict resolved. Follow it down the page.</p></Reveal>
       </div>
     </Stage>
     <section className="lp-journey-wrap" aria-label="The Footprint AI workflow"><div className="lp-inner"><Journey /></div></section>

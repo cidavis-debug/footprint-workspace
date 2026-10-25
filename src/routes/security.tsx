@@ -43,7 +43,7 @@ function DataJourney() {
 }
 
 const verified = [
-  { h: 'Access is owner-only', t: 'Workspaces, collections, sources, conversations and engineering findings are protected by row-level rules that tie them to the workspace owner.' },
+  { h: 'Access is workspace-scoped', t: 'Workspaces, collections, sources, conversations and engineering findings are protected by row-level rules that tie them to their workspace and its members.' },
   { h: 'File access follows the workspace', t: 'Rules on the file store scope reads, uploads and deletes to the folder of a workspace you own.' },
   { h: 'Credentials stay on the server', t: 'The AI provider key is read on the server and is not sent to your browser.' },
   { h: 'Citations you can open', t: 'Answers list the sources they used, and the evidence drawer shows the excerpt behind each one.' },
@@ -62,10 +62,10 @@ function Security() {
         <div className="lp-sec-hero-copy">
           <p className="lp-mono lp-eyebrow">Security & data boundaries</p>
           <SplitHeading className="lp-mega" lines={[{ t: 'Clear boundaries.' }, { t: 'Plainly stated.', accent: true }]} />
-          <Reveal dir="none"><p className="lp-lead">Trust starts with being specific about what a product does, and what it does not. This is what Footprint AI does today.</p></Reveal>
+          <Reveal dir="none"><p className="lp-lead">Trust starts with being specific about what a product does, and what it does not. This is how Footprint AI treats your engineering data.</p></Reveal>
         </div>
         <div className="lp-sec-stack">
-          <Reveal dir="slide-l" delay={250} className="lp-lit lp-glass lp-sec-pane p1"><span className="lp-mono">Access</span><b>Owner-only workspaces</b><p>Row-level rules tie your data to your account.</p></Reveal>
+          <Reveal dir="slide-l" delay={250} className="lp-lit lp-glass lp-sec-pane p1"><span className="lp-mono">Access</span><b>Workspace-level access</b><p>Row-level rules tie your data to its workspace.</p></Reveal>
           <Reveal dir="slide-r" delay={380} className="lp-lit lp-glass lp-sec-pane p2"><span className="lp-mono">AI requests</span><b>Excerpts go to Gemini</b><p>Your question and relevant source text are sent to answer it.</p></Reveal>
           <Reveal dir="slide-d" delay={510} className="lp-lit lp-glass lp-sec-pane p3"><span className="lp-mono">Control</span><b>Remove any source</b><p>The record and its uploaded file are deleted.</p></Reveal>
         </div>
@@ -74,7 +74,7 @@ function Security() {
 
     <section className="lp-section lp-sec-verified" aria-labelledby="lp-ver-h">
       <div className="lp-inner lp-ver-grid">
-        <Reveal dir="none"><p className="lp-mono lp-eyebrow">In the product today</p><h2 id="lp-ver-h" className="lp-h2">Four things you <span>can rely on.</span></h2><Rail className="arc-rail-wide" /></Reveal>
+        <Reveal dir="none"><p className="lp-mono lp-eyebrow">Built in</p><h2 id="lp-ver-h" className="lp-h2">Four things you <span>can rely on.</span></h2><Rail className="arc-rail-wide" /></Reveal>
         <ul className="lp-ver-list">
           {verified.map((x, i) => <li key={x.h}><Reveal dir={i % 2 ? 'slide-r' : 'slide-d'} delay={i * 80} className="lp-lit lp-steel"><b>{x.h}</b><p>{x.t}</p></Reveal></li>)}
         </ul>
@@ -96,7 +96,7 @@ function Security() {
         <Reveal dir="slide-r" delay={140} className="arc-plate arc-f-steel arc-inset arc-bleed-r lp-nc-copy">
           <p className="lp-body">Footprint AI does not claim SOC 2 certification, HIPAA compliance, end-to-end encryption or a verified data-retention policy. Those assurances need separate implementation and independent review.</p>
           <p className="lp-body">Saving a Google Drive or OneDrive link does not give Footprint AI access to its private contents. Only public web pages can be read.</p>
-          <p className="lp-body">Do not upload ITAR or other export-controlled data, or anything you may not share with an external AI provider. Compliant or on-premises deployment is a long-term goal, not available today.</p>
+          <p className="lp-body">Do not upload ITAR or other export-controlled data, or anything you may not share with an external AI provider. ITAR-compliant and on-premises deployment is the long-term path for aerospace and defense teams.</p>
           <Link to="/how-it-works" className="lp-textlink lp-textlink-ink">See how sources work <ArrowRight size={15} aria-hidden="true" /></Link>
         </Reveal>
       </div>

@@ -53,7 +53,7 @@ function Collections() {
           <p className="lp-mono lp-eyebrow">Collections · organized knowledge</p>
           <SplitHeading className="lp-mega" lines={[{ t: 'Related ideas.' }, { t: 'One shared home.', accent: true }]} />
         </div>
-        <Reveal dir="slide-r" delay={400} className="lp-lit lp-glass-light"><p className="lp-lead">Workspaces keep programs apart. Sub-workspaces break them into parts. Collections group the sources inside. Try the structure below.</p></Reveal>
+        <Reveal dir="slide-r" delay={400} className="lp-lit lp-glass-light"><p className="lp-lead">Workspaces keep programs apart. Sub-workspaces break them into parts. Collections and superfolders group the sources inside. Try the structure below.</p></Reveal>
       </div>
     </Stage>
 
@@ -63,8 +63,8 @@ function Collections() {
         <Reveal dir="slide-r" delay={120} className="arc-plate arc-f-slate lp-b-boundary">
           <p className="lp-mono lp-eyebrow">The boundary</p>
           <h2>The workspace is the boundary.</h2>
-          <p>Sources, questions and answers are scoped to the workspace you are in. Collections organize what is inside it. They are not separate permission groups.</p>
-          <div className="lp-glass lp-mini-glass"><b>Owner-only today</b><span>Workspaces are accessible only to the account that owns them.</span></div>
+          <p>Sources, questions and answers are scoped to the workspace you are in, and shared with your whole team. Collections organize what is inside it. They are not separate permission groups.</p>
+          <div className="lp-glass lp-mini-glass"><b>Shared with your team</b><span>Team workspaces give every engineer the same source of truth.</span></div>
         </Reveal>
         <Reveal dir="none" className="lp-b-sub">
           <p className="lp-mono lp-eyebrow">Sub-workspaces</p>
@@ -74,23 +74,23 @@ function Collections() {
         <Reveal dir="slide-d" delay={140} className="lp-b-kinds">
           <p className="lp-mono lp-eyebrow">What goes in</p>
           <h3>Files and links.</h3>
-          <p>PDF, Word, Excel, PowerPoint, Markdown and text files up to 20 MB, plus public web links whose page text is read.</p>
+          <p>PDF, Word, Excel, PowerPoint, Markdown and text files up to 20 MB, plus public web links, with superfolders keeping sources in sync.</p>
         </Reveal>
         <Reveal dir="slide-u" delay={100} className="lp-lit arc-plate arc-f-frost lp-b-status">
           <div>
             <p className="lp-mono lp-eyebrow">Available today</p>
             <ul className="lp-checks">
-              <li>Workspaces and one level of sub-workspaces</li>
+              <li>Workspaces and sub-workspaces</li>
               <li>A collection named General in every workspace, which you can rename</li>
               <li>Search across source titles in the active workspace</li>
             </ul>
           </div>
           <div>
-            <p className="lp-mono lp-eyebrow lp-planned">Not available yet</p>
+            <p className="lp-mono lp-eyebrow lp-planned">Coming next</p>
             <ul className="lp-checks lp-checks-muted">
-              <li>Creating several collections in one workspace from the app</li>
-              <li>Sharing a workspace with teammates</li>
-              <li>Auto-sync and Slack or Teams integrations (planned)</li>
+              <li>Superfolders with auto-sync from your tools</li>
+              <li>Shared team workspaces</li>
+              <li>Slack and Teams routing</li>
             </ul>
           </div>
         </Reveal>

@@ -5,15 +5,15 @@ import { pageHead } from '@/components/page-head'
 import { MarketingPage, Rail, Reveal, SplitHeading, Stage } from '@/components/landing/shared'
 
 export const Route = createFileRoute('/pricing')({
-  head: () => pageHead('Pricing — Footprint AI', 'Draft Free, Pro, and Team plans for Footprint AI, clearly labeled as proposals.'),
+  head: () => pageHead('Pricing — Footprint AI', 'Draft Team, Growth, and Organization plans for Footprint AI, priced by contributors and labeled as proposals.'),
   component: Pricing,
 })
 
 /** Draft plan data carried over from the previous page. Proposed only — not a live offer. */
 const plans = [
-  { name: 'Free', blurb: 'Try it on a single program.', monthly: 0, annual: 0 },
-  { name: 'Pro', blurb: 'For an engineer’s everyday sources.', monthly: 12, annual: 9 },
-  { name: 'Team', blurb: 'For teams; shared workspaces planned.', monthly: 29, annual: 24 },
+  { name: 'Team', blurb: 'For a team on one program.', monthly: 1, annual: 12 },
+  { name: 'Growth', blurb: 'For teams across more programs.', monthly: 2, annual: 24 },
+  { name: 'Organization', blurb: 'Advanced admin for the whole company.', monthly: 4, annual: 48 },
 ] as const
 
 const rows: { label: string; vals: [string, string, string]; note?: string }[] = [
@@ -33,10 +33,10 @@ const faq = [
 ]
 
 function Pricing() {
-  const [annual, setAnnual] = useState(false)
+  const [annual, setAnnual] = useState(true)
   const [sel, setSel] = useState(1)
   const p = plans[sel]!
-  const price = (i: number) => annual ? plans[i]!.annual : plans[i]!.monthly
+  const price = (i: number) => `$${annual ? plans[i]!.annual : plans[i]!.monthly}K`
   return <MarketingPage lean="l">
     <section className="lp-pagehero lp-price-hero">
       <div className="lp-inner">
@@ -48,8 +48,8 @@ function Pricing() {
           <SplitHeading className="lp-mega" lines={[{ t: 'Good knowledge.' }, { t: 'A considered plan.', accent: true }]} />
         </div>
         <Reveal dir="none" delay={400} className="lp-lit lp-price-note lp-glass-light">
-          <b>Draft pricing · USD</b>
-          <p>These plans are proposals, not a live offer. Subscriptions and payments are unavailable.</p>
+          <b>Draft pricing · USD, per team</b>
+          <p>These plans are draft proposals, priced by contributors and to be tested in pilots.</p>
         </Reveal>
       </div>
       </div>
@@ -73,7 +73,7 @@ function Pricing() {
                 {plans.map((pl, i) => <th key={pl.name} scope="col" data-sel={sel === i}>
                   <button type="button" aria-pressed={sel === i} onClick={() => setSel(i)}>
                     <span className="lp-plan-name">{pl.name}</span>
-                    <span className="lp-plan-price">${price(i)}<small> / month</small></span>
+                    <span className="lp-plan-price">{price(i)}<small>{annual ? ' / year' : ' / month'}</small></span>
                   </button>
                 </th>)}
               </tr>
@@ -98,8 +98,8 @@ function Pricing() {
           <h2 className="lp-h2">{p.name}<span>{p.blurb}</span></h2>
         </div>
         <div className="lp-lit lp-glass lp-spot-panel" key={`${p.name}-${annual}`}>
-          <p className="lp-spot-price">${price(sel)}<small> / month</small></p>
-          <p className="lp-mono lp-spot-sub">{p.monthly === 0 ? 'Proposed free plan' : annual ? `$${p.annual * 12} billed yearly per ${p.name === 'Team' ? 'team' : 'account'}` : `Billed monthly per ${p.name === 'Team' ? 'team' : 'account'}`}</p>
+          <p className="lp-spot-price">{price(sel)}<small>{annual ? ' / year' : ' / month'}</small></p>
+          <p className="lp-mono lp-spot-sub">{annual ? 'One subscription per team, billed yearly' : `$${p.annual}K per year, billed yearly per team`}</p>
           <ul>
             {rows.slice(0, 4).map(r => <li key={r.label}><span>{r.label}</span><b>{r.vals[sel]}</b></li>)}
           </ul>
