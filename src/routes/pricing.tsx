@@ -11,9 +11,9 @@ export const Route = createFileRoute('/pricing')({
 
 /** Draft plan data carried over from the previous page. Proposed only — not a live offer. */
 const plans = [
-  { name: 'Team', blurb: 'For a team on one program.', monthly: 1, annual: 12 },
-  { name: 'Growth', blurb: 'For teams across more programs.', monthly: 2, annual: 24 },
-  { name: 'Organization', blurb: 'Advanced admin for the whole company.', monthly: 4, annual: 48 },
+  { name: 'Team', blurb: 'For a hardware team on its programs.', monthly: 1, annual: 12 },
+  { name: 'Growth', blurb: 'For several teams across connected tools.', monthly: 2, annual: 24 },
+  { name: 'Organization', blurb: 'Company-wide workspaces and advanced admin.', monthly: 4, annual: 48 },
 ] as const
 
 const rows: { label: string; vals: [string, string, string]; note?: string }[] = [
@@ -29,6 +29,7 @@ const faq = [
   { q: 'Are these final prices?', a: 'These tiers are draft proposals, to be tested in pilots with hardware teams.' },
   { q: 'What counts as a source?', a: 'A file, page, ticket, thread or record from a connected tool such as Drive, SharePoint, Jira, Confluence, Slack or your PLM.' },
   { q: 'How would Team pricing work?', a: 'Plans are priced by contributors rather than per seat: about 20 on Team, 30 on Growth and 60 on Organization, with shared team workspaces and superfolders included.' },
+  { q: 'Does it replace our PLM or PDM?', a: 'No. Footprint complements the systems of record you already use. It connects to them, reads with the access you authorize, and never rewrites your documents.' },
   { q: 'Who is Footprint AI built for?', a: 'Hardware engineering teams, starting with mid-size robotics and hardware companies, then drones, EV batteries, medical devices and industrial automation. Aerospace and defense are the long-term goal through on-prem and ITAR-compliant deployment.' },
 ]
 

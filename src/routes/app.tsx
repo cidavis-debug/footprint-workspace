@@ -466,7 +466,7 @@ function Workspace() {
         <div className="ax-column">
           {thread.length === 0 && <div className="ax-empty-chat">
             <p className="lp-mono ax-kicker">Ask mode</p>
-            <h1>What’s on your mind?</h1>
+            <h1>Ask what your team knows.</h1>
             <p>Ask across every source in this workspace. Answers cite what they used.</p>
           </div>}
           {thread.map((m, i) => <article key={i} className="ax-turn" ref={i === thread.length - 1 ? lastTurn : undefined} aria-label={`Question ${i + 1}`}>

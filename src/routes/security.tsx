@@ -62,7 +62,7 @@ function Security() {
         <div className="lp-sec-hero-copy">
           <p className="lp-mono lp-eyebrow">Security & data boundaries</p>
           <SplitHeading className="lp-mega" lines={[{ t: 'Clear boundaries.' }, { t: 'Plainly stated.', accent: true }]} />
-          <Reveal dir="none"><p className="lp-lead">Trust starts with being specific about what a product does, and what it does not. This is how Footprint AI treats your engineering data.</p></Reveal>
+          <Reveal dir="none"><p className="lp-lead">Trust starts with being specific about what a product does, and what it does not. This is how Footprint AI treats your engineering data as it connects to the tools you already use.</p></Reveal>
         </div>
         <div className="lp-sec-stack">
           <Reveal dir="slide-l" delay={250} className="lp-lit lp-glass lp-sec-pane p1"><span className="lp-mono">Access</span><b>Workspace-level access</b><p>Row-level rules tie your data to its workspace.</p></Reveal>

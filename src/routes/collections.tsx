@@ -5,7 +5,7 @@ import { pageHead } from '@/components/page-head'
 import { Emerge, MarketingPage, Plane, Rail, Reveal, SplitHeading, Stage } from '@/components/landing/shared'
 
 export const Route = createFileRoute('/collections')({
-  head: () => pageHead('Collections — Footprint AI', 'How Footprint AI superfolders, workspaces, sub-workspaces and collections connect and organize engineering sources.'),
+  head: () => pageHead('Superfolders — Footprint AI', 'How Footprint AI superfolders, workspaces, sub-workspaces and collections connect and organize engineering sources.'),
   component: Collections,
 })
 
@@ -63,13 +63,13 @@ function Collections() {
         <Reveal dir="slide-r" delay={120} className="arc-plate arc-f-slate lp-b-boundary">
           <p className="lp-mono lp-eyebrow">The boundary</p>
           <h2>The workspace is the boundary.</h2>
-          <p>Sources, questions and answers are scoped to the workspace you are in, and shared with your whole team. Collections organize what is inside it. They are not separate permission groups.</p>
+          <p>Sources, questions and answers are scoped to the workspace you are in, and shared with your whole team. Superfolders and collections organize what is inside it. They are not separate permission groups.</p>
           <div className="lp-glass lp-mini-glass"><b>Shared with your team</b><span>Team workspaces give every engineer the same source of truth.</span></div>
         </Reveal>
         <Reveal dir="none" className="lp-b-sub">
           <p className="lp-mono lp-eyebrow">Sub-workspaces</p>
           <h3>Break a program into parts.</h3>
-          <p>Create a sub-workspace beneath any workspace. Each has its own sources and its own scope for questions, so Gearbox answers stay about the gearbox.</p>
+          <p>Create a sub-workspace beneath any workspace, several levels deep. Each has its own superfolders and its own scope for questions, so Gearbox answers stay about the gearbox.</p>
         </Reveal>
         <Reveal dir="slide-d" delay={140} className="lp-b-kinds">
           <p className="lp-mono lp-eyebrow">What goes in</p>

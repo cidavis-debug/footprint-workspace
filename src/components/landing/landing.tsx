@@ -102,13 +102,13 @@ function Hero({ onOpen }: { onOpen: OpenHandler }) {
         <div className="lp-hero-copy">
           <p className="lp-mono lp-eyebrow">Robotics and hardware engineering teams</p>
           <h1 className="lp-h1">Complex Engineering. <span>Connected Intelligence.</span></h1>
-          <p className="lp-lead">Footprint AI connects the tools your engineers already use, from Drive and Jira to Slack and your PLM, into one source of truth, then catches conflicts before they become redesigns.</p>
+          <p className="lp-lead">Footprint AI connects the tools your engineers already use, from Drive and Jira to Slack and your PLM, into superfolders that stay in sync, then catches conflicts before they become redesigns.</p>
           <div className="lp-actions">
             <Link to="/app" className="lp-btn lp-btn-primary lp-btn-lg" onClick={onOpen}>Open Footprint AI <ArrowRight size={18} aria-hidden="true" /></Link>
             <Link to="/how-it-works" className="lp-btn lp-btn-ghost lp-btn-lg">See how it works</Link>
           </div>
           <ul className="lp-trio">
-            <li><FolderOpen size={18} aria-hidden="true" /> Connect every source</li>
+            <li><FolderOpen size={18} aria-hidden="true" /> Connect superfolders</li>
             <li><FileText size={18} aria-hidden="true" /> Ask with citations</li>
             <li><AlertTriangle size={18} aria-hidden="true" /> Catch conflicts</li>
           </ul>
@@ -135,7 +135,7 @@ function Problem() {
       <h2 id="lp-problem-h" className="lp-sr">The problem</h2>
       <WordReveal className="lp-statement" text="The answer exists. It’s spread across drawings, requirements, test reports, and decisions — and teams lose time rebuilding context instead of using it." />
       <div className="lp-split-text">
-        <Reveal dir="none"><p className="lp-body">Every hardware program accumulates documents that each hold part of the truth. When they drift apart, nobody notices until it is expensive.</p></Reveal>
+        <Reveal dir="none"><p className="lp-body">Every hardware program accumulates documents, tickets and threads that each hold part of the truth. Engineers keep their own workflows, so sources drift apart and nobody notices until it is expensive.</p></Reveal>
         <Reveal dir="slide-r" className="arc-plate arc-f-steel arc-inset arc-bleed-r lp-rules-slab">
           <ul className="lp-rules">
             {hiding.map(h => <li key={h.n}><div><span className="lp-mono">{h.n}</span><b>{h.t}</b><em>{h.d}</em></div></li>)}
@@ -170,7 +170,7 @@ function Ingest() {
       </div>
       <div className="lp-steel lp-steel-dark lp-columns">
         <Reveal dir="fade"><b>Workspaces</b><p>Shared team workspaces: one home per program, every engineer on the same page.</p></Reveal>
-        <Reveal dir="fade" delay={90}><b>Sub-workspaces</b><p>Break a program into subsystems without losing the parent context.</p></Reveal>
+        <Reveal dir="fade" delay={90}><b>Sub-workspaces</b><p>Break a program into subsystems, several levels deep, without losing the parent context.</p></Reveal>
         <Reveal dir="fade" delay={180}><b>Superfolders</b><p>Combine a desktop folder, a OneNote notebook and a Slack channel. Footprint tracks them and stays up to date.</p></Reveal>
       </div>
     </div>

@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/use-auth'
 
 const directory = [
   { to: '/how-it-works', label: 'How it works' },
-  { to: '/collections', label: 'Collections' },
+  { to: '/collections', label: 'Superfolders' },
   { to: '/security', label: 'Security' },
   { to: '/pricing', label: 'Pricing' },
 ] as const

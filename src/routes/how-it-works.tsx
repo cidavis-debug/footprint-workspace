@@ -97,8 +97,8 @@ function HowItWorks() {
       <Plane className="arc-plane-cut-wire" speed={0} />
       <div className="lp-inner lp-hiw-hero-inner">
         <p className="lp-mono lp-eyebrow">How it works · five steps</p>
-        <SplitHeading className="lp-mega" lines={[{ t: 'From scattered sources' }, { t: 'to a cited answer.', accent: true }]} />
-        <Reveal dir="none" delay={500} className="lp-lit lp-glass lp-hiw-sub"><p className="lp-lead">One workflow, from connected sources to a resolved conflict. Follow it down the page.</p></Reveal>
+        <SplitHeading className="lp-mega" lines={[{ t: 'From scattered sources' }, { t: 'to one source of truth.', accent: true }]} />
+        <Reveal dir="none" delay={500} className="lp-lit lp-glass lp-hiw-sub"><p className="lp-lead">Set it up once and Footprint does the rest: from connected superfolders to a resolved conflict. Follow it down the page.</p></Reveal>
       </div>
     </Stage>
     <section className="lp-journey-wrap" aria-label="The Footprint AI workflow"><div className="lp-inner"><Journey /></div></section>

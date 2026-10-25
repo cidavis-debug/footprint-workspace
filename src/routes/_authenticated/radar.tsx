@@ -60,7 +60,7 @@ function Radar() {
   const { user, signOut } = useAuth()
   return <AppShell workspaces={data.workspaces} value={data.workspaceId} onChange={id => { setSourceId(null); void navigate({ search: { workspace: id } }) }} mode="radar" email={user?.email ?? null} onSignOut={signOut}><main className="radar-shell">
     <section className="radar-main">
-      <p className="section-kicker">Engineering attention</p><h1 className="font-heading text-h1">Radar</h1>
+      <p className="section-kicker">Engineering Change Radar</p><h1 className="font-heading text-h1">Radar</h1>
       <div className="radar-filters" role="group" aria-label="Filter engineering alerts">{radarFilters.map(f => <Button key={f} variant={f === filter ? 'primary' : 'ghost'} size="sm" aria-pressed={f === filter} onClick={() => setFilter(f)}>{f}</Button>)}</div>
       <div className="radar-export" role="group" aria-label="Export report">
         <Button size="sm" variant="quiet" disabled={visible.length === 0} onClick={downloadReport}>Download report (.md)</Button>

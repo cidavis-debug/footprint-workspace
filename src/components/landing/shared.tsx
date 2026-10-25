@@ -63,7 +63,7 @@ export function Mark({ size = 28 }: { size?: number }) {
 
 export const nav = [
   { to: '/how-it-works', label: 'How It Works' },
-  { to: '/collections', label: 'Collections' },
+  { to: '/collections', label: 'Superfolders' },
   { to: '/security', label: 'Security' },
   { to: '/pricing', label: 'Pricing' },
 ] as const
