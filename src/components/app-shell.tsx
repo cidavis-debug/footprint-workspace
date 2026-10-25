@@ -92,7 +92,7 @@ export function AppShell({ workspaces, value, onChange, onCreate, busy, mode, em
         <button type="submit" disabled={busy || !name.trim()} aria-label="Create workspace"><Plus size={15} aria-hidden="true" /></button>
       </form>}
       <WorkspaceTree workspaces={workspaces} value={value} onChange={onChange} {...(onCreate ? { onCreate } : {})} {...(busy !== undefined ? { busy } : {})} />
-      {workspaces.length === 0 && <p className="ax-empty">No workspace found for this account.</p>}
+      {workspaces.length === 0 && <p className="ax-empty">Create a workspace to bring your team’s sources together.</p>}
     </nav>
 
     <div className="ax-center">{children}</div>

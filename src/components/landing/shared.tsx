@@ -181,7 +181,7 @@ export function ClosingBand({ onOpen, joined = false, lean = 'r' }: { onOpen: Op
     <Plane className="arc-plane-closing" speed={50} />
     <div className="lp-inner">
       <Reveal dir="slide-d" className="lp-lit lp-glass lp-closing">
-        <h2 className="lp-h2">Give your team <span>one place to start.</span></h2>
+        <h2 className="lp-h2">Give your team <span>one source of truth.</span></h2>
         <div className="lp-actions">
           <Link to="/app" className="lp-btn lp-btn-primary lp-btn-lg" onClick={onOpen}>Open Footprint AI <ArrowRight size={18} aria-hidden="true" /></Link>
           <Link to="/how-it-works" className="lp-btn lp-btn-dark lp-btn-lg">See how it works</Link>

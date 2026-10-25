@@ -5,39 +5,39 @@ import { pageHead } from '@/components/page-head'
 import { Emerge, MarketingPage, Plane, Reveal, SplitHeading, Stage, WordReveal, clamp, prefersReducedMotion, useScrollProgress, type Dir } from '@/components/landing/shared'
 
 export const Route = createFileRoute('/how-it-works')({
-  head: () => pageHead('How it works — Footprint AI', 'The Footprint AI workflow: set up team workspaces, connect your sources, ask cited questions, and catch conflicts before they cause redesigns.'),
+  head: () => pageHead('How it works — Footprint AI', 'The Footprint AI workflow: set up shared workspaces, connect superfolders, ask cited questions, and catch and route conflicts before they cause redesigns.'),
   component: HowItWorks,
 })
 
 type Step = { id: string; n: string; title: string; lead: string; dir: Dir; body: ReactNode; tone?: 'slate' }
 
 const steps: Step[] = [
-  { id: 'workspace', n: '01', title: 'Create a workspace', dir: 'slide-l',
-    lead: 'A workspace is the shared home for one program or team’s sources. Sub-workspaces nest beneath it, so a subsystem can have its own space without losing the parent.',
+  { id: 'workspace', n: '01', title: 'Set up shared workspaces', dir: 'slide-l',
+    lead: 'Start with a personal workspace, then add shared ones for a team, group or company. Sub-workspaces let Footprint look only at the information you want.',
     body: <ul className="lp-tree" aria-label="Example workspace structure">
       <li><b>Actuator Program</b><span className="lp-mono">Workspace</span></li>
       <li className="sub"><b>Gearbox</b><span className="lp-mono">Sub-workspace</span></li>
       <li className="sub"><b>Controller</b><span className="lp-mono">Sub-workspace</span></li>
       <li><b>Test Campaign</b><span className="lp-mono">Workspace</span></li>
     </ul> },
-  { id: 'add', n: '02', title: 'Add files and links', dir: 'slide-r',
-    lead: 'Connect files and links, or let superfolders pull your sources in and keep them in sync. Footprint AI reads every supported format so answers can cite it.',
+  { id: 'add', n: '02', title: 'Connect your superfolders', dir: 'slide-r',
+    lead: 'A superfolder is the set of places to track for a workspace, such as a desktop folder, a OneNote notebook, a Drive folder, a Jira project or a Slack channel. Footprint tracks them and stays up to date.',
     body: <dl className="lp-facts">
       <div><dt>Files</dt><dd>PDF, Word, Excel, PowerPoint, Markdown, text</dd></div>
-      <div><dt>Size</dt><dd>Up to 20 MB each</dd></div>
-      <div><dt>Links</dt><dd>Public web pages (http or https)</dd></div>
-      <div><dt>Kept current</dt><dd>Auto-sync from your tools</dd></div>
+      <div><dt>Sources</dt><dd>Drive, SharePoint, Jira, Confluence, PLM</dd></div>
+      <div><dt>Chat</dt><dd>Slack and Teams</dd></div>
+      <div><dt>Kept current</dt><dd>Auto-sync, no re-uploading</dd></div>
     </dl> },
-  { id: 'organize', n: '03', title: 'Organize into collections', dir: 'none',
-    lead: 'Every workspace groups its sources into collections, with the file or link type visible at a glance, so questions start from the right material.',
+  { id: 'organize', n: '03', title: 'One view across sources', dir: 'none',
+    lead: 'Every workspace brings its sources together, with each source’s type, owner and revision visible at a glance, so questions start from the right material.',
     body: <ul className="lp-rows" aria-label="Example collection">
-      <li><FileText size={16} aria-hidden="true" /><b>Interface drawing.pdf</b><span className="lp-mono">read for answers</span></li>
-      <li><FileText size={16} aria-hidden="true" /><b>Requirements.md</b><span className="lp-mono">read for answers</span></li>
-      <li><FileText size={16} aria-hidden="true" /><b>Test notes.txt</b><span className="lp-mono">read for answers</span></li>
-      <li><Link2 size={16} aria-hidden="true" /><b>Supplier datasheet</b><span className="lp-mono">page text read</span></li>
+      <li><FileText size={16} aria-hidden="true" /><b>Interface drawing.pdf</b><span className="lp-mono">Drive · synced</span></li>
+      <li><FileText size={16} aria-hidden="true" /><b>Requirements</b><span className="lp-mono">Jira · synced</span></li>
+      <li><FileText size={16} aria-hidden="true" /><b>Test notes</b><span className="lp-mono">Slack · synced</span></li>
+      <li><Link2 size={16} aria-hidden="true" /><b>Supplier datasheet</b><span className="lp-mono">PLM · synced</span></li>
     </ul> },
   { id: 'ask', n: '04', title: 'Ask, with citations', dir: 'fade', tone: 'slate',
-    lead: 'Ask a question in plain language. The answer draws on the active workspace and names the sources it used, so you can open them and check.',
+    lead: 'Ask a question in plain language. The answer draws on the active workspace and names the sources it used and who owns each one, so you can open them and check.',
     body: <div className="lp-qa">
       <p className="lp-mono">Illustrative example</p>
       <p className="lp-qa-q">What clearance does the actuator housing need?</p>
@@ -45,13 +45,13 @@ const steps: Step[] = [
       <div className="lp-cites"><span><b className="lp-mono">1</b>Interface Drawing</span><span><b className="lp-mono">2</b>Assembly Specification</span></div>
       <p className="lp-fine">No answer is guaranteed to be perfect. Check important details against the original.</p>
     </div> },
-  { id: 'analyze', n: '05', title: 'Analyze for conflicts', dir: 'slide-d',
-    lead: 'Footprint AI extracts engineering claims — interfaces, requirements, decisions, constraints and assumptions — and compares them across the workspace, including EBOM to MBOM. Conflicts land in Radar with a confidence level and a likely-stale-source hint, then reach the right people in Slack or Teams.',
+  { id: 'analyze', n: '05', title: 'Catch and route conflicts', dir: 'slide-d',
+    lead: 'Footprint pulls the main assumptions and design decisions from every source and flags where they conflict, including EBOM against MBOM. Review the evidence, contact the owners in Slack or Teams, or let Footprint draft the engineering change order.',
     body: <div className="lp-conflict">
       <div><span className="lp-mono">Interface Drawing</span><strong>8<small>mm</small></strong></div>
       <div className="vs lp-mono">vs</div>
       <div className="hot"><span className="lp-mono">Assembly Specification</span><strong>10<small>mm</small></strong></div>
-      <p>Potential conflict — review required. Footprint AI flags it; your team decides which source is correct.</p>
+      <p>Potential conflict — review required. Footprint AI flags it and routes it to the owners; your team decides which source is correct.</p>
     </div> },
 ]
 
@@ -97,18 +97,18 @@ function HowItWorks() {
       <Plane className="arc-plane-cut-wire" speed={0} />
       <div className="lp-inner lp-hiw-hero-inner">
         <p className="lp-mono lp-eyebrow">How it works · five steps</p>
-        <SplitHeading className="lp-mega" lines={[{ t: 'From scattered files' }, { t: 'to a cited answer.', accent: true }]} />
-        <Reveal dir="none" delay={500} className="lp-lit lp-glass lp-hiw-sub"><p className="lp-lead">One workflow, from the first file to a conflict resolved. Follow it down the page.</p></Reveal>
+        <SplitHeading className="lp-mega" lines={[{ t: 'From scattered sources' }, { t: 'to a cited answer.', accent: true }]} />
+        <Reveal dir="none" delay={500} className="lp-lit lp-glass lp-hiw-sub"><p className="lp-lead">One workflow, from connected sources to a resolved conflict. Follow it down the page.</p></Reveal>
       </div>
     </Stage>
     <section className="lp-journey-wrap" aria-label="The Footprint AI workflow"><div className="lp-inner"><Journey /></div></section>
     <Stage className="lp-section lp-dark lp-slate lp-honest arc-sec arc-wt arc-t-l arc-b-l" aria-labelledby="lp-honest-h">
       <div className="lp-dark-bg" aria-hidden="true" />
       <div className="lp-inner">
-        <p className="lp-mono lp-eyebrow">A note on links</p>
-        <h2 id="lp-honest-h" className="lp-sr">Links stay honest</h2>
-        <WordReveal className="lp-statement lp-statement-dark" text="Links stay honest. Footprint AI reads public web pages you save, but it cannot open private Google Drive or OneDrive content." />
-        <Emerge from="left" delay={150}><p className="lp-body">For private documents, upload a supported file. <Link to="/security" className="lp-textlink">Read the data boundaries <ArrowUpRight size={15} aria-hidden="true" /></Link></p></Emerge>
+        <p className="lp-mono lp-eyebrow">A note on control</p>
+        <h2 id="lp-honest-h" className="lp-sr">Your tools stay yours</h2>
+        <WordReveal className="lp-statement lp-statement-dark" text="Your tools stay yours. Footprint connects to the systems of record you already use, with the access you authorize, and never rewrites your documents." />
+        <Emerge from="left" delay={150}><p className="lp-body">Footprint complements PLM and PDM; it never replaces them. <Link to="/security" className="lp-textlink">Read the data boundaries <ArrowUpRight size={15} aria-hidden="true" /></Link></p></Emerge>
       </div>
     </Stage>
   </MarketingPage>

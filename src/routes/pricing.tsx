@@ -17,19 +17,19 @@ const plans = [
 ] as const
 
 const rows: { label: string; vals: [string, string, string]; note?: string }[] = [
-  { label: 'Workspaces', vals: ['1', '3', '10'] },
-  { label: 'Members', vals: ['1', '1', '5 included'], note: 'Multi-member workspaces are not available in the product today.' },
-  { label: 'Sources', vals: ['25', '500 across workspaces', '2,000 across workspaces'] },
-  { label: 'AI questions per month', vals: ['50', '500', '2,000 shared'] },
-  { label: 'Collections and source citations', vals: ['Included', 'Included', 'Included'] },
-  { label: 'Shared collections', vals: ['—', '—', 'Proposed'], note: 'Proposed for Team; not available today.' },
+  { label: 'Shared team workspaces', vals: ['Included', 'Included', 'Included'] },
+  { label: 'Contributors', vals: ['~20', '~30', '~60'] },
+  { label: 'Superfolders and auto-sync', vals: ['Included', 'Included', 'Included'] },
+  { label: 'Cited answers', vals: ['Included', 'Included', 'Included'] },
+  { label: 'Engineering Change Radar', vals: ['Included', 'Included', 'Included'] },
+  { label: 'Slack and Teams routing', vals: ['Included', 'Included', 'Included'] },
 ]
 
 const faq = [
-  { q: 'Can I subscribe now?', a: 'No. These prices and limits are draft proposals. No plan can be purchased or activated.' },
-  { q: 'What counts as a source?', a: 'An uploaded file (PDF, Word, Excel, PowerPoint, Markdown or text, up to 20 MB each) or a saved public web link whose page text Footprint AI reads.' },
-  { q: 'How would Team pricing work?', a: 'The proposed Team price would include five members rather than charging per person, with source and question limits shared across the team’s workspaces. Extra-member pricing has not been defined, and multi-member workspaces do not exist yet.' },
-  { q: 'Are taxes and overages included?', a: 'Tax treatment has not been decided. The proposal has no automatic overage charges; limits and any upgrade options would be confirmed before launch.' },
+  { q: 'Are these final prices?', a: 'These tiers are draft proposals, to be tested in pilots with hardware teams.' },
+  { q: 'What counts as a source?', a: 'A file, page, ticket, thread or record from a connected tool such as Drive, SharePoint, Jira, Confluence, Slack or your PLM.' },
+  { q: 'How would Team pricing work?', a: 'Plans are priced by contributors rather than per seat: about 20 on Team, 30 on Growth and 60 on Organization, with shared team workspaces and superfolders included.' },
+  { q: 'Who is Footprint AI built for?', a: 'Hardware engineering teams, starting with mid-size robotics and hardware companies, then drones, EV batteries, medical devices and industrial automation. Aerospace and defense are the long-term goal through on-prem and ITAR-compliant deployment.' },
 ]
 
 function Pricing() {

@@ -100,15 +100,15 @@ function Hero({ onOpen }: { onOpen: OpenHandler }) {
       <div className="lp-dotwrap" aria-hidden="true"><div className="lp-dot" /></div>
       <div className="lp-inner lp-hero-inner">
         <div className="lp-hero-copy">
-          <p className="lp-mono lp-eyebrow">For hardware engineering teams</p>
+          <p className="lp-mono lp-eyebrow">Robotics and hardware engineering teams</p>
           <h1 className="lp-h1">Complex Engineering. <span>Connected Intelligence.</span></h1>
-          <p className="lp-lead">Footprint AI is the source of truth for hardware engineering knowledge. It connects your teams’ sources, answers with citations, and catches conflicts before they become redesigns.</p>
+          <p className="lp-lead">Footprint AI connects the tools your engineers already use, from Drive and Jira to Slack and your PLM, into one source of truth, then catches conflicts before they become redesigns.</p>
           <div className="lp-actions">
             <Link to="/app" className="lp-btn lp-btn-primary lp-btn-lg" onClick={onOpen}>Open Footprint AI <ArrowRight size={18} aria-hidden="true" /></Link>
             <Link to="/how-it-works" className="lp-btn lp-btn-ghost lp-btn-lg">See how it works</Link>
           </div>
           <ul className="lp-trio">
-            <li><FolderOpen size={18} aria-hidden="true" /> Connect sources</li>
+            <li><FolderOpen size={18} aria-hidden="true" /> Connect every source</li>
             <li><FileText size={18} aria-hidden="true" /> Ask with citations</li>
             <li><AlertTriangle size={18} aria-hidden="true" /> Catch conflicts</li>
           </ul>
@@ -155,23 +155,23 @@ function Ingest() {
     <div className="lp-inner">
       <div className="lp-ingest-top">
         <Reveal dir="none" className="lp-ingest-title">
-          <p className="lp-mono lp-eyebrow">02 — Bring it together</p>
-          <h2 className="lp-h2" id="lp-ingest-h">Every source, <span>one shared workspace.</span></h2>
+          <p className="lp-mono lp-eyebrow">02 — Superfolders</p>
+          <h2 className="lp-h2" id="lp-ingest-h">Connect it all, <span>keep it in sync.</span></h2>
         </Reveal>
         <Reveal dir="slide-r" className="lp-lit lp-glass lp-spec" delay={120}>
-          <p className="lp-mono lp-spec-title">What Footprint connects</p>
+          <p className="lp-mono lp-spec-title">What superfolders connect</p>
           <dl>
-            <div><dt>Files</dt><dd>PDF, Word, Excel, PPT, MD, TXT</dd></div>
-            <div><dt>Sync</dt><dd>Superfolders stay current</dd></div>
-            <div><dt>Links</dt><dd>Public http or https pages</dd></div>
-            <div><dt>Routing</dt><dd>Slack and Teams</dd></div>
+            <div><dt>Files</dt><dd>Drive, OneDrive, SharePoint</dd></div>
+            <div><dt>Tickets</dt><dd>Jira and Confluence</dd></div>
+            <div><dt>Chat</dt><dd>Slack and Teams</dd></div>
+            <div><dt>Systems</dt><dd>PLM, PDM and ERP</dd></div>
           </dl>
         </Reveal>
       </div>
       <div className="lp-steel lp-steel-dark lp-columns">
         <Reveal dir="fade"><b>Workspaces</b><p>Shared team workspaces: one home per program, every engineer on the same page.</p></Reveal>
         <Reveal dir="fade" delay={90}><b>Sub-workspaces</b><p>Break a program into subsystems without losing the parent context.</p></Reveal>
-        <Reveal dir="fade" delay={180}><b>Superfolders</b><p>Pull in files, folders and notes from your tools and keep them in sync.</p></Reveal>
+        <Reveal dir="fade" delay={180}><b>Superfolders</b><p>Combine a desktop folder, a OneNote notebook and a Slack channel. Footprint tracks them and stays up to date.</p></Reveal>
       </div>
     </div>
   </Stage>
@@ -237,7 +237,7 @@ function Radar() {
     <div className="lp-inner">
       <div className="lp-radar-head">
         <Reveal dir="none"><p className="lp-mono lp-eyebrow">04 — Engineering Change Radar</p><h2 className="lp-h2" id="lp-radar-h">Two sources. <span>One number that doesn’t match.</span></h2></Reveal>
-        <Reveal dir="none" delay={100}><p className="lp-body">When sources disagree, Footprint AI surfaces the difference with the evidence behind it, so your team can review it. It does not decide which source is right.</p></Reveal>
+        <Reveal dir="none" delay={100}><p className="lp-body">When sources disagree, Footprint AI surfaces the difference with the evidence behind it, names the likely out-of-date source and routes it to the right engineer. It does not decide which source is right.</p></Reveal>
       </div>
       <div className="lp-steel lp-measure" ref={ref} key={run} data-shown={seen} data-hover={hover ?? ''}>
         <div className="lp-mrow lp-mrow-a" onPointerEnter={() => setHover('a')} onPointerLeave={() => setHover(null)}>
@@ -254,8 +254,8 @@ function Radar() {
       </div>
       <div className="lp-radar-foot">
         <div className="lp-expand">
-          <details className="lp-details"><summary>What Footprint AI compares</summary><p>Claims extracted from each source — a subject, an attribute, a value and a unit, with the excerpt they came from — are compared across the workspace. Possible conflicts, interface mismatches, EBOM-to-MBOM differences and unsupported assumptions are raised for review, each with a confidence level and, where possible, a likely out-of-date source.</p></details>
-          <details className="lp-details"><summary>What your team can do</summary><p>Open both sources and their evidence side by side, route the issue to the right engineers in Slack or Teams, and draft the change order. Nothing is changed in your documents.</p></details>
+          <details className="lp-details"><summary>What Footprint AI compares</summary><p>Claims (subject, attribute, value, unit and excerpt) are compared across every connected source, raising conflicts, interface mismatches, EBOM-to-MBOM differences and unsupported assumptions, each with a confidence level and a likely-stale-source hint.</p></details>
+          <details className="lp-details"><summary>What your team can do</summary><p>Review the evidence side by side, notify the owner of each source in Slack or Teams, and let Footprint draft the engineering change order. Nothing is changed in your documents.</p></details>
         </div>
         <button type="button" className="lp-btn lp-btn-ghost" onClick={() => setRun(r => r + 1)}><RotateCcw size={15} aria-hidden="true" /> Replay</button>
       </div>
@@ -282,7 +282,7 @@ function Security({ onOpen }: { onOpen: OpenHandler }) {
       </ol>
       <Link to="/security" className="lp-textlink">Read the security details <ArrowUpRight size={15} aria-hidden="true" /></Link>
       <Reveal dir="slide-u" className="lp-lit lp-glass lp-closing">
-        <h2 className="lp-h2">Give your team <span>one place to start.</span></h2>
+        <h2 className="lp-h2">Give your team <span>one source of truth.</span></h2>
         <div className="lp-actions">
           <Link to="/app" className="lp-btn lp-btn-primary lp-btn-lg" onClick={onOpen}>Open Footprint AI <ArrowRight size={18} aria-hidden="true" /></Link>
           <Link to="/how-it-works" className="lp-btn lp-btn-dark lp-btn-lg">See how it works</Link>

@@ -29,7 +29,7 @@ type Workspace = WorkspaceNode
 type Collection = { id: string; name: string; description: string | null }
 type Source = { id: string; title: string; source_type: string; status: string; collection_id: string | null; engineering_analysis_status: string; engineering_summary: string | null }
 
-export const Route = createFileRoute('/app')({ ssr: false, validateSearch: (s: Record<string, unknown>): { workspace?: string; sources?: boolean } => ({ ...(typeof s['workspace'] === 'string' ? { workspace: s['workspace'] } : {}), ...(s['sources'] === true ? { sources: true } : {}) }), head: () => pageHead('Workspace — Footprint AI', 'A focused workspace for questions, documents, and shared team knowledge.'), component: Workspace })
+export const Route = createFileRoute('/app')({ ssr: false, validateSearch: (s: Record<string, unknown>): { workspace?: string; sources?: boolean } => ({ ...(typeof s['workspace'] === 'string' ? { workspace: s['workspace'] } : {}), ...(s['sources'] === true ? { sources: true } : {}) }), head: () => pageHead('Workspace — Footprint AI', 'Ask cited questions across every source in your shared team workspace, from Drive and Jira to Slack and your PLM.'), component: Workspace })
 
 /** The analysis fingerprint and version must survive a file replacement so the next analysis can tell what changed. */
 function keepAnalysisMeta(metadata: unknown) {
@@ -362,7 +362,7 @@ function Workspace() {
     setNotice(`Workspace “${name}” created.`)
   }
 
-  const statusLine = dataLoading ? 'Loading your workspace…' : workspaces.length > 0 ? `Answering from “${workspaces.find(w => w.id === activeWorkspace)?.name ?? 'Personal'}” sources.` : 'No workspace found for this account.'
+  const statusLine = dataLoading ? 'Loading your workspace…' : workspaces.length > 0 ? `Answering from “${workspaces.find(w => w.id === activeWorkspace)?.name ?? 'Personal'}” sources.` : 'Create a workspace to bring your team’s sources together.'
   const isLink = (t: string) => t === 'link' || t === 'url'
   const sourcesPanel = <aside className="ax-glass ax-sources" aria-label="Sources">
     <div className="ax-src-head">
@@ -427,7 +427,7 @@ function Workspace() {
               </div>}
             </li>
           })
-        : <li className="ax-empty"><b>{sources.length > 0 ? 'No file names match.' : 'No sources yet.'}</b><span>{sources.length > 0 ? 'Text matches, if any, are listed above.' : `Your “${collections[0]?.name ?? 'General'}” collection is ready — add a file or a link.`}</span></li>}
+        : <li className="ax-empty"><b>{sources.length > 0 ? 'No file names match.' : 'No sources yet.'}</b><span>{sources.length > 0 ? 'Text matches, if any, are listed above.' : 'Superfolders will keep Drive, Jira and Slack sources current. Add a file or a link to begin.'}</span></li>}
     </ul>
 
     <details className="ax-manage">
@@ -467,7 +467,7 @@ function Workspace() {
           {thread.length === 0 && <div className="ax-empty-chat">
             <p className="lp-mono ax-kicker">Ask mode</p>
             <h1>What’s on your mind?</h1>
-            <p>Ask about the sources in this workspace. Answers cite what they used.</p>
+            <p>Ask across every source in this workspace. Answers cite what they used.</p>
           </div>}
           {thread.map((m, i) => <article key={i} className="ax-turn" ref={i === thread.length - 1 ? lastTurn : undefined} aria-label={`Question ${i + 1}`}>
             <header className="ax-q"><span className="ax-who lp-mono"><i aria-hidden="true" />You</span><h2>{m.question}</h2></header>
@@ -489,7 +489,7 @@ function Workspace() {
       <div className="ax-dock" ref={dockRef}>
         <div className="ax-column">
           {notice && <p className="ax-notice ax-dismissible" role="status" key={noticeState.id}><span>{notice}</span><button type="button" className="ax-notice-x" aria-label="Dismiss message" onClick={() => setNotice('')}><X size={14} aria-hidden="true" /></button></p>}
-          <PromptBar onSend={q => void ask(q)} onUpload={openUpload} onAddLink={openLink} asking={asking} onStop={stop} placeholder={asking ? 'Thinking…' : 'Ask a question…'} />
+          <PromptBar onSend={q => void ask(q)} onUpload={openUpload} onAddLink={openLink} asking={asking} onStop={stop} placeholder={asking ? 'Thinking…' : 'Ask your engineering sources…'} />
           <p className="ax-hint lp-mono">{statusLine} <span>Shift + Enter for new line</span></p>
         </div>
       </div>
