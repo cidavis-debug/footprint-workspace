@@ -21,9 +21,9 @@ const steps: Step[] = [
       <li><b>Test Campaign</b><span className="lp-mono">Workspace</span></li>
     </ul> },
   { id: 'add', n: '02', title: 'Connect your superfolders', dir: 'slide-r',
-    lead: 'A superfolder is the set of places to track for a workspace, such as a desktop folder, a OneNote notebook, a Drive folder, a Jira project or a Slack channel. Footprint tracks them and stays up to date.',
+    lead: 'A superfolder is the set of places to track for a workspace, such as a local folder, a Word doc, a OneNote notebook, a Drive folder, a Jira project or a Slack channel. Footprint tracks them and stays up to date.',
     body: <dl className="lp-facts">
-      <div><dt>Files</dt><dd>PDF, Word, Excel, PowerPoint, Markdown, text</dd></div>
+      <div><dt>Files</dt><dd>Local folders, Word, Excel, PowerPoint, OneNote</dd></div>
       <div><dt>Sources</dt><dd>Drive, SharePoint, Jira, Confluence, PLM</dd></div>
       <div><dt>Chat</dt><dd>Slack and Teams</dd></div>
       <div><dt>Kept current</dt><dd>Auto-sync, no re-uploading</dd></div>
@@ -98,7 +98,7 @@ function HowItWorks() {
       <div className="lp-inner lp-hiw-hero-inner">
         <p className="lp-mono lp-eyebrow">How it works · five steps</p>
         <SplitHeading className="lp-mega" lines={[{ t: 'From scattered sources' }, { t: 'to one source of truth.', accent: true }]} />
-        <Reveal dir="none" delay={500} className="lp-lit lp-glass lp-hiw-sub"><p className="lp-lead">Set it up once and Footprint does the rest: from connected superfolders to a resolved conflict. Follow it down the page.</p></Reveal>
+        <Reveal dir="none" delay={500} className="lp-lit lp-glass lp-hiw-sub"><p className="lp-lead">Set it up once and Footprint does the rest: from connected superfolders to a resolved conflict, with fewer roadblocks along the way.</p></Reveal>
       </div>
     </Stage>
     <section className="lp-journey-wrap" aria-label="The Footprint AI workflow"><div className="lp-inner"><Journey /></div></section>
@@ -108,7 +108,7 @@ function HowItWorks() {
         <p className="lp-mono lp-eyebrow">A note on control</p>
         <h2 id="lp-honest-h" className="lp-sr">Your tools stay yours</h2>
         <WordReveal className="lp-statement lp-statement-dark" text="Your tools stay yours. Footprint connects to the systems of record you already use, with the access you authorize, and never rewrites your documents." />
-        <Emerge from="left" delay={150}><p className="lp-body">Footprint complements PLM and PDM; it never replaces them. <Link to="/security" className="lp-textlink">Read the data boundaries <ArrowUpRight size={15} aria-hidden="true" /></Link></p></Emerge>
+        <Emerge from="left" delay={150}><p className="lp-body">Footprint complements PLM and PDM, and there is nothing new to learn. <Link to="/security" className="lp-textlink">Read the data boundaries <ArrowUpRight size={15} aria-hidden="true" /></Link></p></Emerge>
       </div>
     </Stage>
   </MarketingPage>

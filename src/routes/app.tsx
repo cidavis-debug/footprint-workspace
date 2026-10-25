@@ -427,7 +427,7 @@ function Workspace() {
               </div>}
             </li>
           })
-        : <li className="ax-empty"><b>{sources.length > 0 ? 'No file names match.' : 'No sources yet.'}</b><span>{sources.length > 0 ? 'Text matches, if any, are listed above.' : 'Superfolders will keep Drive, Jira and Slack sources current. Add a file or a link to begin.'}</span></li>}
+        : <li className="ax-empty"><b>{sources.length > 0 ? 'No file names match.' : 'No sources yet.'}</b><span>{sources.length > 0 ? 'Text matches, if any, are listed above.' : 'Superfolders will keep local documents, Drive, Jira and Slack current. Add a file or a link to begin.'}</span></li>}
     </ul>
 
     <details className="ax-manage">

@@ -16,11 +16,11 @@ const tree: Node[] = [
   { id: 'ap', label: 'Actuator Program', level: 0, collection: 'General', sources: [
     { name: 'Program requirements', kind: 'file', tag: 'Jira' }, { name: 'Interface drawing.pdf', kind: 'file', tag: 'Drive' }, { name: 'Supplier datasheet', kind: 'link', tag: 'PLM' }] },
   { id: 'gb', label: 'Gearbox', level: 1, collection: 'General', sources: [
-    { name: 'Gear ratio study', kind: 'file', tag: 'Confluence' }, { name: 'Housing tolerances', kind: 'file', tag: 'SharePoint' }] },
+    { name: 'Gear ratio study', kind: 'file', tag: 'Confluence' }, { name: 'Housing tolerances', kind: 'file', tag: 'Word' }] },
   { id: 'ct', label: 'Controller', level: 1, collection: 'General', sources: [
     { name: 'Firmware notes', kind: 'file', tag: 'Notion' }, { name: 'Vendor reference', kind: 'link', tag: 'Link' }, { name: 'Bench test log', kind: 'file', tag: 'Slack' }] },
   { id: 'tc', label: 'Test Campaign', level: 0, collection: 'General', sources: [
-    { name: 'Thermal soak plan', kind: 'file', tag: 'OneNote' }, { name: 'Run 14 report.pdf', kind: 'file', tag: 'Drive' }] },
+    { name: 'Thermal soak plan', kind: 'file', tag: 'OneNote' }, { name: 'Run 14 report.pdf', kind: 'file', tag: 'Desktop' }] },
 ]
 
 function Explorer() {
@@ -53,7 +53,7 @@ function Collections() {
           <p className="lp-mono lp-eyebrow">Superfolders · connected knowledge</p>
           <SplitHeading className="lp-mega" lines={[{ t: 'Every source.' }, { t: 'One shared home.', accent: true }]} />
         </div>
-        <Reveal dir="slide-r" delay={400} className="lp-lit lp-glass-light"><p className="lp-lead">Workspaces keep programs apart. Sub-workspaces break them into parts. Superfolders connect the tools your sources live in. Try the structure below.</p></Reveal>
+        <Reveal dir="slide-r" delay={400} className="lp-lit lp-glass-light"><p className="lp-lead">Workspaces keep programs apart. Sub-workspaces break them into parts. Superfolders connect the local documents and tools your sources live in. Try the structure below.</p></Reveal>
       </div>
     </Stage>
 
@@ -74,7 +74,7 @@ function Collections() {
         <Reveal dir="slide-d" delay={140} className="lp-b-kinds">
           <p className="lp-mono lp-eyebrow">What goes in</p>
           <h3>Files, links and tools.</h3>
-          <p>Files up to 20 MB, public web links, and connected tools such as Drive, OneDrive, SharePoint, Jira, Confluence, Notion, Slack, Teams and PLM, kept in sync by superfolders.</p>
+          <p>Local documents like Word files and OneNote notebooks, public web links, and connected tools such as Drive, SharePoint, Jira, Confluence, Slack, Teams and PLM, kept in sync by superfolders.</p>
         </Reveal>
         <Reveal dir="slide-u" delay={100} className="lp-lit arc-plate arc-f-frost lp-b-status">
           <div>
@@ -88,7 +88,7 @@ function Collections() {
           <div>
             <p className="lp-mono lp-eyebrow lp-planned">The platform</p>
             <ul className="lp-checks lp-checks-muted">
-              <li>Superfolders that auto-sync Drive, SharePoint, Jira and Confluence</li>
+              <li>Superfolders that auto-sync local folders, Word, OneNote, Drive, Jira and Confluence</li>
               <li>Slack and Teams routing to the right owner</li>
               <li>EBOM-to-MBOM checks and change-order drafting</li>
             </ul>
@@ -102,7 +102,7 @@ function Collections() {
       <Rail className="arc-rail-wide" />
       <div className="lp-col-end-inner">
         <Emerge from="left"><h2 className="lp-h2">Simple structure. <span>Shared context.</span></h2></Emerge>
-        <Reveal dir="none"><p className="lp-body">Connect a superfolder once and Footprint keeps the program’s sources current. <Link to="/how-it-works" className="lp-textlink lp-textlink-ink">Follow the full workflow <ArrowUpRight size={15} aria-hidden="true" /></Link></p></Reveal>
+        <Reveal dir="none"><p className="lp-body">Connect a superfolder once and Footprint keeps the program’s sources current, so your team spends less time hunting and more time building. <Link to="/how-it-works" className="lp-textlink lp-textlink-ink">Follow the full workflow <ArrowUpRight size={15} aria-hidden="true" /></Link></p></Reveal>
       </div>
       </div>
     </section>

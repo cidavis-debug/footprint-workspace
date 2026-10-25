@@ -101,8 +101,8 @@ function Hero({ onOpen }: { onOpen: OpenHandler }) {
       <div className="lp-inner lp-hero-inner">
         <div className="lp-hero-copy">
           <p className="lp-mono lp-eyebrow">Robotics and hardware engineering teams</p>
-          <h1 className="lp-h1">Complex Engineering. <span>Connected Intelligence.</span></h1>
-          <p className="lp-lead">Footprint AI connects the tools your engineers already use, from Drive and Jira to Slack and your PLM, into superfolders that stay in sync, then catches conflicts before they become redesigns.</p>
+          <h1 className="lp-h1">The future, <span>built together.</span></h1>
+          <p className="lp-lead">Superfolders keep everything your engineers already use in sync, from local Word files and OneNote to Drive, Jira, Slack and your PLM. Footprint catches conflicts early, so your team builds faster with fewer roadblocks.</p>
           <div className="lp-actions">
             <Link to="/app" className="lp-btn lp-btn-primary lp-btn-lg" onClick={onOpen}>Open Footprint AI <ArrowRight size={18} aria-hidden="true" /></Link>
             <Link to="/how-it-works" className="lp-btn lp-btn-ghost lp-btn-lg">See how it works</Link>
@@ -135,7 +135,7 @@ function Problem() {
       <h2 id="lp-problem-h" className="lp-sr">The problem</h2>
       <WordReveal className="lp-statement" text="The answer exists. It’s spread across drawings, requirements, test reports, and decisions — and teams lose time rebuilding context instead of using it." />
       <div className="lp-split-text">
-        <Reveal dir="none"><p className="lp-body">Every hardware program accumulates documents, tickets and threads that each hold part of the truth. Engineers keep their own workflows, so sources drift apart and nobody notices until it is expensive.</p></Reveal>
+        <Reveal dir="none"><p className="lp-body">Every hardware program accumulates documents, tickets and threads that each hold part of the truth. Everyone works from a different source of truth, so conflicts surface late and force redesigns.</p></Reveal>
         <Reveal dir="slide-r" className="arc-plate arc-f-steel arc-inset arc-bleed-r lp-rules-slab">
           <ul className="lp-rules">
             {hiding.map(h => <li key={h.n}><div><span className="lp-mono">{h.n}</span><b>{h.t}</b><em>{h.d}</em></div></li>)}
@@ -161,9 +161,9 @@ function Ingest() {
         <Reveal dir="slide-r" className="lp-lit lp-glass lp-spec" delay={120}>
           <p className="lp-mono lp-spec-title">What superfolders connect</p>
           <dl>
-            <div><dt>Files</dt><dd>Drive, OneDrive, SharePoint</dd></div>
-            <div><dt>Tickets</dt><dd>Jira and Confluence</dd></div>
-            <div><dt>Chat</dt><dd>Slack and Teams</dd></div>
+            <div><dt>Local</dt><dd>Folders, Word, OneNote</dd></div>
+            <div><dt>Cloud</dt><dd>Drive, OneDrive, SharePoint</dd></div>
+            <div><dt>Teams</dt><dd>Jira, Confluence, Slack, Teams</dd></div>
             <div><dt>Systems</dt><dd>PLM, PDM and ERP</dd></div>
           </dl>
         </Reveal>
@@ -171,7 +171,7 @@ function Ingest() {
       <div className="lp-steel lp-steel-dark lp-columns">
         <Reveal dir="fade"><b>Workspaces</b><p>Shared team workspaces: one home per program, every engineer on the same page.</p></Reveal>
         <Reveal dir="fade" delay={90}><b>Sub-workspaces</b><p>Break a program into subsystems, several levels deep, without losing the parent context.</p></Reveal>
-        <Reveal dir="fade" delay={180}><b>Superfolders</b><p>Combine a desktop folder, a OneNote notebook and a Slack channel. Footprint tracks them and stays up to date.</p></Reveal>
+        <Reveal dir="fade" delay={180}><b>Superfolders</b><p>Combine a local folder, a Word doc, a OneNote notebook and a Slack channel. Footprint tracks them and stays up to date.</p></Reveal>
       </div>
     </div>
   </Stage>
@@ -282,7 +282,7 @@ function Security({ onOpen }: { onOpen: OpenHandler }) {
       </ol>
       <Link to="/security" className="lp-textlink">Read the security details <ArrowUpRight size={15} aria-hidden="true" /></Link>
       <Reveal dir="slide-u" className="lp-lit lp-glass lp-closing">
-        <h2 className="lp-h2">Give your team <span>one source of truth.</span></h2>
+        <h2 className="lp-h2">Unlock your engineers’ <span>full output.</span></h2>
         <div className="lp-actions">
           <Link to="/app" className="lp-btn lp-btn-primary lp-btn-lg" onClick={onOpen}>Open Footprint AI <ArrowRight size={18} aria-hidden="true" /></Link>
           <Link to="/how-it-works" className="lp-btn lp-btn-dark lp-btn-lg">See how it works</Link>

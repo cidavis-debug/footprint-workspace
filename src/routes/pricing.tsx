@@ -19,7 +19,7 @@ const plans = [
 const rows: { label: string; vals: [string, string, string]; note?: string }[] = [
   { label: 'Shared team workspaces', vals: ['Included', 'Included', 'Included'] },
   { label: 'Contributors', vals: ['~20', '~30', '~60'] },
-  { label: 'Superfolders and auto-sync', vals: ['Included', 'Included', 'Included'] },
+  { label: 'Local and cloud superfolders', vals: ['Included', 'Included', 'Included'] },
   { label: 'Cited answers', vals: ['Included', 'Included', 'Included'] },
   { label: 'Engineering Change Radar', vals: ['Included', 'Included', 'Included'] },
   { label: 'Slack and Teams routing', vals: ['Included', 'Included', 'Included'] },
@@ -27,7 +27,7 @@ const rows: { label: string; vals: [string, string, string]; note?: string }[] =
 
 const faq = [
   { q: 'Are these final prices?', a: 'These tiers are draft proposals, to be tested in pilots with hardware teams.' },
-  { q: 'What counts as a source?', a: 'A file, page, ticket, thread or record from a connected tool such as Drive, SharePoint, Jira, Confluence, Slack or your PLM.' },
+  { q: 'What counts as a source?', a: 'A local Word, Excel or OneNote file, or a page, ticket, thread or record from a tool such as Drive, SharePoint, Jira, Confluence, Slack or your PLM.' },
   { q: 'How would Team pricing work?', a: 'Plans are priced by contributors rather than per seat: about 20 on Team, 30 on Growth and 60 on Organization, with shared team workspaces and superfolders included.' },
   { q: 'Does it replace our PLM or PDM?', a: 'No. Footprint complements the systems of record you already use. It connects to them, reads with the access you authorize, and never rewrites your documents.' },
   { q: 'Who is Footprint AI built for?', a: 'Hardware engineering teams, starting with mid-size robotics and hardware companies, then drones, EV batteries, medical devices and industrial automation. Aerospace and defense are the long-term goal through on-prem and ITAR-compliant deployment.' },
@@ -50,7 +50,7 @@ function Pricing() {
         </div>
         <Reveal dir="none" delay={400} className="lp-lit lp-price-note lp-glass-light">
           <b>Draft pricing · USD, per team</b>
-          <p>These plans are draft proposals, priced by contributors and to be tested in pilots.</p>
+          <p>Draft proposals, priced by contributors and tested in pilots. It pays for itself if it prevents a single redesign.</p>
         </Reveal>
       </div>
       </div>

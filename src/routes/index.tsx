@@ -3,6 +3,6 @@ import { pageHead } from '@/components/page-head'
 import { Landing } from '@/components/landing/landing'
 
 export const Route = createFileRoute('/')({
-  head: () => pageHead('Footprint AI — Complex Engineering. Connected Intelligence.', 'Footprint AI connects Drive, Jira, Slack and your PLM into one source of truth for hardware teams, answers with citations, and catches conflicts before they become redesigns.'),
+  head: () => pageHead('Footprint AI — The future, built together', 'Superfolders connect local documents, Drive, Jira, Slack and your PLM into one source of truth, so hardware teams catch conflicts early, build faster and scale without the roadblocks.'),
   component: Landing,
 })

@@ -14,7 +14,7 @@ const journey = [
     body: 'Footprint AI uses email and password or Google sign-in. Once you are signed in, your session token accompanies each request to the server, and server functions reject requests without it.',
     sent: 'Your session token', stored: 'Your account and its workspaces' },
   { id: 'upload', label: 'Connect', title: 'Files and sources land in your workspace.',
-    body: 'Files and connected sources land in your workspace. Superfolders connect only with the permissions you grant, and text is extracted and saved with the source record so it can be used for answers.',
+    body: 'Local documents, files and connected sources land in your workspace. Superfolders watch folders and tools only with the permissions you grant, and text is extracted and saved with the source record so it can be used for answers.',
     sent: 'Read-only requests to tools you authorize', stored: 'The source, its record, and its extracted text' },
   { id: 'ask', label: 'Ask', title: 'Your question and source excerpts go to Gemini.',
     body: 'To answer, the server loads the active workspace’s sources, extracted claims and open alerts, then sends your question and that source text to Google’s Gemini API. This is not local-only processing. The AI key is held on the server, never in the browser. The question and answer are saved to the workspace’s conversation history.',
@@ -95,7 +95,7 @@ function Security() {
         <Reveal dir="none"><p className="lp-mono lp-eyebrow">What we do not claim</p><h2 id="lp-nc-h" className="lp-h2">No inflated <span>claims.</span></h2></Reveal>
         <Reveal dir="slide-r" delay={140} className="arc-plate arc-f-steel arc-inset arc-bleed-r lp-nc-copy">
           <p className="lp-body">Footprint AI does not claim SOC 2 certification, HIPAA compliance, end-to-end encryption or a verified data-retention policy. Those assurances need separate implementation and independent review.</p>
-          <p className="lp-body">Private tools such as Drive, SharePoint and Jira connect only through access you authorize, and their permissions are respected.</p>
+          <p className="lp-body">Local documents and private tools such as Drive, SharePoint and Jira connect only through access you authorize, and their permissions are respected.</p>
           <p className="lp-body">Do not upload ITAR or other export-controlled data for now, or anything you may not share with an external AI provider. ITAR-compliant and on-premises deployment is the long-term path for aerospace and defense teams.</p>
           <Link to="/how-it-works" className="lp-textlink lp-textlink-ink">See how sources work <ArrowRight size={15} aria-hidden="true" /></Link>
         </Reveal>

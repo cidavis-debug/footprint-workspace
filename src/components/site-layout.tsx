@@ -58,7 +58,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
     {children}
     <footer className="site-width"><div className="site-footer">
       <Link to="/" className="wordmark"><Brand /></Link>
-      <span className="demo-label">One source of truth for hardware engineering.</span>
+      <span className="demo-label">The future, built together.</span>
       <nav aria-label="Footer navigation" className="footer-links">{directory.map(item => <Link key={item.to} to={item.to} className="site-link">{item.label}</Link>)}<Link to="/app" className="site-link">Open Footprint AI <span aria-hidden="true">↗</span></Link></nav>
     </div></footer>
     </div>
