@@ -3,96 +3,65 @@ import { useEffect, useRef, useState } from 'react'
 import { AlertTriangle, ArrowRight, ArrowUpRight, FileText, FolderOpen, RotateCcw } from 'lucide-react'
 import { Header, Mark, Plane, Reveal, Stage, WordReveal, clamp, nav, prefersReducedMotion, smooth, useInView, useOpenApp, useScrollProgress, v, type OpenHandler } from './shared'
 
-/* ---------- 1. hero: mechanical bloom, scrubbed by scroll ---------- */
+/* ---------- 1. hero: puzzle zoom, scrubbed by scroll ---------- */
 
-const BLOOM_SRC = '/Footprint AI — Mechanical Bloom Zoom Transition.mp4'
-const BLOOM_POSTER = '/footprint-bloom-poster.jpg'
-// Pre-rendered stills of the bloom video (92 frames across its full length). Scrubbing paints these onto a canvas,
-// which is far smoother than seeking a compressed video on every scroll event. The video file itself is unchanged.
-const BLOOM_FRAMES = 92
-const bloomFrame = (i: number) => `/bloom/f${String(i).padStart(3, '0')}.jpg`
+// Prepared puzzle: the ceramic board without its centre mark, plus a hi-res Footprint mark laid over the centre piece
+// (same placement as the title slide of the investor deck). The mark is a separate layer so it stays crisp at ~20x zoom.
+const PUZZLE_SRC = '/puzzle/puzzle-base.webp'
+const PUZZLE_MARK_SRC = '/puzzle/puzzle-foot.png'
+// Zoom target: the solid "ball" of the foot, as a fraction of the square board.
+const BALL_X = 0.5024, BALL_Y = 0.4562
+// Ball is ~0.097 of the board wide and ~0.061 tall; the zoom ends once it covers the viewport.
+const BALL_W = 0.097, BALL_H = 0.061
 
 function Hero({ onOpen }: { onOpen: OpenHandler }) {
   const outer = useRef<HTMLElement>(null)
-  const video = useRef<HTMLVideoElement>(null)
-  const canvas = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
-    const el = outer.current, vid = video.current, cv = canvas.current
-    if (!el || !vid || !cv) return
+    const el = outer.current
+    if (!el) return
     const set = (k: string, val: number | string) => el.style.setProperty(k, String(val))
-    const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 
-    // Scroll budget: REVEAL_VH of travel to uncover the flower, then BLOOM_VH of travel to scrub the video.
+    // Scroll budget: REVEAL_VH of travel to uncover the puzzle, then ZOOM_VH of travel for zoom, orange, and the grey dot.
     // Keep these in sync with the .lp-hero height in landing.css (100vh + both = 222vh).
-    const REVEAL_VH = 0.26, BLOOM_VH = 0.96
+    const REVEAL_VH = 0.26, ZOOM_VH = 0.96
 
-    let vh = window.innerHeight, vw = window.innerWidth, reveal = REVEAL_VH * vh, shiftPx = 0, objX = 50
+    let vh = window.innerHeight, vw = window.innerWidth, reveal = REVEAL_VH * vh, shiftPx = 0, offX = 0, size = 0, zoomMax = 1, dotR = 0
     const measure = () => {
       vh = window.innerHeight; vw = window.innerWidth; reveal = REVEAL_VH * vh
-      // Rendered video frame under object-fit: cover (frame is 16:9).
-      const frameH = Math.max(vh, vw * 9 / 16), frameW = Math.max(vw, vh * 16 / 9)
-      if (vw <= 640) { shiftPx = vh * 0.24; objX = 76; return }
-      // Push the frame down until ~55% of the flower (frame y 4%..96%) is above the bottom edge.
-      shiftPx = Math.max(0, vh - (vh - frameH) / 2 - (0.04 + 0.92 * 0.55) * frameH)
-      // On narrower-than-16:9 viewports keep the flower in view on the right while the frame is cropped.
-      const crop = frameW - vw
-      objX = crop > 1 ? clamp(-(0.66 * vw - 0.64 * frameW) / crop, 0, 1) * 100 : 50
+      const mobile = vw <= 640
+      size = mobile ? Math.min(vw * 0.94, vh * 0.52) : Math.min(vh * 0.8, vw * 0.9)
+      // Start: puzzle to the right of the copy (desktop) or under it (mobile), ~55% of it above the bottom edge. End: centred.
+      offX = mobile ? 0 : vw * 0.2
+      shiftPx = mobile ? vh * 0.3 : Math.max(0, vh - (vh - size) / 2 - 0.55 * size)
+      zoomMax = Math.max(vw / (BALL_W * size), vh / (BALL_H * size)) * 1.08
+      dotR = Math.hypot(vw, vh) / 2 + 4
+      set('--size', `${size.toFixed(1)}px`)
+      set('--ball-x', `${(BALL_X * 100).toFixed(2)}%`)
+      set('--ball-y', `${(BALL_Y * 100).toFixed(2)}%`)
+      set('--dot', `${(dotR * 2).toFixed(1)}px`)
     }
     measure()
 
     const apply = (y: number) => {
       const r = clamp(y / reveal)
-      const t = clamp((y - reveal) / (BLOOM_VH * vh))
+      const t = clamp((y - reveal) / (ZOOM_VH * vh))
       const re = smooth(r)
+      // 0..0.62 of the travel zooms into the ball (exponential, so it feels even), then orange holds, then the dot grows.
+      const z = smooth(t / 0.62)
       set('--shift', `${(shiftPx * (1 - re)).toFixed(1)}px`)
-      set('--scale', (1 + 0.1 * (1 - re)).toFixed(4))
+      set('--px', `${(offX * (1 - re)).toFixed(1)}px`)
+      set('--scale', (1 + 0.05 * (1 - re)).toFixed(4))
       set('--edge', (1 - re).toFixed(4))
       set('--text', (1 - smooth((r - 0.3) / 0.6)).toFixed(4))
-      set('--t', t.toFixed(4))
-      set('--wash', smooth((t - 0.86) / 0.14).toFixed(4))
-      set('--grow', smooth(t / 0.3).toFixed(4))
-      el.dataset['phase'] = r < 1 ? 'reveal' : 'bloom'
-      cv.style.objectPosition = vid.style.objectPosition = `${lerp(objX, 50, re).toFixed(1)}% center`
-      return t
+      set('--zoom', Math.exp(Math.log(zoomMax) * z).toFixed(3))
+      set('--ty', `${((0.5 - BALL_Y) * size * z).toFixed(1)}px`)
+      set('--fill', smooth((t - 0.36) / 0.24).toFixed(4))
+      set('--grow', smooth((t - 0.64) / 0.36).toFixed(4))
+      el.dataset['phase'] = r < 1 ? 'reveal' : 'zoom'
     }
 
-    // --- frame sequence -> canvas ---
-    const frames: (HTMLImageElement | null)[] = new Array(BLOOM_FRAMES).fill(null)
-    const ctx = cv.getContext('2d', { alpha: false })
-    cv.width = 1152; cv.height = 648
-    let drawn = -1, alive = true
-    const paint = (pos: number) => {
-      if (!ctx) return
-      const key = Math.round(pos * 20) // repaint only when the blend visibly changes
-      if (key === drawn) return
-      const i0 = Math.min(BLOOM_FRAMES - 1, Math.floor(pos)), a = pos - i0
-      const at = (i: number) => { for (let k = i; k >= 0; k--) if (frames[k]) return frames[k]; return null }
-      const f0 = at(i0)
-      if (!f0) return
-      drawn = key
-      ctx.globalAlpha = 1
-      ctx.drawImage(f0, 0, 0, cv.width, cv.height)
-      const f1 = i0 + 1 < BLOOM_FRAMES ? frames[i0 + 1] : null
-      if (f1 && a > 0.04) { ctx.globalAlpha = a; ctx.drawImage(f1, 0, 0, cv.width, cv.height); ctx.globalAlpha = 1 }
-    }
-    let pos = 0
-    const load = (i: number) => new Promise<void>(res => {
-      const im = new Image()
-      im.decoding = 'async'
-      im.onload = () => { frames[i] = im; if (alive) { drawn = -1; paint(pos) } res() }
-      im.onerror = () => res()
-      im.src = bloomFrame(i)
-    })
-    void (async () => {
-      await load(0)
-      // load in coarse-to-fine order so scrubbing works early: every 8th frame, then the gaps
-      const order: number[] = []
-      for (const step of [8, 4, 2, 1]) for (let i = 0; i < BLOOM_FRAMES; i += step) if (!order.includes(i)) order.push(i)
-      for (let k = 0; k < order.length && alive; k += 6) await Promise.all(order.slice(k, k + 6).map(load))
-    })()
-
-    if (prefersReducedMotion()) { apply(reveal); paint(0); return }
+    if (prefersReducedMotion()) { apply(reveal); return }
 
     let target = 0, shown = 0, raf = 0, running = true, last = performance.now()
     const frame = (now: number) => {
@@ -102,25 +71,26 @@ function Hero({ onOpen }: { onOpen: OpenHandler }) {
       // time-based exponential smoothing: identical feel at 60 and 144 Hz, quick catch-up on fast scrolls
       shown += (target - shown) * (1 - Math.exp(-dt / 70))
       if (Math.abs(target - shown) < 0.3) shown = target
-      const t = apply(shown)
-      pos = t * (BLOOM_FRAMES - 1)
-      paint(pos)
+      apply(shown)
       raf = requestAnimationFrame(frame)
     }
-    const onResize = () => measure()
+    const onResize = () => { measure(); apply(shown) }
     window.addEventListener('resize', onResize)
     raf = requestAnimationFrame(frame)
-    return () => { running = false; alive = false; cancelAnimationFrame(raf); window.removeEventListener('resize', onResize) }
+    return () => { running = false; cancelAnimationFrame(raf); window.removeEventListener('resize', onResize) }
   }, [])
 
   return <section className="lp-hero" ref={outer}>
     <div className="lp-hero-sticky">
-      <div className="lp-bloom">
-        <video ref={video} className="lp-bloom-video" src={encodeURI(BLOOM_SRC)} poster={BLOOM_POSTER} muted playsInline preload="none" aria-hidden="true" tabIndex={-1} />
-        <canvas ref={canvas} className="lp-bloom-canvas" aria-hidden="true" />
+      <div className="lp-puzzle">
+        <div className="lp-puzzle-box">
+          <img className="lp-puzzle-base" src={PUZZLE_SRC} alt="" width={1254} height={1254} decoding="async" fetchPriority="high" draggable={false} aria-hidden="true" />
+          <img className="lp-puzzle-mark" src={PUZZLE_MARK_SRC} alt="" decoding="async" draggable={false} aria-hidden="true" />
+        </div>
       </div>
       <div className="lp-floor" aria-hidden="true" />
-      <div className="lp-wash" aria-hidden="true" />
+      <div className="lp-fill" aria-hidden="true" />
+      <div className="lp-dotwrap" aria-hidden="true"><div className="lp-dot" /></div>
       <div className="lp-inner lp-hero-inner">
         <div className="lp-hero-copy">
           <p className="lp-mono lp-eyebrow">For hardware engineering teams</p>

@@ -49,14 +49,18 @@
 .lp-mobile-nav .lp-nav-link { padding: 12px; text-align: left; font-size: 17px; color: var(--ink); }
 
 /* layering */
-/* 1. hero: scroll-scrubbed mechanical bloom */
-.lp-hero { --t: 0; --text: 1; --wash: 0; --grow: 0; position: relative; --shift: 45vh; --scale: 1.1; --edge: 1; height: 222vh; margin-top: -68px; background: #e8eaed; z-index: 2; }
+/* 1. hero: scroll-scrubbed puzzle zoom (puzzle -> orange -> grey dot -> next section) */
+.lp-hero { --text: 1; --fill: 0; --grow: 0; --zoom: 1; --ty: 0px; --px: 0px; --size: 80vh; --ball-x: 50.24%; --ball-y: 45.62%; --dot: 160vmax; position: relative; --shift: 45vh; --scale: 1.05; --edge: 1; height: 222vh; margin-top: -68px; background: #e8eaed; z-index: 2; }
 .lp-hero-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; background: #e8eaed; }
-.lp-bloom { position: absolute; inset: 0; transform: translate3d(0, var(--shift), 0) scale(var(--scale)); transform-origin: 70% 50%; will-change: transform; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--edge) * 18%)); mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--edge) * 18%)); }
+.lp-puzzle { position: absolute; inset: 0; transform: translate3d(0, var(--shift), 0) scale(var(--scale)); transform-origin: 70% 50%; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--edge) * 18%)); mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--edge) * 18%)); }
 .lp-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 24%; z-index: 2; pointer-events: none; opacity: calc(var(--edge) * .9); background: linear-gradient(to top, #e8eaed 0, rgba(232, 234, 237, .75) 28%, rgba(232, 234, 237, 0) 100%); }
-.lp-bloom-canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
-.lp-bloom-video { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; background: transparent; }
-.lp-wash { position: absolute; inset: 0; background: #e8eaed; opacity: var(--wash); pointer-events: none; z-index: 1; }
+.lp-puzzle-box { position: absolute; left: 50%; top: 50%; width: var(--size); height: var(--size); transform-origin: var(--ball-x) var(--ball-y); transform: translate3d(calc(var(--px) - 50%), calc(var(--ty) - 50%), 0) scale(var(--zoom)); }
+.lp-puzzle-base { display: block; width: 100%; height: 100%; user-select: none; }
+.lp-puzzle-mark { position: absolute; left: 50.24%; top: 49.6%; height: 22.73%; width: auto; transform: translate(-50%, -50%); user-select: none; }
+/* solid brand orange fills the screen once the zoom has reached the foot, then the grey dot grows out of the centre */
+.lp-fill { position: absolute; inset: 0; background: #fe6a04; opacity: var(--fill); pointer-events: none; z-index: 1; }
+.lp-dotwrap { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }
+.lp-dot { position: absolute; left: 50%; top: 50%; width: var(--dot); height: var(--dot); margin: calc(var(--dot) / -2) 0 0 calc(var(--dot) / -2); border-radius: 50%; background: #e8eaed; transform: scale(var(--grow)); }
 .lp-hero-inner { position: relative; z-index: 3; height: 100%; display: flex; align-items: center; padding: 68px var(--pad) 0; }
 .lp-hero-copy { max-width: min(640px, 46%); display: flex; flex-direction: column; gap: 24px; opacity: var(--text); transform: translateY(calc((1 - var(--text)) * -28px)); will-change: opacity, transform; pointer-events: auto; }
 .lp-hero-copy[style], .lp-hero[data-inert] .lp-hero-copy { pointer-events: auto; }
@@ -67,7 +71,7 @@
 .lp-scrollcue { position: absolute; left: calc(50% - min(660px, 50% - var(--pad))); bottom: 28px; z-index: 3; display: flex; align-items: center; gap: 12px; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); opacity: var(--text); }
 .lp-scrollcue::after { content: ""; width: 1px; height: 34px; background: linear-gradient(to bottom, var(--orange), transparent); animation: lp-cue 1.8s ease-in-out infinite; transform-origin: top; }
 @keyframes lp-cue { 0% { transform: scaleY(0); opacity: 0; } 40% { opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
-.lp-hero[data-phase="bloom"] .lp-hero-copy { visibility: hidden; }
+.lp-hero[data-phase="zoom"] .lp-hero-copy { visibility: hidden; }
 .lp-hero .lp-eyebrow, .lp-hero .lp-lead, .lp-hero .lp-trio { text-shadow: 0 0 24px rgba(232, 234, 237, .9); }
 
 /* ===== Materials ===== */
@@ -238,8 +242,7 @@
   .lp-hero-copy { max-width: none; gap: 16px; }
   .lp-hero .lp-lead { font-size: 1rem; }
   .lp-trio { display: none; }
-  .lp-bloom { top: auto; bottom: 0; height: calc(52% + var(--grow) * 48%); -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--edge) * 18% + (1 - var(--grow)) * 12%)); mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--edge) * 18% + (1 - var(--grow)) * 12%)); }
-  .lp-bloom-video, .lp-bloom-canvas { object-position: 76% center; }
+  .lp-puzzle { transform-origin: 50% 50%; }
   .lp-btn-lg { width: 100%; }
   .lp-header-actions .lp-btn-primary { height: 40px; padding: 0 16px; }
   .lp-mrow { grid-template-columns: 1fr; gap: 12px; }
